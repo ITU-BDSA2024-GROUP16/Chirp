@@ -1,64 +1,62 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using CsvHelper;
-using System;
+using CsvHelper.Configuration;
 
-// Vælg om du vil læse eksisterende cheeps eller vil skrive en ny
-// Skriv enten dotnet run -- read ELLEr dotnet run -- write <Din Text>
-
-
-
-
-if (args[0] == "read")
+class Program
 {
-    read();
-} else if (args[0] == "write")
-{
-    write(args);
-}
-
-
-static void read()
-{
-    using StreamReader reader = new StreamReader("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv");
+    static void Main(string[] args)
     {
-        string line = reader.ReadLine();
-        while ((line = reader.ReadLine()) != null)
+        if (args.Length == 0)
         {
-            // Vores regex som indeler i 3 grupper. "Author", "Message", "Timestamp"
-            string pattern = "^(\\w+),\"([^\"]+)\",(\\d+)$";
-
-            // Regex matcher hver "Line" i vores input".
-            Match match = Regex.Match(line, pattern);
-
-            // Input bliver matchet i respektive grupper.
-            string author = match.Groups[1].Value;
-            string message = match.Groups[2].Value;
-            string timestamp = match.Groups[3].Value;
-
-            // Timestamp, som er i unix-seconds, bliver convertet til dato og tid (+ med 2 timer if.t tidsforksel)
-            DateTimeOffset adjustedDateTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(timestamp)).AddHours(2);
-
-            //Print den samlede cheep (Formatet på dato kan justeres. Eksemplet var med NA datering, men kan hurtig ændres)
-            Console.WriteLine(author + " @ " + adjustedDateTime.ToString("MM/dd/yy HH:mm:ss") + ": " + message);
+            Console.WriteLine("Please provide 'read' or 'write' command.");
+            return;
         }
-    } 
-}
-
-static void write(string[] args)
-{
-    using (StreamWriter sw = File.AppendText("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv"))
-    {
-        sw.WriteLine("");
-        // Skriver din enheds navn i filen
-        sw.Write(Environment.MachineName + ",\"");
         
-        for (int i = 1; i < args.Length; i++)
+        if (args[0] == "read")
         {
-            //Hvert ord i args bliver skrevet ind i filen
-            sw.Write(args[i]);
-            sw.Write(" ");
+            Read();
         }
-        // Skriver tiden netop nu
-        sw.Write( "\"," + ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+        else if (args[0] == "write")
+        {
+            Write(args);
+        }
+        else
+        {
+            Console.WriteLine("Invalid command. Use 'read' or 'write'.");
+        }
+    }
+
+    static void Read()
+    {
+        using var reader = new StreamReader("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv");
+        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true, 
+        });
+        
+        foreach (var cheep in csv.GetRecords<Cheep>())
+        {
+            DateTimeOffset adjustedDateTime = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp).AddHours(2);
+            
+            Console.WriteLine($"{cheep.Author} @ {adjustedDateTime:MM/dd/yy HH:mm:ss}: {cheep.Message}");
+        }
+    }
+
+    static void Write(string[] args)
+    {
+        using var writer = new StreamWriter("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv", append: true);
+        using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+        
+        var cheep = new Cheep
+        {
+            Author = Environment.MachineName,
+            Message = string.Join(" ", args[1..]), // Combine all message arguments
+            Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds()
+        };
+        
+        csv.WriteRecord(cheep);
+        csv.NextRecord();
     }
 }
