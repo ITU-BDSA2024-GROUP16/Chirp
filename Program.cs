@@ -1,10 +1,24 @@
 ﻿using System.Text.RegularExpressions;
+using CsvHelper;
 using System;
 
 // Vælg om du vil læse eksisterende cheeps eller vil skrive en ny
 // Skriv enten dotnet run -- read ELLEr dotnet run -- write <Din Text>
 
-if(args[0] == "read") {
+
+
+
+if (args[0] == "read")
+{
+    read();
+} else if (args[0] == "write")
+{
+    write(args);
+}
+
+
+static void read()
+{
     using StreamReader reader = new StreamReader("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv");
     {
         string line = reader.ReadLine();
@@ -28,8 +42,10 @@ if(args[0] == "read") {
             Console.WriteLine(author + " @ " + adjustedDateTime.ToString("MM/dd/yy HH:mm:ss") + ": " + message);
         }
     } 
+}
 
-} else if (args[0] == "write") {
+static void write(string[] args)
+{
     using (StreamWriter sw = File.AppendText("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv"))
     {
         sw.WriteLine("");
