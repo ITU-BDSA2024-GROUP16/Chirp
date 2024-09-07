@@ -3,11 +3,15 @@ using System.Globalization;
 using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
+using SimpleDB;
 
 class Program
 {
     static void Main(string[] args)
     {
+        // I imported the Database where the cheeps are stored. (Insert your own filepath)
+        var db = new CSVDatabase<Cheep>("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv");
+        
         if (args.Length == 0)
         {
             Console.WriteLine("Please provide 'read' or 'write' command.");
@@ -16,11 +20,11 @@ class Program
         
         if (args[0] == "read")
         {
-            Read();
+            Read(db);
         }
         else if (args[0] == "write")
         {
-            Write(args);
+            Write(db,args);
         }
         else
         {
@@ -28,15 +32,11 @@ class Program
         }
     }
 
-    static void Read()
+    static void Read(CSVDatabase<Cheep> db)
     {
-        using var reader = new StreamReader("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv");
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            HasHeaderRecord = true, 
-        });
+        var cheeps = db.Read();
         
-        foreach (var cheep in csv.GetRecords<Cheep>())
+        foreach (var cheep in cheeps)
         {
             DateTimeOffset adjustedDateTime = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp).AddHours(2);
             
@@ -44,19 +44,9 @@ class Program
         }
     }
 
-    static void Write(string[] args)
+    //Would it make sense to remove this entire method, and just use db.Store() in the args section?
+    static void Write(CSVDatabase<Cheep> db,string[] args)
     {
-        using var writer = new StreamWriter("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv", append: true);
-        using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-        
-        var cheep = new Cheep
-        {
-            Author = Environment.MachineName,
-            Message = string.Join(" ", args[1..]), // Combine all message arguments
-            Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds()
-        };
-        
-        csv.WriteRecord(cheep);
-        csv.NextRecord();
+        db.Store(args);
     }
 }
