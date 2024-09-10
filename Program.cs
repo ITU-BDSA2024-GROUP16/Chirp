@@ -4,6 +4,8 @@ using System.IO;
 using CsvHelper;
 using CsvHelper.Configuration;
 using SimpleDB;
+using System.CommandLine;
+using Chirp.CLI;
 
 class Program
 {
@@ -34,14 +36,12 @@ class Program
 
     static void Read(CSVDatabase<Cheep> db)
     {
+        // Gets IEnumerable<Cheep> from CSVDatabase
         var cheeps = db.Read();
         
-        foreach (var cheep in cheeps)
-        {
-            DateTimeOffset adjustedDateTime = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp).AddHours(2);
-            
-            Console.WriteLine($"{cheep.Author} @ {adjustedDateTime:MM/dd/yy HH:mm:ss}: {cheep.Message}");
-        }
+        // Calls on UserInterface to print the cheeps from CSVDatabase
+        UserInterface.printCheeps(cheeps);
+        
     }
 
     //Would it make sense to remove this entire method, and just use db.Store() in the args section?
