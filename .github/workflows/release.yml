@@ -41,7 +41,17 @@ jobs:
       - name: Build Chirp CLI for Linux
         run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o ./publish/linux
 
-      # Create a release and upload the executables
+      # Compress the executables into ZIP files
+      - name: Create ZIP for Windows Executable
+        run: zip -j ./publish/Chirp.CLI-Windows.zip ./publish/win/Chirp.CLI.exe
+
+      - name: Create ZIP for macOS Executable
+        run: zip -j ./publish/Chirp.CLI-macOS.zip ./publish/macos/Chirp.CLI
+
+      - name: Create ZIP for Linux Executable
+        run: zip -j ./publish/Chirp.CLI-Linux.zip ./publish/linux/Chirp.CLI
+
+      # Create a release and upload the ZIP files
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -53,35 +63,35 @@ jobs:
           draft: false
           prerelease: false
 
-      # Upload Windows executable to the release
-      - name: Upload Windows Executable
+      # Upload Windows ZIP to the release
+      - name: Upload Windows ZIP
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./publish/win/Chirp.CLI.exe # Update this if your executable is named differently
-          asset_name: Chirp.CLI-Windows.exe
-          asset_content_type: application/octet-stream
+          asset_path: ./publish/Chirp.CLI-Windows.zip
+          asset_name: Chirp.CLI-Windows.zip
+          asset_content_type: application/zip
 
-      # Upload macOS executable to the release
-      - name: Upload macOS Executable
+      # Upload macOS ZIP to the release
+      - name: Upload macOS ZIP
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./publish/macos/Chirp.CLI # Update this if your executable is named differently
-          asset_name: Chirp.CLI-macOS
-          asset_content_type: application/octet-stream
+          asset_path: ./publish/Chirp.CLI-macOS.zip
+          asset_name: Chirp.CLI-macOS.zip
+          asset_content_type: application/zip
 
-      # Upload Linux executable to the release
-      - name: Upload Linux Executable
+      # Upload Linux ZIP to the release
+      - name: Upload Linux ZIP
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./publish/linux/Chirp.CLI # Update this if your executable is named differently
-          asset_name: Chirp.CLI-Linux
-          asset_content_type: application/octet-stream
+          asset_path: ./publish/Chirp.CLI-Linux.zip
+          asset_name: Chirp.CLI-Linux.zip
+          asset_content_type: application/zip
