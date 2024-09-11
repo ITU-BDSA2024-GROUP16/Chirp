@@ -10,16 +10,16 @@ class Program
         
         var rootCommand = new RootCommand("This application performs 'read' and 'write' operations.");
         
-        var readCommand = new Command("read", "Reads data from the database");
-        readCommand.SetHandler(() => Read(db));
+        var readCommand = new Command("--read", "Reads data from the database");
+        readCommand.SetHandler(() => ReadCheeps(db));
         
-        var dataArgument = new Argument<string>("data", "The data to be written");
-        var writeCommand = new Command("write", "Writes data to the database")
+        var dataArgument = new Argument<string>("message", "The message to be written");
+        var writeCommand = new Command("--write", "Writes data to the database")
         {
             dataArgument 
         };
         
-        writeCommand.SetHandler((string data) => Write(db, data), dataArgument);
+        writeCommand.SetHandler((string data) => CreateCheepFromCommandLine(db, data), dataArgument);
         
         rootCommand.AddCommand(readCommand);
         rootCommand.AddCommand(writeCommand);
@@ -27,12 +27,12 @@ class Program
         return await rootCommand.InvokeAsync(args);
     }
 
-    static void Read(CSVDatabase<Cheep> db)
+    static void ReadCheeps(CSVDatabase<Cheep> db)
     {
         var cheeps = db.Read();
         UserInterface.printCheeps(cheeps);
     }
-    static void Write(CSVDatabase<Cheep> db, string data)
+    static void CreateCheepFromCommandLine(CSVDatabase<Cheep> db, string data)
     {
         db.Store(new[] { data });
         Console.WriteLine($"Data '{data}' has been written to the database.");

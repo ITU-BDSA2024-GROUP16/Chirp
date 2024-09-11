@@ -31,13 +31,15 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
     {
         using var writer = new StreamWriter("chirp_cli_db.csv", append: true);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
         
         var cheep = new Cheep
         {
             Author = Environment.MachineName,
-            Message = string.Join(" ", args[1..]), // Combine all message arguments
+            Message = string.Join(" ", args[0..]), // Combine all message arguments
             Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds()
         };
+        
         
         csv.WriteRecord(cheep);
         csv.NextRecord();
