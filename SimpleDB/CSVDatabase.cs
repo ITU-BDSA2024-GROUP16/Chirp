@@ -9,10 +9,25 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
 {
     
     private string _filePath;
+    private static CSVDatabase<T> instance = null;
+    private static readonly object padlock = new object();
     
     public CSVDatabase(string filePath)
     {
         _filePath = filePath;
+    }
+    
+    
+    public static CSVDatabase<T> Instance(string filePath)
+    {
+        lock (padlock)
+        {
+            if (instance == null)
+            {
+                instance = new CSVDatabase<T>(filePath);
+            }
+            return instance;
+        }
     }
     
     public IEnumerable<T> Read(int? limit = null)
