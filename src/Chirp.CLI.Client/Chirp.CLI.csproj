@@ -15,7 +15,7 @@
   <ItemGroup>
     <Folder Include="data\" />
     <Folder Include="src\Chirp.CLI.Client\" />
-    <Folder Include="test\" />
+    <Folder Include="test\Chirp.CSVDB.Tests\" />
   </ItemGroup>
 
 </Project>
