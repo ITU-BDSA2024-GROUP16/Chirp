@@ -1,4 +1,4 @@
-name: Release Chirp Executable
+name: Release Chirp Executables
 
 on:
   # Trigger workflow on tag creation matching 'v*'
@@ -25,15 +25,23 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      # Build the project and create a single-file executable
-      - name: Build Chirp CLI
-        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish
-
       # Run tests
       - name: Run tests
         run: dotnet test
 
-      # Create a release and upload the executable
+      # Build for Windows
+      - name: Build Chirp CLI for Windows
+        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish/win
+
+      # Build for macOS
+      - name: Build Chirp CLI for macOS
+        run: dotnet publish -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -o ./publish/macos
+
+      # Build for Linux
+      - name: Build Chirp CLI for Linux
+        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o ./publish/linux
+
+      # Create a release and upload the executables
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -45,13 +53,35 @@ jobs:
           draft: false
           prerelease: false
 
-      # Upload the single-file executable to the release
-      - name: Upload Chirp Executable
+      # Upload Windows executable to the release
+      - name: Upload Windows Executable
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./publish/Chirp.CLI.exe # Update this if your executable is named differently
-          asset_name: Chirp.CLI.exe
+          asset_path: ./publish/win/Chirp.CLI.exe # Update this if your executable is named differently
+          asset_name: Chirp.CLI-Windows.exe
+          asset_content_type: application/octet-stream
+
+      # Upload macOS executable to the release
+      - name: Upload macOS Executable
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/macos/Chirp.CLI # Update this if your executable is named differently
+          asset_name: Chirp.CLI-macOS
+          asset_content_type: application/octet-stream
+
+      # Upload Linux executable to the release
+      - name: Upload Linux Executable
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/linux/Chirp.CLI # Update this if your executable is named differently
+          asset_name: Chirp.CLI-Linux
           asset_content_type: application/octet-stream
