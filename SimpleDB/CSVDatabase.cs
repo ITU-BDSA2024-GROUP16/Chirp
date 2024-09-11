@@ -29,7 +29,7 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
 
     public void Store(string[] args)
     {
-        using var writer = new StreamWriter("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv", append: true);
+        using var writer = new StreamWriter("chirp_cli_db.csv", append: true);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
         
         var cheep = new Cheep

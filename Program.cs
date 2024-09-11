@@ -1,52 +1,40 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using CsvHelper;
-using CsvHelper.Configuration;
-using SimpleDB;
+﻿using SimpleDB;
 using System.CommandLine;
 using Chirp.CLI;
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task<int> Main(string[] args)
     {
-        // I imported the Database where the cheeps are stored. (Insert your own filepath)
-        var db = new CSVDatabase<Cheep>("C:\\Users\\jacqu\\Chirp.CLI\\chirp_cli_db.csv");
+        var db = new CSVDatabase<Cheep>("chirp_cli_db.csv");
         
-        if (args.Length == 0)
-        {
-            Console.WriteLine("Please provide 'read' or 'write' command.");
-            return;
-        }
+        var rootCommand = new RootCommand("This application performs 'read' and 'write' operations.");
         
-        if (args[0] == "read")
+        var readCommand = new Command("read", "Reads data from the database");
+        readCommand.SetHandler(() => Read(db));
+        
+        var dataArgument = new Argument<string>("data", "The data to be written");
+        var writeCommand = new Command("write", "Writes data to the database")
         {
-            Read(db);
-        }
-        else if (args[0] == "write")
-        {
-            Write(db,args);
-        }
-        else
-        {
-            Console.WriteLine("Invalid command. Use 'read' or 'write'.");
-        }
+            dataArgument 
+        };
+        
+        writeCommand.SetHandler((string data) => Write(db, data), dataArgument);
+        
+        rootCommand.AddCommand(readCommand);
+        rootCommand.AddCommand(writeCommand);
+        
+        return await rootCommand.InvokeAsync(args);
     }
 
     static void Read(CSVDatabase<Cheep> db)
     {
-        // Gets IEnumerable<Cheep> from CSVDatabase
         var cheeps = db.Read();
-        
-        // Calls on UserInterface to print the cheeps from CSVDatabase
         UserInterface.printCheeps(cheeps);
-        
     }
-
-    //Would it make sense to remove this entire method, and just use db.Store() in the args section?
-    static void Write(CSVDatabase<Cheep> db,string[] args)
+    static void Write(CSVDatabase<Cheep> db, string data)
     {
-        db.Store(args);
+        db.Store(new[] { data });
+        Console.WriteLine($"Data '{data}' has been written to the database.");
     }
 }
