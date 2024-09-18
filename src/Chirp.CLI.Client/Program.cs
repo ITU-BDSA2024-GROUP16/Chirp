@@ -6,7 +6,7 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var db = new CSVDatabase<Cheep>("chirp_cli_db.csv");
+        var db = CSVDatabase<Cheep>.Instance("chirp_cli_db.csv");
         
         var rootCommand = new RootCommand("This application performs 'read' and 'write' operations.");
         
@@ -18,6 +18,8 @@ class Program
         {
             dataArgument 
         };
+        
+        
         
         writeCommand.SetHandler((string data) => CreateCheepFromCommandLine(db, data), dataArgument);
         
