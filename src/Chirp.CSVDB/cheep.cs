@@ -1,4 +1,4 @@
-﻿//namespace Chirp.CLI;
+﻿namespace SimpleDB;
 
 public class Cheep
 {

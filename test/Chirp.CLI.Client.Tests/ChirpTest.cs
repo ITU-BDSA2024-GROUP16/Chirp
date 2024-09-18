@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using SimpleDB;
+using Chirp.CLI;
 
 namespace Chirp.Tests
 {

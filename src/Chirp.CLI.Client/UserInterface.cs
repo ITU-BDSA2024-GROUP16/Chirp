@@ -1,5 +1,7 @@
 ﻿namespace Chirp.CLI;
 
+using SimpleDB;
+
 public class UserInterface
 {
     public static void printCheeps(IEnumerable<Cheep> cheeps)

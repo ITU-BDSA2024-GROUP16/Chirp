@@ -1,4 +1,6 @@
-﻿using SimpleDB;
+﻿namespace Chirp.CLI;
+
+using SimpleDB;
 using System.CommandLine;
 using Chirp.CLI;
 
