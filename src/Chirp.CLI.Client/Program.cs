@@ -4,6 +4,8 @@ using SimpleDB;
 using System.CommandLine;
 using Chirp.CLI;
 
+
+
 class Program
 {
     static async Task<int> Main(string[] args)
