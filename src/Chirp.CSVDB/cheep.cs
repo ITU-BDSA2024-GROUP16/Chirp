@@ -10,7 +10,7 @@ public class Cheep
         // Helper method to convert UNIX timestamp to readable time
         public static DateTime ConvertFromUnixTimestamp(long timestamp)
         {
-            return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+            return DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime;
         }
     
 }
