@@ -6,7 +6,7 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var db = CSVDatabase<Cheep>.Instance("chirp_cli_db.csv");
+        var db = CSVDatabase<Cheep>.Instance("data\\chirp_cli_db.csv");
         
         var rootCommand = new RootCommand("This application performs 'read' and 'write' operations.");
         
