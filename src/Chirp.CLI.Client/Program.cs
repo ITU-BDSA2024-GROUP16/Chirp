@@ -1,4 +1,6 @@
-﻿using SimpleDB;
+﻿namespace Chirp.CLI;
+
+using SimpleDB;
 using System.CommandLine;
 using Chirp.CLI;
 
@@ -6,7 +8,7 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var db = CSVDatabase<Cheep>.Instance("data\\chirp_cli_db.csv");
+        var db = new CSVDatabase<Cheep>("..\\..\\data\\chirp_cli_db.csv");
         
         var rootCommand = new RootCommand("This application performs 'read' and 'write' operations.");
         
@@ -18,8 +20,6 @@ class Program
         {
             dataArgument 
         };
-        
-        
         
         writeCommand.SetHandler((string data) => CreateCheepFromCommandLine(db, data), dataArgument);
         

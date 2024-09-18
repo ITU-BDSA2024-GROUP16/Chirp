@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
-
 namespace SimpleDB;
 
 
@@ -9,25 +8,10 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
 {
     
     private string _filePath;
-    private static CSVDatabase<T> instance = null;
-    private static readonly object padlock = new object();
     
     public CSVDatabase(string filePath)
     {
         _filePath = filePath;
-    }
-    
-    
-    public static CSVDatabase<T> Instance(string filePath)
-    {
-        lock (padlock)
-        {
-            if (instance == null)
-            {
-                instance = new CSVDatabase<T>(filePath);
-            }
-            return instance;
-        }
     }
     
     public IEnumerable<T> Read(int? limit = null)
@@ -44,7 +28,7 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
 
     public void Store(string[] args)
     {
-        using var writer = new StreamWriter("data\\chirp_cli_db.csv", append: true);
+        using var writer = new StreamWriter("..\\..\\data\\chirp_cli_db.csv", append: true);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
         
