@@ -39,7 +39,7 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
         using var reader = new StreamReader(_filePath);
         using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            HasHeaderRecord = true, 
+            HasHeaderRecord = false, 
         });
         //Used .ToList() to be able to access the records outside of the using blocks
         return csv.GetRecords<T>().ToList();

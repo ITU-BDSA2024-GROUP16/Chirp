@@ -13,7 +13,7 @@ app.MapGet("/cheepss", () => new Cheep
 });
 
 
-app.MapGet("/", () => "Helloooo");
+app.MapGet("/", () => "Hej");
 app.MapGet("/cheeps", () => db.Read());
 app.MapPost("/cheep", (Cheep cheep) => db.Store(cheep));
 

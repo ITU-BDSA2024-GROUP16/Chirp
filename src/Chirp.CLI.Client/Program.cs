@@ -43,7 +43,7 @@
             {
                 try
                 {
-                    var cheeps = await httpClient.GetFromJsonAsync<Cheep>("/cheeps");
+                    var cheeps = await httpClient.GetFromJsonAsync<List<Cheep>>("/cheeps");
                     UserInterface.printCheeps(cheeps);
                 }
                 catch (Exception ex)
