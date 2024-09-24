@@ -10,7 +10,7 @@
         class Program
         {
             
-            private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri("https://teststuff1234.azurewebsites.net") };
+            private static readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri("https://bdsagroup16chirpremotedb-e2gtbebhczeqftdc.northeurope-01.azurewebsites.net/") };
 
             static async Task<int> Main(string[] args)
             {
