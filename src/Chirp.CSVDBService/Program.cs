@@ -5,8 +5,6 @@ var app = builder.Build();
 
 var db = CSVDatabase<Cheep>.Instance("chirp_cli_db.csv");
 
-//app.MapGet("/cheepss", () => new Cheep("me", "Hej!", 1684229348));
-
 app.MapGet("/cheepss", () => new Cheep
 {
     Author = "mig",
@@ -15,14 +13,9 @@ app.MapGet("/cheepss", () => new Cheep
 });
 
 
-
 app.MapGet("/", () => "Helloooo");
 app.MapGet("/cheeps", () => db.Read());
 app.MapPost("/cheep", (Cheep cheep) => db.Store(cheep));
 
 app.Run();
-
-//public record Cheep(string Author, string Message, long Timestamp);
-
-
 

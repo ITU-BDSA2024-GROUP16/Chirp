@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿
+using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
 namespace SimpleDB;
@@ -7,14 +8,33 @@ namespace SimpleDB;
 public class CSVDatabase<T> : IDatabaseRepository<T>
 {
     
+    
     private string _filePath;
+    private static CSVDatabase<T> instance = null;
+    private static readonly object padlock = new object();
+    
     
     public CSVDatabase(string filePath)
     {
         _filePath = filePath;
     }
     
-    public IEnumerable<T> Read(int? limit = null)
+    
+    public static CSVDatabase<T> Instance(string filePath)
+    {
+        lock (padlock)
+        {
+            if (instance == null)
+            {
+                instance = new CSVDatabase<T>(filePath);
+            }
+            return instance;
+        }
+    }
+    
+    
+    
+    public IEnumerable<T> Read()
     {
         using var reader = new StreamReader(_filePath);
         using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -26,21 +46,11 @@ public class CSVDatabase<T> : IDatabaseRepository<T>
         
     }
 
-    public void Store(string[] args)
+    public void Store(T record)
     {
-        using var writer = new StreamWriter("..\\..\\data\\chirp_cli_db.csv", append: true);
+        using var writer = new StreamWriter(_filePath, append: true);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
-        
-        var cheep = new Cheep
-        {
-            Author = Environment.MachineName,
-            Message = string.Join(" ", args[0..]), // Combine all message arguments
-            Timestamp = DateTimeOffset.Now.ToUnixTimeSeconds()
-        };
-        
-        
-        csv.WriteRecord(cheep);
+        csv.WriteRecord(record);
         csv.NextRecord();
     }
 }
