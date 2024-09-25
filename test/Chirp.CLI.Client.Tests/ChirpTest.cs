@@ -1,7 +1,11 @@
 using System;
+using System.Globalization;
 using Xunit;
 using SimpleDB;
 using Chirp.CLI;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Moq;
 
 namespace Chirp.Tests
 {
@@ -20,5 +24,17 @@ namespace Chirp.Tests
             // Assert
             Assert.Equal(expectedDate.ToUniversalTime(), actualDate.ToUniversalTime());
         }
+        
+        [Fact]
+        public void Instance_ShouldReturnSameInstance_WhenCalledMultipleTimes()
+        {
+            // Arrange
+            var db1 = CSVDatabase<string>.Instance("testfile.csv");
+            var db2 = CSVDatabase<string>.Instance("anotherfile.csv");
+
+            // Act & Assert
+            Assert.Same(db1, db2);  // Both instances should be the same
+        }
+        
     }
 }
