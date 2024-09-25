@@ -1,13 +1,14 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - bdsagroup16chirpremotedb
+name: Build, deploy, and release ASP.Net Core app to Azure Web App - bdsagroup16chirpremotedb
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      release-tag:
+        description: 'Tag for the release (e.g., v1.0.0)'
+        required: true
 
 jobs:
   build:
@@ -38,16 +39,15 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: none  # Adjust this if you are using service principal authentication
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -60,6 +60,15 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'bdsagroup16chirpremotedb'
-          slot-name: 'Production'
-          package: .
-          
+          package: ${{ runner.temp }}/.net-app
+
+  release:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.release-tag }}  # This creates a release with the provided tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
