@@ -38,7 +38,7 @@
                 return await rootCommand.InvokeAsync(args);
             }
             
-            
+            /*
             static async Task ReadCheeps()
             {
                 try
@@ -50,7 +50,7 @@
                 {
                     Console.WriteLine($"Error reading cheeps: {ex.Message}");
                 }
-            }
+            }*/
 
             
             
