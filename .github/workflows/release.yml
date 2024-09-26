@@ -3,6 +3,8 @@ name: Release Chirp Executables
 on:
   # Trigger workflow on tag creation matching 'v*'
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
@@ -31,15 +33,15 @@ jobs:
 
       # Build for Windows
       - name: Build Chirp CLI for Windows
-        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish/win
+        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
 
       # Build for macOS
       - name: Build Chirp CLI for macOS
-        run: dotnet publish -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -o ./publish/macos
+        run: dotnet publish -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
 
       # Build for Linux
       - name: Build Chirp CLI for Linux
-        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o ./publish/linux
+        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
 
       # Compress the executables into ZIP files
       - name: Create ZIP for Windows Executable
