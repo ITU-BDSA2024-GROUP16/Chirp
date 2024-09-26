@@ -28,6 +28,10 @@ jobs:
       - name: dotnet publish
         run: dotnet publish src/Chirp.CSVDBService -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+      # Debugging Step to List Published Files
+      - name: List published files
+        run: ls -R ${{env.DOTNET_ROOT}}/myapp
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -62,4 +66,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'bdsagroup16chirpremotedb'
-          package: ${{ runner.temp }}/.net-app
+          package: ${{ github.workspace }}/myapp  # Correct package path

@@ -1,12 +1,15 @@
 name: Release Chirp Executables
 
 on:
-  # Trigger workflow on tag creation matching 'v*'
   push:
     branches:
       - main
     tags:
       - 'v*'
+
+permissions:
+  contents: write  # Grants permission to create releases and write to the repository
+  id-token: write  # Required if you're using the Azure login action
 
 jobs:
   build-and-release:
@@ -21,7 +24,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.x' # Use the appropriate .NET version for your project
+          dotnet-version: '7.x'
 
       # Restore dependencies
       - name: Restore dependencies
@@ -31,49 +34,27 @@ jobs:
       - name: Run tests
         run: dotnet test
 
-      # Build Chirp CLI for Windows (Executable Project)
+      # Build for Windows
       - name: Build Chirp CLI for Windows
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
+        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
 
-      # Build Chirp CSVDB Service for Windows (Executable Project)
-      - name: Build Chirp CSVDB Service for Windows
-        run: dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
-
-      # Build Chirp CLI for macOS
+      # Build for macOS
       - name: Build Chirp CLI for macOS
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
+        run: dotnet publish -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
 
-      # Build Chirp CSVDB Service for macOS (Executable Project)
-      - name: Build Chirp CSVDB Service for macOS
-        run: dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
-
-      # Build Chirp CLI for Linux
+      # Build for Linux
       - name: Build Chirp CLI for Linux
-        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
+        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
 
-      # Build Chirp CSVDB Service for Linux (Executable Project)
-      - name: Build Chirp CSVDB Service for Linux
-        run: dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
-
-      # Don't apply single-file publish to class libraries like SimpleDB
-      - name: Build SimpleDB for Windows
-        run: dotnet build src/Chirp.CSVDB/SimpleDB.csproj -c Release -o ./publish/win
-
-      - name: Build SimpleDB for macOS
-        run: dotnet build src/Chirp.CSVDB/SimpleDB.csproj -c Release -o ./publish/macos
-
-      - name: Build SimpleDB for Linux
-        run: dotnet build src/Chirp.CSVDB/SimpleDB.csproj -c Release -o ./publish/linux
-
-      # Compress the executables into ZIP files
+      # Create ZIP files for each platform
       - name: Create ZIP for Windows Executable
-        run: zip -j ./publish/Chirp.CLI-Windows.zip ./publish/win/Chirp.CLI.exe ./publish/win/Chirp.CSVDBService.exe
+        run: zip -j ./publish/Chirp.CLI-Windows.zip ./publish/win/Chirp.CLI.exe
 
       - name: Create ZIP for macOS Executable
-        run: zip -j ./publish/Chirp.CLI-macOS.zip ./publish/macos/Chirp.CLI ./publish/macos/Chirp.CSVDBService
+        run: zip -j ./publish/Chirp.CLI-macOS.zip ./publish/macos/Chirp.CLI
 
       - name: Create ZIP for Linux Executable
-        run: zip -j ./publish/Chirp.CLI-Linux.zip ./publish/linux/Chirp.CLI ./publish/linux/Chirp.CSVDBService
+        run: zip -j ./publish/Chirp.CLI-Linux.zip ./publish/linux/Chirp.CLI
 
       # Create a release and upload the ZIP files
       - name: Create GitHub Release
