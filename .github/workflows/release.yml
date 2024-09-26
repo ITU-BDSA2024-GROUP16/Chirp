@@ -31,27 +31,49 @@ jobs:
       - name: Run tests
         run: dotnet test
 
-      # Build for Windows
+      # Build Chirp CLI for Windows (Executable Project)
       - name: Build Chirp CLI for Windows
-        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
 
-      # Build for macOS
+      # Build Chirp CSVDB Service for Windows (Executable Project)
+      - name: Build Chirp CSVDB Service for Windows
+        run: dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/win
+
+      # Build Chirp CLI for macOS
       - name: Build Chirp CLI for macOS
-        run: dotnet publish -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
 
-      # Build for Linux
+      # Build Chirp CSVDB Service for macOS (Executable Project)
+      - name: Build Chirp CSVDB Service for macOS
+        run: dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/macos
+
+      # Build Chirp CLI for Linux
       - name: Build Chirp CLI for Linux
-        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
+        run: dotnet publish src/Chirp.CLI.Client/Chirp.CLI.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
+
+      # Build Chirp CSVDB Service for Linux (Executable Project)
+      - name: Build Chirp CSVDB Service for Linux
+        run: dotnet publish src/Chirp.CSVDBService/Chirp.CSVDBService.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:UseAppHost=true -o ./publish/linux
+
+      # Don't apply single-file publish to class libraries like SimpleDB
+      - name: Build SimpleDB for Windows
+        run: dotnet build src/Chirp.CSVDB/SimpleDB.csproj -c Release -o ./publish/win
+
+      - name: Build SimpleDB for macOS
+        run: dotnet build src/Chirp.CSVDB/SimpleDB.csproj -c Release -o ./publish/macos
+
+      - name: Build SimpleDB for Linux
+        run: dotnet build src/Chirp.CSVDB/SimpleDB.csproj -c Release -o ./publish/linux
 
       # Compress the executables into ZIP files
       - name: Create ZIP for Windows Executable
-        run: zip -j ./publish/Chirp.CLI-Windows.zip ./publish/win/Chirp.CLI.exe
+        run: zip -j ./publish/Chirp.CLI-Windows.zip ./publish/win/Chirp.CLI.exe ./publish/win/Chirp.CSVDBService.exe
 
       - name: Create ZIP for macOS Executable
-        run: zip -j ./publish/Chirp.CLI-macOS.zip ./publish/macos/Chirp.CLI
+        run: zip -j ./publish/Chirp.CLI-macOS.zip ./publish/macos/Chirp.CLI ./publish/macos/Chirp.CSVDBService
 
       - name: Create ZIP for Linux Executable
-        run: zip -j ./publish/Chirp.CLI-Linux.zip ./publish/linux/Chirp.CLI
+        run: zip -j ./publish/Chirp.CLI-Linux.zip ./publish/linux/Chirp.CLI ./publish/linux/Chirp.CSVDBService
 
       # Create a release and upload the ZIP files
       - name: Create GitHub Release

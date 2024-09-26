@@ -40,7 +40,8 @@ jobs:
     environment:
       name: 'Production'
     permissions:
-      id-token: none  # Adjust this if you are using service principal authentication
+      id-token: write  # Set the correct permission for id-token
+      contents: read  # Ensure read permission for the repository content
 
     steps:
       - name: Download artifact from build job
@@ -54,6 +55,7 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EDDC0F0EF9DB4770B08C1775416ED4FB }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E2E7DFF2BE0F43A39820045011F70A2E }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_308084345AC04BD8B3695AB012974585 }}
+          enable-AzPSSession: true
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
