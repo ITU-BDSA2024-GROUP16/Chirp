@@ -1,6 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 
-namespace Chirp.Razor.Initial;
+namespace Chirp;
 
 public class DBFacade
 {
@@ -12,7 +14,6 @@ public class DBFacade
         using (var connection = new SqliteConnection($"Data Source={sqlDBFilePath}"))
         {
             connection.Open();
-            
             
             // var sqlQuery = "SELECT author_id, message_id, pub_date FROM message ORDER BY pub_date DESC"; // Adjust to match your table structure
             var sqlQuery = "SELECT u.username, m.author_id, m.text, m.pub_date FROM user u JOIN message m ON u.user_id = m.author_id ORDER BY m.pub_date DESC";
@@ -39,6 +40,4 @@ public class DBFacade
 
         return cheeps; // Return the list of CheepViewModel objects
     }
-    
-    
 }

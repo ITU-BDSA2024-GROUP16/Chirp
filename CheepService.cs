@@ -1,6 +1,6 @@
+using Chirp;
+using Microsoft.Data.Sqlite;
 
-using System.Data;
-using Chirp.Razor.Initial;
 public record CheepViewModel(string Author, string Message, string Timestamp);
 
 public interface ICheepService
