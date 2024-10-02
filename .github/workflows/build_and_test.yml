@@ -33,7 +33,7 @@ jobs:
 
   release:
     name: Release
-    needs: build  # Ensures that the release job runs after the build job
+    needs: build  
     strategy:
       matrix:
         kind: ['linux', 'windows', 'macOS']
@@ -52,4 +52,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
-        uses
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+      - name: Publish
+        run: dotnet publish -c Release -o ./output/${{ matrix.target }} --self-contained true -r ${{ matrix.target }}
+      - name: GH Release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          files: ./output/${{ matrix.target }}/* 
+          tag: ${{ github.ref }} 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
