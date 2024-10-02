@@ -4,8 +4,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<ICheepService, CheepService>();
 
-
 var app = builder.Build();
+
+CheepService.CreateDatabase();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

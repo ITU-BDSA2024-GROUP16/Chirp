@@ -2,6 +2,9 @@ using Chirp;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics;
 using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public record CheepViewModel(string Author, string Message, string Timestamp);
 
@@ -13,67 +16,63 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
-    static CheepService()
+    public CheepService()
     {
         // Initialize SQLite
         SQLitePCL.Batteries.Init();
-
-        // Initialize the database
-        InitializeDatabase();
     }
-
-    private static void InitializeDatabase()
+    
+    public static void CreateDatabase()
     {
-        // Get the database path from the environment variable or set to /tmp/chirp.db
+        // Get the path from the environment variable or default to /tmp
         string dbPath = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? "/tmp/chirp.db";
+        
+        // Get the current directory and build relative paths for the SQL files
+        string baseDirectory = Directory.GetCurrentDirectory();
+        string schemaFilePath = Path.Combine(baseDirectory, "data", "schema.sql");
+        string dumpFilePath = Path.Combine(baseDirectory, "data", "dump.sql");
 
-        RunInitScript(dbPath);
+        // Check if running on Windows and convert paths for WSL if needed
+        bool isWindows = Path.DirectorySeparatorChar == '\\';
+        if (isWindows)
+        {
+            schemaFilePath = ConvertToWslPath(schemaFilePath);
+            dumpFilePath = ConvertToWslPath(dumpFilePath);
+        }
+
+        // Check if files exist
+        if (!File.Exists(schemaFilePath) || !File.Exists(dumpFilePath))
+        {
+            throw new FileNotFoundException("Schema or Dump file not found.");
+        }
+
+        // Initialize the database by executing the schema and dump files
+        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+        {
+            connection.Open();
+            ExecuteSqlFile(schemaFilePath, connection);
+            ExecuteSqlFile(dumpFilePath, connection);
+        }
+
+        Console.WriteLine($"Database initialized at {dbPath}.");
     }
 
-
-    private static void RunInitScript(string dbPath)
+    private static void ExecuteSqlFile(string filePath, SqliteConnection connection)
     {
-        // Path to your initDB.sh script
-        string initScriptPath = Path.Combine(Directory.GetCurrentDirectory(), "scripts", "initDB.sh");
-
-        Console.WriteLine($"Init Script Path: {initScriptPath}");
-        Console.WriteLine($"Database Path: {dbPath}");
-
-        // Create the process start info
-        ProcessStartInfo startInfo = new ProcessStartInfo
+        string sql = File.ReadAllText(filePath);
+        using (var command = new SqliteCommand(sql, connection))
         {
-            FileName = "/bin/bash",
-            Arguments = $"-c \"CHIRPDBPATH='{dbPath}' bash '{initScriptPath}'\"",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-
-        using (Process process = Process.Start(startInfo))
-        {
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-
-            Console.WriteLine("Output:");
-            Console.WriteLine(output);
-            Console.WriteLine("Error:");
-            Console.WriteLine(error);
-
-            if (process.ExitCode != 0)
-            {
-                Console.WriteLine("Error running init script:");
-                Console.WriteLine(error);
-                return;
-            }
-
-            Console.WriteLine("Database initialized successfully.");
+            command.ExecuteNonQuery();
         }
     }
 
+    private static string ConvertToWslPath(string windowsPath)
+    {
+        // Convert Windows path to WSL-compatible path
+        return windowsPath.Replace('\\', '/').Replace("C:/", "/mnt/c/");
+    }
 
-    // These would normally be loaded from a database for example
+    // Example data loading logic
     private static readonly List<CheepViewModel> _cheeps = DBFacade.LoadCheeps();
 
     public List<CheepViewModel> GetCheeps()
@@ -83,7 +82,7 @@ public class CheepService : ICheepService
 
     public List<CheepViewModel> GetCheepsFromAuthor(string author)
     {
-        // filter by the provided author name
+        // Filter by the provided author name
         return _cheeps.Where(x => x.Author == author).ToList();
     }
 }
