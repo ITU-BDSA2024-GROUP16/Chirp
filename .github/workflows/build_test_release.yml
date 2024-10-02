@@ -1,8 +1,8 @@
 ﻿name: .NET Build and Test
-  
+
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
 
 on:
   push:
@@ -11,7 +11,6 @@ on:
       - "v*.*.*"
   pull_request:
     branches: workflow-fixing
-    
 
 jobs:
   build:
@@ -29,7 +28,13 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
+      - name: Create ZIP file
+        run: |
+          mkdir release
+          dotnet publish -c Release -o ./release
+          cd release
+          zip -r ../my_project.zip .  # Change 'my_project.zip' to your desired ZIP file name
       - name: GH Release
         uses: softprops/action-gh-release@v2.0.8
-        
-    
+        with:
+          files: my_project.zip  # Specify the ZIP file to be attached to the release
