@@ -6,11 +6,11 @@ permissions:
 
 on:
   push:
-    branches: main
+    branches: workflow-fixing
     tags:
       - "v*.*.*"
   pull_request:
-    branches: main
+    branches: workflow-fixing
 
 jobs:
   build:
