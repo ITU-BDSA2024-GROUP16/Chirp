@@ -6,11 +6,11 @@ permissions:
 
 on:
   push:
-    branches: workflow-fixing
+    branches: main
     tags:
       - "v*.*.*"
   pull_request:
-    branches: workflow-fixing
+    branches: main
 
 jobs:
   build:
@@ -33,8 +33,26 @@ jobs:
           mkdir release
           dotnet publish -c Release -o ./release
           cd release
-          zip -r ../my_project.zip .  # Change 'my_project.zip' to your desired ZIP file name
+          zip -r ../my_project.zip .
+          
+      - name: Create ZIP file
+        run: |
+          mkdir release
+          dotnet publish -r osx-x64 -c Release -o ./release
+          cd release
+          zip -r ../my_projectmac.zip .
+          
+      - name: Create ZIP file
+        run: |
+          mkdir release
+          dotnet publish -r win-x64 -c Release -o ./release
+          cd release
+          zip -r ../my_projectwin.zip .
       - name: GH Release
         uses: softprops/action-gh-release@v2.0.8
         with:
-          files: my_project.zip  # Specify the ZIP file to be attached to the release
+          files: |
+            my_project_linux.zip
+            my_project_mac.zip
+            my_project_win.zip
+          
