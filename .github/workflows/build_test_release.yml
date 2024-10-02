@@ -3,6 +3,8 @@
 on:
   push:
     branches: workflow-fixing
+    tags:
+      - "v*.*.*"
   pull_request:
     branches: workflow-fixing
     
