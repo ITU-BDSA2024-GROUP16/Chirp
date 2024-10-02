@@ -1,4 +1,8 @@
 ﻿name: .NET Build and Test
+  
+permissions:
+    contents: write
+    pull-requests: write
 
 on:
   push:
@@ -8,9 +12,6 @@ on:
   pull_request:
     branches: workflow-fixing
     
-    permissions:
-      contents: write
-      pull-requests: write
 
 jobs:
   build:
@@ -30,3 +31,5 @@ jobs:
         run: dotnet test --no-build --verbosity normal
       - name: GH Release
         uses: softprops/action-gh-release@v2.0.8
+        
+    
