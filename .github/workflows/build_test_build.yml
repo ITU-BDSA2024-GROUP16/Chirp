@@ -5,10 +5,10 @@ on:
     tags:
       - 'v*'
     branches:
-      - pagination-of-cheeps
+      - workflow-fixing
   pull_request:
     branches:
-      - pagination-of-cheeps
+      - workflow-fixing
 
 permissions:
   contents: write
