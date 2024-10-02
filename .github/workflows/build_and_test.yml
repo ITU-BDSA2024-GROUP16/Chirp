@@ -5,10 +5,10 @@ on:
     tags:
       - 'v*'
     branches:
-      - main
+      - pagination-of-cheeps
   pull_request:
     branches:
-      - main
+      - pagination-of-cheeps
 
 permissions:
   contents: write
