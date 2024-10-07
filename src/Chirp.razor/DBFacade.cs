@@ -36,7 +36,6 @@ public class DBFacade
                 }
             }
         }
-        Console.WriteLine($"Loaded {cheeps.Count} cheeps");
         return cheeps; // Return the list of CheepViewModel objects
     }
 }
