@@ -6,7 +6,7 @@ namespace Chirp;
 
 public class DBFacade
 {
-    public static List<CheepViewModel> LoadCheeps()
+    public static List<CheepViewModel> LoadCheeps(int pageNumber)
     {
         var cheeps = new List<CheepViewModel>();
 

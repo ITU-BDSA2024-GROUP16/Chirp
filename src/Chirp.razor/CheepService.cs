@@ -10,8 +10,8 @@ public record CheepViewModel(string Author, string Message, string Timestamp);
 
 public interface ICheepService
 {
-    List<CheepViewModel> GetCheeps();
-    List<CheepViewModel> GetCheepsFromAuthor(string author);
+    List<CheepViewModel> GetCheeps(int pageNumber, int pageSize);
+    List<CheepViewModel> GetCheepsFromAuthor(string author, int pageNumber, int pageSize);
 }
 
 public class CheepService : ICheepService
@@ -72,17 +72,21 @@ public class CheepService : ICheepService
         return windowsPath.Replace('\\', '/').Replace("C:/", "/mnt/c/");
     }
 
-    // Example data loading logic
-    private static readonly List<CheepViewModel> _cheeps = DBFacade.LoadCheeps();
-
-    public List<CheepViewModel> GetCheeps()
+    public List<CheepViewModel> GetCheeps(int pageNumber, int pageSize)
     {
-        return _cheeps;
+        return DBFacade.LoadCheeps(pageNumber)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
-    public List<CheepViewModel> GetCheepsFromAuthor(string author)
+    public List<CheepViewModel> GetCheepsFromAuthor(string author, int pageNumber, int pageSize)
     {
-        // Filter by the provided author name
-        return _cheeps.Where(x => x.Author == author).ToList();
+        // filter by the provided author name
+        return DBFacade.LoadCheeps(pageNumber)
+            .Where(x => x.Author == author)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 }
