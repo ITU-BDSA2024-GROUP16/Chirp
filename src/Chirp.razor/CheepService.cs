@@ -75,8 +75,6 @@ public class CheepService : ICheepService
     public List<CheepViewModel> GetCheeps(int pageNumber, int pageSize)
     {
         return DBFacade.LoadCheeps(pageNumber)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
             .ToList();
     }
 
@@ -85,8 +83,6 @@ public class CheepService : ICheepService
         // filter by the provided author name
         return DBFacade.LoadCheeps(pageNumber)
             .Where(x => x.Author == author)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
             .ToList();
     }
 }
