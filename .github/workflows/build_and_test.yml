@@ -21,39 +21,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 8.0.x
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
-      - name: Create ZIP files
-        run: |
-          # Create a release directory to hold all platform-specific releases
-          mkdir release
-
-          # Publish for Linux (default)
-          dotnet publish -c Release -o ./release/linux
-          cd release/linux
-          zip -r ../../my_project_linux.zip .
-
-          # Publish for macOS
-          cd ../../
-          dotnet publish -r osx-x64 -c Release -o ./release/mac
-          cd release/mac
-          zip -r ../../my_project_mac.zip .
-
-          # Publish for Windows
-          cd ../../
-          dotnet publish -r win-x64 -c Release -o ./release/win
-          cd release/win
-          zip -r ../../my_project_win.zip .
-
-      - name: GH Release
-        uses: softprops/action-gh-release@v2.0.8
-        with:
-          files: |
-            my_project_linux.zip
-            my_project_mac.zip
-            my_project_win.zip
