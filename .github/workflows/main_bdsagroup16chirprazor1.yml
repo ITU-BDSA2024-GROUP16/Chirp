@@ -64,5 +64,5 @@ jobs:
         with:
           app-name: 'bdsagroup16chirprazor1'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: ./myapp
           
