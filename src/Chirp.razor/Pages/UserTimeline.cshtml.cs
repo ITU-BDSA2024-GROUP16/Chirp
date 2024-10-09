@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MyChat.Razor;
 
 namespace Chirp.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    private readonly ICheepService _service;
-    public List<CheepViewModel> Cheeps { get; set; }
+    private readonly ICheepRepository _repository;
+    public List<Cheep> Cheeps { get; set; }
     private const int PageSize = 32;
     public int pageNumber { get; set; }
 
-    public UserTimelineModel(ICheepService service)
+    public UserTimelineModel(ICheepRepository repository)
     {
-        _service = service;
+        _repository = repository;
     }
 
     public async Task<ActionResult> OnGetAsync(string author)
@@ -21,7 +22,7 @@ public class UserTimelineModel : PageModel
         var pageQuery = Request.Query["page"];
         pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
-        Cheeps = await _service.GetCheepsFromAuthor(author, pageNumber, PageSize);
+        Cheeps = await _repository.GetCheepsFromAuthor(author, pageNumber, PageSize);
         return Page();
     }
 }

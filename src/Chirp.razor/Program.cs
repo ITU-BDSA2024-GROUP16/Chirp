@@ -8,12 +8,13 @@ builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(conne
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<ICheepService, CheepService>();
-//builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+//builder.Services.AddSingleton<ICheepService, CheepService>();
+builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 
 var app = builder.Build();
 
-CheepService.CreateDatabase();
+//DBFacade.CreateDatabase();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
