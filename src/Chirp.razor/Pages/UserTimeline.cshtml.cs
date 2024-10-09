@@ -19,6 +19,7 @@ public class UserTimelineModel : PageModel
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
+        Console.WriteLine("author:" + author);
         pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
         Cheeps = _service.GetCheepsFromAuthor(author, pageNumber, PageSize);

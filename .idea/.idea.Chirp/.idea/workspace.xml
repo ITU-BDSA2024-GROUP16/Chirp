@@ -5,12 +5,23 @@
     <projectFile profileName="IIS Express">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
     <projectFile profileName="http">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
     <projectFile profileName="https">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
+    <projectFile profileName="http">src/Chirp.razor/Chirp.csproj</projectFile>
+    <projectFile profileName="https">src/Chirp.razor/Chirp.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="" />
+    <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/test/Chrip.razor.test/GetRequestTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Chirp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Chirp.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Pages/UserTimeline.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Pages/UserTimeline.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Chrip.razor.test/Chrip.razor.test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/test/Chrip.razor.test/Chrip.razor.test.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Chrip.razor.test/UnitTest1.cs" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,15 +41,15 @@
     &quot;assignee&quot;: &quot;JacquesPuvis&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:ITU-BDSA2024-GROUP16/Chirp.git",
-    "accountId": "3f80a407-1ba9-4fd7-a1f5-4577bb40702d"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:ITU-BDSA2024-GROUP16/Chirp.git&quot;,
+    &quot;accountId&quot;: &quot;3f80a407-1ba9-4fd7-a1f5-4577bb40702d&quot;
   }
-}]]></component>
+}</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/DBFacade.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Chirp.razor/Program.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -49,19 +60,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "pagination-of-cheeps",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;API-tests&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.Chirp.CSVDBService: http">
+}</component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.Chirp.CSVDBService: IIS Express">
     <configuration name="Chirp.CLI" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -80,9 +91,39 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration name="Chirp: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/Chirp.razor/Chirp.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="http" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="Chirp: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/Chirp.razor/Chirp.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="https" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
     <configuration name="Chirp.CSVDBService: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/Chirp.CSVDBService/Chirp.CSVDBService.csproj" />
-      <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/Chirp.razor/Chirp.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
       <option name="LAUNCH_PROFILE_NAME" value="IIS Express" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
@@ -136,6 +177,11 @@
       <updated>1727862662879</updated>
       <workItem from="1727862664017" duration="4146000" />
       <workItem from="1727866861790" duration="1228000" />
+      <workItem from="1728293349667" duration="345000" />
+      <workItem from="1728293722845" duration="1653000" />
+      <workItem from="1728382825142" duration="9837000" />
+      <workItem from="1728393982337" duration="1516000" />
+      <workItem from="1728475452742" duration="7053000" />
     </task>
     <servers />
   </component>

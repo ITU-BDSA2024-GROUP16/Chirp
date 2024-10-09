@@ -39,7 +39,7 @@ public class CheepService : ICheepService
             schemaFilePath = ConvertToWslPath(schemaFilePath);
             dumpFilePath = ConvertToWslPath(dumpFilePath);
         }
-
+        
         // Check if files exist
         if (!File.Exists(schemaFilePath) || !File.Exists(dumpFilePath))
         {
@@ -80,9 +80,10 @@ public class CheepService : ICheepService
 
     public List<CheepViewModel> GetCheepsFromAuthor(string author, int pageNumber, int pageSize)
     {
+        Console.WriteLine(author);
         // filter by the provided author name
         return DBFacade.LoadCheeps(pageNumber)
-            .Where(x => x.Author == author)
+            .Where(x => x.Author.ToLower().Equals(author))
             .ToList();
     }
 }
