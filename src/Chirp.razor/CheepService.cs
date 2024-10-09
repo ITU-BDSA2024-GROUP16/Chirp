@@ -16,12 +16,15 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
-    public CheepService()
+    //Dependency injected DBfacade into CheepService
+    private readonly DBFacade _dbFacade;
+    public CheepService(DBFacade dbFacade)
     {
+        _dbFacade = dbFacade;
         // Initialize SQLite
         SQLitePCL.Batteries.Init();
     }
-    
+    // From now on, not using CreateDatabase, but straight from DbIntializer
     public static void CreateDatabase()
     {
         // Get the path from the environment variable or default to /tmp
@@ -74,14 +77,14 @@ public class CheepService : ICheepService
 
     public List<CheepViewModel> GetCheeps(int pageNumber, int pageSize)
     {
-        return DBFacade.LoadCheeps(pageNumber)
+        return _dbFacade.LoadCheeps(pageNumber)
             .ToList();
     }
 
     public List<CheepViewModel> GetCheepsFromAuthor(string author, int pageNumber, int pageSize)
     {
         // filter by the provided author name
-        return DBFacade.LoadCheeps(pageNumber)
+        return _dbFacade.LoadCheeps(pageNumber)
             .Where(x => x.Author == author)
             .ToList();
     }

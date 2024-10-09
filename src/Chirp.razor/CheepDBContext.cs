@@ -5,8 +5,8 @@ namespace Chirp;
 
 public class CheepDBContext : DbContext
 {
-    DbSet<Cheep> Cheeps { get; set; } 
-    private DbSet<Author> Authors { get; set; }
+    public DbSet<Cheep> Cheeps { get; set; } 
+    public DbSet<Author> Authors { get; set; }
 
     public CheepDBContext(DbContextOptions<CheepDBContext> dbContextOptions)
         : base(dbContextOptions)

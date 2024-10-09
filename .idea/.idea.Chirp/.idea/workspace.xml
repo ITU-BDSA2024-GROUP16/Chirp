@@ -5,12 +5,26 @@
     <projectFile profileName="IIS Express">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
     <projectFile profileName="http">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
     <projectFile profileName="https">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
+    <projectFile profileName="IIS Express">src/Chirp.razor/Chirp.csproj</projectFile>
+    <projectFile profileName="http">src/Chirp.razor/Chirp.csproj</projectFile>
+    <projectFile profileName="https">src/Chirp.razor/Chirp.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="" />
+    <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Chirp.razor/DbInitializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Chat.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Chat.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Cheep.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Cheep.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepDBContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepDBContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/DBFacade.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/DBFacade.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Migrations/20241008122019_InitialDBSchema.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Migrations/20241008122019_InitialDBSchema.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Program.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,7 +33,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="web-database" />
+        <entry key="$PROJECT_DIR$" value="EF-Core-implementation" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -30,16 +44,16 @@
     &quot;assignee&quot;: &quot;JacquesPuvis&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:ITU-BDSA2024-GROUP16/Chirp.git",
-    "accountId": "3f80a407-1ba9-4fd7-a1f5-4577bb40702d"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:ITU-BDSA2024-GROUP16/Chirp.git&quot;,
+    &quot;accountId&quot;: &quot;3f80a407-1ba9-4fd7-a1f5-4577bb40702d&quot;
   }
-}]]></component>
+}</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/DBFacade.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Chirp.razor/DbInitializer.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 6
@@ -52,7 +66,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "pagination-of-cheeps",
+    "git-widget-placeholder": "DbInitializer",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -142,6 +156,7 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />

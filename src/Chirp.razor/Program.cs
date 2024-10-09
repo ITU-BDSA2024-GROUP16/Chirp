@@ -6,13 +6,36 @@ var builder = WebApplication.CreateBuilder(args);
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
+
+// Change this line
+builder.Services.AddScoped<DBFacade>();
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSingleton<ICheepService, CheepService>();
-
+builder.Services.AddScoped<ICheepService, CheepService>();
 var app = builder.Build();
 
-CheepService.CreateDatabase();
+//CheepService.CreateDatabase();
+
+//Here we are seeding the CheepDBConte
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<CheepDBContext>();
+
+        
+        context.Database.Migrate();
+
+        // Seed the database using DbInitializer
+        DbInitializer.SeedDatabase(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
