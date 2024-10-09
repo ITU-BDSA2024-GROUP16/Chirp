@@ -15,13 +15,13 @@ public class UserTimelineModel : PageModel
         _service = service;
     }
 
-    public ActionResult OnGet(string author)
+    public async Task<ActionResult> OnGetAsync(string author)
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
-        Cheeps = _service.GetCheepsFromAuthor(author, pageNumber, PageSize);
+        Cheeps = await _service.GetCheepsFromAuthor(author, pageNumber, PageSize);
         return Page();
     }
 }

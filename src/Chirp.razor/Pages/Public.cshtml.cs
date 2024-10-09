@@ -16,13 +16,13 @@ public class PublicModel : PageModel
         _service = service;
     }
 
-    public ActionResult OnGet()
+    public async Task<ActionResult> OnGetAsync()
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
-        Cheeps = _service.GetCheeps(pageNumber, PageSize);
+        Cheeps = await _service.GetCheeps(pageNumber, PageSize);
         return Page();
     }
 }
