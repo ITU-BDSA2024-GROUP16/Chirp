@@ -6,11 +6,11 @@ permissions:
 
 on:
   push:
-    branches: Structure-change
+    branches: main
     tags:
       - "v*.*.*"
   pull_request:
-    branches: Structure-change
+    branches: main
 
 jobs:
   build:
