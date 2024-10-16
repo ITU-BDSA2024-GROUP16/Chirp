@@ -1,7 +1,5 @@
 using System;
 using Chirp;
-using MyChat.Razor;
-
 public static class DbInitializer
 {
     public static void SeedDatabase(CheepDBContext cheepContext)

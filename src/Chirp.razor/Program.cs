@@ -7,14 +7,11 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
 
-// Change this line
 builder.Services.AddScoped<DBFacade>();
+builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<ICheepService, CheepService>();
 var app = builder.Build();
-
-//CheepService.CreateDatabase();
 
 //Here we are seeding the CheepDBConte
 using (var scope = app.Services.CreateScope())

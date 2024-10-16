@@ -1,4 +1,4 @@
-namespace MyChat.Razor;
+namespace Chirp;
 
 public class Cheep
 {

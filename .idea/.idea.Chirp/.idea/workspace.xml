@@ -14,16 +14,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Chirp.razor/DbInitializer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Author.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Author.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Chat.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Chat.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Cheep.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Cheep.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepDBContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepDBContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepService.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.razor/DBFacade.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/DBFacade.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Migrations/20241008122019_InitialDBSchema.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Migrations/20241008122019_InitialDBSchema.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/DbInitializer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/DbInitializer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Pages/Public.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Pages/Public.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Pages/Public.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Pages/Public.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Pages/UserTimeline.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Pages/UserTimeline.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Pages/UserTimeline.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Pages/UserTimeline.cshtml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.razor/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/mychirp.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +71,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "DbInitializer",
+    "git-widget-placeholder": "RepositoryPattern",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
