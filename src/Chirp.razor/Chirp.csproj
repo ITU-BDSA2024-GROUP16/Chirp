@@ -21,6 +21,16 @@
     <None Update="data/*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
+    <None Remove="Properties\launchSettings.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Public.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\UserTimeline.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\style.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\favicon\favicon.ico" />
+    <_ContentIncludedByDefault Remove="wwwroot\images\icon1.png" />
   </ItemGroup>
 
 </Project>
