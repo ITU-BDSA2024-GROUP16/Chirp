@@ -1,27 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
 namespace Chirp.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    private readonly ICheepService _service;
-    public List<CheepViewModel> Cheeps { get; set; }
+    private readonly ICheepRepository _cheepRepository;
+    public List<CheepDTO> Cheeps { get; set; }
     private const int PageSize = 32;
     public int pageNumber { get; set; }
 
-    public UserTimelineModel(ICheepService service)
+    public UserTimelineModel(ICheepRepository cheepRepository)
     {
-        _service = service;
+        _cheepRepository = cheepRepository;
     }
 
-    public ActionResult OnGet(string author)
+    public async Task<ActionResult> OnGet(string author)
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
-        
-        Cheeps = _service.GetCheepsFromAuthor(author, pageNumber, PageSize);
+
+        Cheeps = await _cheepRepository.ReadCheeps(author, pageNumber, PageSize);
         return Page();
     }
 }

@@ -5,24 +5,24 @@ namespace Chirp.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly ICheepService _service;
-    public List<CheepViewModel> Cheeps { get; set; }
+    private readonly ICheepRepository _cheepRepository;
+    public List<CheepDTO> Cheeps { get; set; }
     private const int PageSize = 32;
     public int pageNumber { get; set; }
     
 
-    public PublicModel(ICheepService service)
+    public PublicModel(ICheepRepository cheepRepository)
     {
-        _service = service;
+        _cheepRepository = cheepRepository;
     }
 
-    public ActionResult OnGet()
+    public async Task<ActionResult> OnGet()
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
-        Cheeps = _service.GetCheeps(pageNumber, PageSize);
+        Cheeps = await _cheepRepository.GetCheeps(pageNumber, PageSize);
         return Page();
     }
 }
