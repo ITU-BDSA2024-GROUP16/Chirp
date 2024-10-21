@@ -8,7 +8,7 @@ INSERT INTO user VALUES(7,'Malcolm Janski','Malcolm-Janski@gmail.com','qlNxORrJB
 INSERT INTO user VALUES(8,'Octavio Wagganer','Octavio.Wagganer@dtu.dk','6/B1TZy7FKmfHOWmO5U+fPCvdbpNvjyh0BMRbNLnEtY=');
 INSERT INTO user VALUES(9,'Johnnie Calixto','Johnnie+Calixto@itu.dk','vg5idc0DsDrsBL9AIKZGyve3O3epaOeLuO397TNZnck=');
 INSERT INTO user VALUES(10,'Jacqualine Gilcoine','Jacqualine.Gilcoine@gmail.com','dvvQcp9fpczncIE8m/UTzr73J78Gz0zBo/I/Xk59pUU=');
-INSERT INTO user VALUES(11,'Helge','ropf@itu.dk','GymiVSmepZgfMfAM6nIlQaQ15eeywD1gzSXiPjelIgs=');
+INSERT INTO user VALUES(11,'Helge','ropf@itu.dk','GymiVSmepZgfMfAM6nIlQaQ15eeywD1gzSXiPjelIgz=');
 INSERT INTO user VALUES(12,'Adrian','adho@itu.dk','GymiVSmepZgfMfAM6nIlQaQ15eeywD1gzSXiPjelIgs=');
 
 INSERT INTO message VALUES(0,10,'They were married in Chicago, with old Smith, and was expected aboard every day; meantime, the two went past me.',1690895677);
@@ -670,5 +670,5 @@ INSERT INTO message VALUES(655,11,'Hello, BDSA students!',1690892208);
 INSERT INTO message VALUES(656,12,'Hej, velkommen til kurset.',1690895308);
 
 DELETE FROM sqlite_sequence;
-INSERT INTO sqlite_sequence VALUES('user',12);
+INSERT INTO sqlite_sequence VALUES('user',13);
 INSERT INTO sqlite_sequence VALUES('message',657);

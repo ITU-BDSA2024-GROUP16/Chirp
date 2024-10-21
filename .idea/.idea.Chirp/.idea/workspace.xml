@@ -5,7 +5,6 @@
     <projectFile profileName="IIS Express">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
     <projectFile profileName="http">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
     <projectFile profileName="https">src/Chirp.CSVDBService/Chirp.CSVDBService.csproj</projectFile>
-    <projectFile profileName="IIS Express">src/Chirp.razor/Chirp.csproj</projectFile>
     <projectFile profileName="http">src/Chirp.razor/Chirp.csproj</projectFile>
     <projectFile profileName="https">src/Chirp.razor/Chirp.csproj</projectFile>
   </component>
@@ -14,9 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepDTO.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.razor/CheepRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.razor/CheepRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/main_bdsagroup16chirprazor1.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main_bdsagroup16chirprazor1.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="EF-Core-implementation" />
+        <entry key="$PROJECT_DIR$" value="web-database" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -44,10 +41,8 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5553559cdb4b5664893497ec3d7831e41e3f7cff9dd2ef3258115769f70aa/DateTime.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/Chirp.razor/DbInitializer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Chirp.razor/release/mac/Chirp.deps.json" root0="SKIP_HIGHLIGHTING" />
   </component>
-  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 6
@@ -57,18 +52,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "RepositoryPattern",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Chirp.CSVDBService: http">
     <configuration name="Chirp.CLI" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -144,13 +139,14 @@
       <updated>1727862662879</updated>
       <workItem from="1727862664017" duration="4146000" />
       <workItem from="1727866861790" duration="1228000" />
+      <workItem from="1728489933446" duration="567000" />
+      <workItem from="1728490507323" duration="7622000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />
