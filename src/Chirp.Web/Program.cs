@@ -1,5 +1,12 @@
 using Chirp;
+using Chirp.Infrastructure;
+using Chirp.Web;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +19,6 @@ builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();
 var app = builder.Build();
-
 //Here we are seeding the CheepDBConte
 using (var scope = app.Services.CreateScope())
 {
@@ -46,7 +52,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.MapRazorPages();
 
 app.Run();

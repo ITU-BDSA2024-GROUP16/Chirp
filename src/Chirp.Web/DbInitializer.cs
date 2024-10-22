@@ -1,7 +1,10 @@
 using System;
 using Chirp;
-using Chirp.Infrastructure.Data;
+using Chirp.Core;
+using Chirp.Infrastructure;
 
+namespace Chirp.Web;
+    
 public static class DbInitializer
 {
     public static void SeedDatabase(CheepDBContext cheepContext)
@@ -694,10 +697,10 @@ public static class DbInitializer
             a8.Cheeps = new List<Cheep>() { c55, c124, c139, c151, c164, c263, c310, c328, c360, c375, c430, c470, c564, c576, c605 };
             a11.Cheeps = new List<Cheep>() { c656 };
             a12.Cheeps = new List<Cheep>() { c657 };
-
             cheepContext.Authors.AddRange(authors);
             cheepContext.Cheeps.AddRange(cheeps);
             cheepContext.SaveChanges();
+            
         }
     }
 }

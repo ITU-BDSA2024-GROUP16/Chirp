@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Chirp.Core;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace Chirp;
+namespace Chirp.Infrastructure;
 
 public class DBFacade
 {

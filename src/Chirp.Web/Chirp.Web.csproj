@@ -12,7 +12,7 @@
       <AdditionalFiles Include="Pages\Shared\_Layout.cshtml" />
       <AdditionalFiles Include="Pages\UserTimeline.cshtml" />
     </ItemGroup>
-
+    
     <ItemGroup>
       <Content Update="appsettings.json">
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -31,7 +31,18 @@
     <ItemGroup>
       <ProjectReference Include="..\..\test\Chrip.razor.test\Chrip.razor.test.csproj" />
         <ProjectReference Include="..\..\src\Chirp.Core\Chirp.Core.csproj" />
+        <ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
 
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    </ItemGroup>
+    
 
 </Project>
