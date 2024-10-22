@@ -94,7 +94,19 @@ namespace Chirp.Infrastructure
                 Cheeps = new List<Cheep>() 
             };
 
-            _dbContext.Authors.Add(author);
+            try
+            {
+                _dbContext.Authors.Add(author);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Microsoft.Data.Sqlite.SqliteException sqliteEx &&
+                    sqliteEx.SqliteErrorCode == 19) 
+                {
+                    Console.WriteLine("User Already exists");
+                }
+            }
         }
     }
 }

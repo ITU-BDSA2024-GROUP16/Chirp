@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Core
 {
-    [Index(nameof(Name), nameof(Email), IsUnique = true)] 
     public class Author
     {
         public int AuthorId { get; set; }
