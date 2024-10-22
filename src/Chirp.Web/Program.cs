@@ -15,6 +15,7 @@ builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(conne
 
 
 builder.Services.AddScoped<DBFacade>();
+builder.Services.AddScoped<ICheepService, CheepService>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();

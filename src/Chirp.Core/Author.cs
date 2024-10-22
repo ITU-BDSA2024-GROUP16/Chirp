@@ -1,9 +1,13 @@
-namespace Chirp.Core;
+using Microsoft.EntityFrameworkCore;
 
-public class Author
+namespace Chirp.Core
 {
-    public int AuthorId { get; set; }
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public ICollection<Cheep> Cheeps { get; set; }
+    [Index(nameof(Name), nameof(Email), IsUnique = true)] 
+    public class Author
+    {
+        public int AuthorId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public ICollection<Cheep> Cheeps { get; set; }
+    }
 }
