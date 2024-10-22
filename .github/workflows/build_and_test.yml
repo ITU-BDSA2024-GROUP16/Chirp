@@ -6,11 +6,11 @@ permissions:
 
 on:
   push:
-    branches: main
+    branches: Fix-release-workflow
     tags:
       - "v*.*.*"
   pull_request:
-    branches: main
+    branches: Fix-release-workflow
 
 jobs:
   build:
@@ -28,3 +28,32 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
+      - name: Create ZIP files
+        run: |
+          # Create a release directory to hold all platform-specific releases
+          mkdir release
+
+          # Publish for Linux (default)
+          dotnet publish -c Release -o ./release/linux
+          cd release/linux
+          zip -r ../../my_project_linux.zip .
+
+          # Publish for macOS
+          cd ../../
+          dotnet publish -r osx-x64 -c Release -o ./release/mac
+          cd release/mac
+          zip -r ../../my_project_mac.zip .
+
+          # Publish for Windows
+          cd ../../
+          dotnet publish -r win-x64 -c Release -o ./release/win
+          cd release/win
+          zip -r ../../my_project_win.zip .
+
+      - name: GH Release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          files: |
+            my_project_linux.zip
+            my_project_mac.zip
+            my_project_win.zip
