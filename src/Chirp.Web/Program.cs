@@ -19,6 +19,7 @@ builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();
 var app = builder.Build();
+
 //Here we are seeding the CheepDBConte
 using (var scope = app.Services.CreateScope())
 {
