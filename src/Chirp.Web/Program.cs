@@ -29,7 +29,6 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<CheepDBContext>();
 
         context.Database.EnsureCreated();
-        context.Database.Migrate();
 
         // Seed the database using DbInitializer
         DbInitializer.SeedDatabase(context);
