@@ -12,20 +12,18 @@ namespace Chirp.Infrastructure
             : base(dbContextOptions)
         {
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Name)
-                .IsUnique(); // Ensures unique names
-
+                .IsUnique();
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Email)
-                .IsUnique(); // Ensures unique emails
-            modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(500);
+                .IsUnique();
+            modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
 
             base.OnModelCreating(modelBuilder);
         }
     }
-    
 }
