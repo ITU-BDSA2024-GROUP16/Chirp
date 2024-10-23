@@ -15,7 +15,6 @@ builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(conne
 
 
 builder.Services.AddScoped<DBFacade>();
-builder.Services.AddScoped<ICheepService, CheepService>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -29,8 +28,8 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<CheepDBContext>();
 
-        
         context.Database.EnsureCreated();
+        context.Database.Migrate();
 
         // Seed the database using DbInitializer
         DbInitializer.SeedDatabase(context);
