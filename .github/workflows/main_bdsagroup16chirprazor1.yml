@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish src/Chirp.Web/ -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: List published files
         run: ls -al ${{env.DOTNET_ROOT}}/myapp

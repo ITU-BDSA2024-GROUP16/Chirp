@@ -8,7 +8,9 @@ namespace Chirp.Infrastructure
         Task<List<CheepDTO>> GetCheeps(int pageNumber, int pageSize);
         Task<List<CheepDTO>> ReadCheeps(string userName, int pageNumber, int pageSize);
         Task<int> CreateCheep(CheepDTO dto);
-        Task<int> UpdateCheep(CheepDTO dto);
+        Task<Author> FindAuthorWithName(string userName);
+        Task<Author> FindAuthorWithEmail(string email);
+        Task CreateAuthor(string name, string email);
     }
 
     public class CheepRepository : ICheepRepository
@@ -71,20 +73,40 @@ namespace Chirp.Infrastructure
             await _dbContext.SaveChangesAsync(); 
             return queryResult.Entity.CheepId;
         }
-        
-        public async Task<int> UpdateCheep(CheepDTO dto)
-        {
-            // we have not finished this method
-            Cheep newCheep = new()
-            {
-                Text = dto.Text, Author = new Author() {Name = dto.Author}, TimeStamp = DateTime.Parse(dto.TimeStamp)
-            };
-            var queryResult = await _dbContext.Cheeps.AddAsync(newCheep); 
 
-            await _dbContext.SaveChangesAsync(); 
-            return queryResult.Entity.CheepId;
+        public async Task<Author> FindAuthorWithName(string userName)
+        {
+            return await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
         }
-        
-        
+
+        public async Task<Author> FindAuthorWithEmail(string email)
+        {
+            return await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
+        }
+
+        public async Task CreateAuthor(string name, string email)
+        {
+            Author author = new Author
+            {
+                Name = name,
+                Email = email,
+                AuthorId = _dbContext.Authors.Count() + 1,
+                Cheeps = new List<Cheep>() 
+            };
+
+            try
+            {
+                _dbContext.Authors.Add(author);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is Microsoft.Data.Sqlite.SqliteException sqliteEx &&
+                    sqliteEx.SqliteErrorCode == 19) 
+                {
+                    Console.WriteLine("User Already exists");
+                }
+            }
+        }
     }
 }
