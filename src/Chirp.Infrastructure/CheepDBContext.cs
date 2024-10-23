@@ -13,4 +13,19 @@ public class CheepDBContext : DbContext
     {
         
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Author>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+        modelBuilder.Entity<Author>()
+            .HasIndex(c => c.Email)
+            .IsUnique();
+        modelBuilder.Entity<Cheep>();
+        
+        modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
+    }
 }
