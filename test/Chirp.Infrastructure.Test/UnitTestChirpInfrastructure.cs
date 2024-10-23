@@ -9,51 +9,27 @@ namespace Chirp.Infrastructure.Test;
 
 public class UnitTestChirpInfrastructure : IAsyncLifetime
 {
-    private string _dbFileName;
-    private string _dbFilePath;
+    private SqliteConnection _connection;
 
     public async Task InitializeAsync()
     {
-        var tempDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tmp");
-
-        if (!Directory.Exists(tempDir))
-        {
-            Directory.CreateDirectory(tempDir);
-        }
-
-        // Create a unique database file name
-        _dbFileName = $"myChirpDatabase_{Guid.NewGuid()}.db";
-        _dbFilePath = Path.Combine(tempDir, _dbFileName);
+        _connection = new SqliteConnection("Filename=:memory:");
+        await _connection.OpenAsync();
     }
 
     public async Task DisposeAsync()
     {
-        // Delete the database file only if it exists
-        if (File.Exists(_dbFilePath))
-        {
-            try
-            {
-                File.Delete(_dbFilePath);
-            }
-            catch (IOException)
-            {
-                // Handle the exception or log it if needed
-            }
-        }
+        await _connection.DisposeAsync();
     }
 
     private CheepDBContext CreateContext()
     {
-        var connectionString = $"Filename={_dbFilePath}";
-        var connection = new SqliteConnection(connectionString);
-        connection.Open();
-
         var options = new DbContextOptionsBuilder<CheepDBContext>()
-            .UseSqlite(connection)
+            .UseSqlite(_connection) 
             .Options;
 
         var context = new CheepDBContext(options);
-        context.Database.EnsureCreated(); // Create the database if not exists
+        context.Database.EnsureCreated(); 
         return context;
     }
 
@@ -71,12 +47,12 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         };
 
         dbContext.Authors.Add(_testAuthor);
-        await dbContext.SaveChangesAsync(); // Make sure to save changes
+        await dbContext.SaveChangesAsync(); 
 
         var author = await _cheepRepository.FindAuthorWithName(_testAuthor.Name);
 
         Assert.NotNull(author);
-        Assert.Equal(_testAuthor.Name, author.Name); // Compare names
+        Assert.Equal(_testAuthor.Name, author.Name);
     }
 
     [Fact]
@@ -93,12 +69,12 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         };
 
         dbContext.Authors.Add(_testAuthor);
-        await dbContext.SaveChangesAsync(); // Make sure to save changes
+        await dbContext.SaveChangesAsync(); 
 
         var author = await _cheepRepository.FindAuthorWithEmail(_testAuthor.Email);
 
         Assert.NotNull(author);
-        Assert.Equal(_testAuthor.Email, author.Email); // Compare emails
+        Assert.Equal(_testAuthor.Email, author.Email); 
     }
 
     [Fact]
@@ -125,22 +101,20 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
             Cheeps = new List<Cheep>(),
         };
         
-        // Add the first author to the context
         await dbContext.Authors.AddAsync(_testAuthor1);
-        await dbContext.SaveChangesAsync(); // Save changes to commit the first author
+        await dbContext.SaveChangesAsync(); 
 
         var _testAuthor2 = new Author
         {
-            Name = "Test Name", // Same name
-            Email = "test@gmail.com", // Same email
+            Name = "Test Name", 
+            Email = "test@gmail.com", 
             Cheeps = new List<Cheep>(),
         };
-
-        // Use Assert.ThrowsAsync to check if an exception is thrown
+        
         await Assert.ThrowsAsync<DbUpdateException>(async () =>
         {
             await dbContext.Authors.AddAsync(_testAuthor2);
-            await dbContext.SaveChangesAsync(); // This should throw an exception
+            await dbContext.SaveChangesAsync(); 
         });
     }
 }
