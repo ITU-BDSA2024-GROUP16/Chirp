@@ -30,7 +30,7 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<CheepDBContext>();
 
         
-        context.Database.Migrate();
+        context.Database.EnsureCreated();
 
         // Seed the database using DbInitializer
         DbInitializer.SeedDatabase(context);
