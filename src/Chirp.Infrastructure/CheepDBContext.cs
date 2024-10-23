@@ -22,23 +22,10 @@ namespace Chirp.Infrastructure
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Email)
                 .IsUnique(); // Ensures unique emails
+            modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(500);
 
             base.OnModelCreating(modelBuilder);
         }
     }
     
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<Author>()
-            .HasIndex(c => c.Name)
-            .IsUnique();
-        modelBuilder.Entity<Author>()
-            .HasIndex(c => c.Email)
-            .IsUnique();
-        modelBuilder.Entity<Cheep>();
-        
-        modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
-    }
 }
