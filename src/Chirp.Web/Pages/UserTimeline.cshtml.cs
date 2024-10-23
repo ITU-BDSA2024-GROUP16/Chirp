@@ -9,7 +9,7 @@ public class UserTimelineModel : PageModel
     private readonly ICheepRepository _cheepRepository;
     public List<CheepDTO> Cheeps { get; set; }
     private const int PageSize = 32;
-    public int pageNumber { get; set; }
+    public int PageNumber { get; set; }
 
     public UserTimelineModel(ICheepRepository cheepRepository)
     {
@@ -20,9 +20,9 @@ public class UserTimelineModel : PageModel
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
-        pageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
+        PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
 
-        Cheeps = await _cheepRepository.ReadCheeps(author, pageNumber, PageSize);
+        Cheeps = await _cheepRepository.ReadCheeps(author, PageNumber, PageSize);
         return Page();
     }
 }

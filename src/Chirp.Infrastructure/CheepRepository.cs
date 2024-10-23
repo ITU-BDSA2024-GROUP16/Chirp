@@ -34,7 +34,7 @@ namespace Chirp.Infrastructure
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
                 {
-                    Author = cheep.Author.Name,
+                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
                 })
@@ -49,12 +49,12 @@ namespace Chirp.Infrastructure
             var result = await query.ToListAsync();
     
             return result
-                .Where(cheep => cheep.Author.Name == userName) // Use userName for filtering
+                .Where(cheep => cheep.Author != null && cheep.Author.Name == userName) // Use userName for filtering
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
                 {
-                    Author = cheep.Author.Name,
+                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
                 })
@@ -66,7 +66,10 @@ namespace Chirp.Infrastructure
         {
             Cheep newCheep = new()
             {
-                Text = dto.Text, Author = new Author() {Name = dto.Author}, TimeStamp = DateTime.Parse(dto.TimeStamp)
+                Text = dto.Text, 
+                Author = new Author() {Name = dto.Author}, 
+                TimeStamp = DateTime.TryParse(dto.TimeStamp, out var dateTime) ? dateTime : DateTime.Now
+                
             };
             var queryResult = await _dbContext.Cheeps.AddAsync(newCheep); 
 
@@ -76,12 +79,24 @@ namespace Chirp.Infrastructure
 
         public async Task<Author> FindAuthorWithName(string userName)
         {
-            return await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
+            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
+            if (author == null)
+            {
+                throw new InvalidOperationException($"Author with name {userName} not found.");
+            }
+
+            return author;
         }
 
         public async Task<Author> FindAuthorWithEmail(string email)
         {
-            return await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
+            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
+            if (author == null)
+            {
+                throw new InvalidOperationException($"Author with name {email} not found.");
+            }
+
+            return author;
         }
 
         public async Task CreateAuthor(string name, string email)
