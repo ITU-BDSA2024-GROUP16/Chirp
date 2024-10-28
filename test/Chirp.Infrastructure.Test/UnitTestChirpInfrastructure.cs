@@ -9,7 +9,7 @@ namespace Chirp.Infrastructure.Test;
 
 public class UnitTestChirpInfrastructure : IAsyncLifetime
 {
-    private SqliteConnection _connection;
+    private SqliteConnection? _connection;
 
     public async Task InitializeAsync()
     {
@@ -19,19 +19,29 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _connection.DisposeAsync();
+        if (_connection != null)
+        {
+            await _connection.DisposeAsync();
+        }
     }
+
 
     private CheepDBContext CreateContext()
     {
+        if (_connection == null)
+        {
+            throw new InvalidOperationException("Connection is not initialized.");
+        }
+
         var options = new DbContextOptionsBuilder<CheepDBContext>()
-            .UseSqlite(_connection) 
+            .UseSqlite(_connection)
             .Options;
 
         var context = new CheepDBContext(options);
-        context.Database.EnsureCreated(); 
+        context.Database.EnsureCreated();
         return context;
     }
+
 
     [Fact]
     public async Task UnitTestGetAuthorFromName()
@@ -83,10 +93,11 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await using var dbContext = CreateContext();
         var _cheepRepository = new CheepRepository(new DBFacade(dbContext), dbContext);
 
-        var author = await _cheepRepository.FindAuthorWithName("DrDontExist");
-
-        Assert.Null(author);
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => 
+            await _cheepRepository.FindAuthorWithName("DrDontExist")
+        );
     }
+
     
     [Fact]
     public async Task UnitTestDuplicateAuthors()
