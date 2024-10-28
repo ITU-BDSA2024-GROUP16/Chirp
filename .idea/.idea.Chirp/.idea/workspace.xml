@@ -24,8 +24,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Core/Author.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Core/Author.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Core/Chirp.Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Core/Chirp.Core.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Infrastructure/CheepDBContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Infrastructure/CheepDBContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Infrastructure/Chirp.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Infrastructure/Chirp.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_Layout.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/Chirp.Infrastructure.Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/Chirp.Infrastructure.Test.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +76,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Add-navigationBar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -319,6 +327,7 @@
       <workItem from="1729503115854" duration="1478000" />
       <workItem from="1729592130617" duration="172000" />
       <workItem from="1729592330607" duration="1109000" />
+      <workItem from="1730108309650" duration="2448000" />
     </task>
     <servers />
   </component>

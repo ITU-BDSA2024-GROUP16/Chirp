@@ -1,4 +1,5 @@
 using Chirp;
+using Chirp.Core;
 using Chirp.Infrastructure;
 using Chirp.Web;
 using Microsoft.AspNetCore.Builder;
@@ -40,6 +41,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+builder.Services.AddDefaultIdentity<Author>(options =>
+options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -52,6 +56,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
