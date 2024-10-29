@@ -14,16 +14,12 @@
         <div>
             <a href="/@(User.Identity.Name)">my timeline</a> |
             <a href="/">public timeline</a> |
-            <a ... >logout [@(User.Identity.Name)]</a>
+            <partial name="_LoginPartial" />
         </div>
         }
         else
         {
-        <div>
-            <a href="/">public timeline</a> |
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">register</a> |
-            <a ... >login</a>
-        </div>
+            <partial name="_LoginPartial" />
         }
     </div>
     <div class=body>
