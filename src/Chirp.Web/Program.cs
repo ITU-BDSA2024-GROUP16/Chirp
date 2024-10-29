@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Chirp.Web.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,10 @@ builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(conne
 
 builder.Services.AddScoped<DBFacade>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+
+builder.Services.AddDefaultIdentity<Author>(options =>
+    options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 var app = builder.Build();
@@ -40,9 +46,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
-
-builder.Services.AddDefaultIdentity<Author>(options =>
-options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

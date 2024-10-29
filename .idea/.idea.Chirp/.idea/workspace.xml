@@ -25,8 +25,8 @@
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Infrastructure/Migrations/CheepDBContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Infrastructure/Migrations/CheepDBContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/appsettings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
