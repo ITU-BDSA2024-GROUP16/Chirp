@@ -5,21 +5,20 @@
 @inject SignInManager<Author> SignInManager
 @inject UserManager<Author> UserManager
 
-<div style="display: inline;"> <!-- Add display: inline; to align elements horizontally -->
+<div style="display: inline;">
     <ul class="navbar-nav" style="display: inline; list-style-type: none; padding: 0; margin: 0;">
         @if (SignInManager.IsSignedIn(User))
         {
-            <li class="nav-item" style="display: inline;">
+            <li class="nav-item" style="display: inline; gap: 10px; align-items: center;">
                 @{
-                // Retrieve the Name claim
-                var userName = User.FindFirst("Name")?.Value ?? "User";
+                    var userName = User.FindFirst("Name")?.Value ?? "User";
                 }
-                <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index">
+                <a id="manage" class="navigation" asp-area="Identity" asp-page="/Account/Manage/Index">
                     Hello @userName!
-                </a>     
-                
+                </a>
+                <span style="margin: 0 5px;">|</span>
             </li>
-            <li class="nav-item" style="display: inline;">
+            <li class="nav-item" style="display: inline; gap: 10px; align-items: center;">
                 <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
                     <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
                 </form>
@@ -27,10 +26,11 @@
         }
         else
         {
-            <li class="nav-item" style="display: inline;">
-                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a> |
+            <li class="nav-item" style="display: inline; gap: 10px; align-items: center;">
+                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                <span>|</span>
             </li>
-            <li class="nav-item" style="display: inline;">
+            <li class="nav-item" style="display: inline; gap: 10px; align-items: center;">
                 <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
             </li>
         }
