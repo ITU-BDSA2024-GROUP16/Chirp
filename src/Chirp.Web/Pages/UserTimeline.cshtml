@@ -4,11 +4,11 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var routeName = HttpContext.GetRouteValue("author");
+    var userName = User.FindFirst("Name")?.Value ?? "User";
 }
 
 <div>
-    <h2> @routeName's Timeline </h2>
+    <h2> @userName's Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
