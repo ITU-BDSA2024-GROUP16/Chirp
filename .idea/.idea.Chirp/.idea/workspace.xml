@@ -24,11 +24,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/Index.cshtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/Index.cshtml.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/ManageNavPages.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Data/IdentityDataContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_LoginPartial.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_LoginPartial.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +45,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="web-database" />
+        <entry key="$PROJECT_DIR$" value="login-site" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -56,7 +63,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7d382df578ec93391918cfaa4ce7f4b8f35c9aed1241d6556dc9be26df13c/IdentityUser.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c32d3221297241cb92f1d473861e236212b08/5f/950f24c0/UserManager`1.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Chirp.Core/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Chirp.Web/Program.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -72,7 +79,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Scaffolding",
+    "git-widget-placeholder": "account-and-email-page",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -338,8 +345,18 @@
     <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore.Relational" />
     <option featureType="dependencySupport" implementationName="dotnet:Microsoft.EntityFrameworkCore" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
-    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
 </project>
