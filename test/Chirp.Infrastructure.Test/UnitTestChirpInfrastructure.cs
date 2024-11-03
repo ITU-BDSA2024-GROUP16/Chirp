@@ -209,4 +209,23 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
             await dbContext.SaveChangesAsync(); 
         });
     }
+    
+    [Fact]
+    public async Task UnitTestTestNoCheepsOnEmptyPage()
+    {
+        //Arrange
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(new DBFacade(dbContext), dbContext);
+        
+        List<CheepDTO> cheeps = new List<CheepDTO>();
+        
+        //Act
+        cheeps = await cheepRepository.GetCheeps(100000, 32);
+        
+        _output.WriteLine("cheeps: {0}", cheeps.Count);
+
+        //Assert
+        Assert.Empty(cheeps);
+    }
 }
