@@ -24,10 +24,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/IntegrationTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/Chirp.Infrastructure.Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/Chirp.Infrastructure.Test.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/IntegrationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/IntegrationTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -324,7 +325,9 @@
       <workItem from="1729592330607" duration="1109000" />
       <workItem from="1730108309650" duration="2448000" />
       <workItem from="1730630019499" duration="3626000" />
-      <workItem from="1730634020322" duration="682000" />
+      <workItem from="1730634020322" duration="1051000" />
+      <workItem from="1730635371357" duration="71000" />
+      <workItem from="1730635478248" duration="1373000" />
     </task>
     <servers />
   </component>
