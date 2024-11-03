@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 
 using Microsoft.AspNetCore.Identity;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -64,3 +66,6 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+//This makes the program public, then the test class can access it
+public partial class Program { }
