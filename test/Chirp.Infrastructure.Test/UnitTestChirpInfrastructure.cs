@@ -1,15 +1,23 @@
 using Chirp.Core;
 using Chirp.Infrastructure;
+using Chirp.Web;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Xunit.Abstractions;
 using Assert = Xunit.Assert;
 
 namespace Chirp.Infrastructure.Test;
 
 public class UnitTestChirpInfrastructure : IAsyncLifetime
 {
-    private SqliteConnection? _connection;
+    private SqliteConnection _connection;
+    private readonly ITestOutputHelper _output;
+    
+    public UnitTestChirpInfrastructure(ITestOutputHelper output)
+    {
+        _output = output; // Assigning the output to the private field
+    }
 
     public async Task InitializeAsync()
     {
@@ -19,29 +27,19 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        if (_connection != null)
-        {
-            await _connection.DisposeAsync();
-        }
+        await _connection.DisposeAsync();
     }
-
 
     private CheepDBContext CreateContext()
     {
-        if (_connection == null)
-        {
-            throw new InvalidOperationException("Connection is not initialized.");
-        }
-
         var options = new DbContextOptionsBuilder<CheepDBContext>()
-            .UseSqlite(_connection)
+            .UseSqlite(_connection) 
             .Options;
 
         var context = new CheepDBContext(options);
-        context.Database.EnsureCreated();
+        context.Database.EnsureCreated(); 
         return context;
     }
-
 
     [Fact]
     public async Task UnitTestGetAuthorFromName()
@@ -93,11 +91,10 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await using var dbContext = CreateContext();
         var _cheepRepository = new CheepRepository(new DBFacade(dbContext), dbContext);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(async () => 
-            await _cheepRepository.FindAuthorWithName("DrDontExist")
-        );
-    }
+        var author = await _cheepRepository.FindAuthorWithName("DrDontExist");
 
+        Assert.Null(author);
+    }
     
     [Fact]
     public async Task UnitTestDuplicateAuthors()
@@ -127,5 +124,108 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
             await dbContext.Authors.AddAsync(_testAuthor2);
             await dbContext.SaveChangesAsync(); 
         });
+    }
+
+    [Fact]
+    public async Task UnitTestTestPageSize()
+    {
+        //Arrange
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(new DBFacade(dbContext), dbContext);
+        
+        List<CheepDTO> cheeps = new List<CheepDTO>();
+        List<CheepDTO> cheeps2 = new List<CheepDTO>();
+        
+        //Act
+        cheeps = await cheepRepository.GetCheeps(1, 32);
+        cheeps2 = await cheepRepository.GetCheeps(1, 12);
+        
+        _output.WriteLine("cheeps: {0}, cheeps2: {1}", cheeps.Count, cheeps2.Count);
+
+        //Assert
+        Assert.Equal(32, cheeps.Count);
+        Assert.Equal(12, cheeps2.Count);
+    }
+    [Fact]
+    public async Task UnitTestGetCheepsFromAuthor()
+    {
+        //Arrange
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        
+        var cheepRepository = new CheepRepository(new DBFacade(dbContext), dbContext);
+        List<CheepDTO> cheeps = new List<CheepDTO>();
+        string AuthorName = "Jacqualine Gilcoine";
+        
+        //Act
+        cheeps = await cheepRepository.ReadCheeps(AuthorName, 1,32);
+
+        
+        //Assert
+        foreach (CheepDTO cheep in cheeps)
+        {
+            _output.WriteLine("cheep Author: {0}", cheep.Author);
+            Assert.Equal(AuthorName, cheep.Author);
+        }
+    }
+
+    [Fact]
+    public async Task UnitTestNoAuthorNameDuplicates()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        
+        var _testAuthor1 = new Author
+        {
+            Name = "Jacqualine Gilcoine",
+            Email = "test@gmail.com",
+            Cheeps = new List<Cheep>(),
+        };
+        
+        await Assert.ThrowsAsync<DbUpdateException>(async () =>
+        {
+            await dbContext.Authors.AddAsync(_testAuthor1);
+            await dbContext.SaveChangesAsync(); 
+        });
+    }
+
+    [Fact]
+    public async Task UnitTestNoEmailDuplicates()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+
+        var _testAuthor1 = new Author
+        {
+            Name = "Jacqie Gilcoine",
+            Email = "Jacqualine.Gilcoine@gmail.com",
+            Cheeps = new List<Cheep>(),
+        };
+        
+        await Assert.ThrowsAsync<DbUpdateException>(async () =>
+        {
+            await dbContext.Authors.AddAsync(_testAuthor1);
+            await dbContext.SaveChangesAsync(); 
+        });
+    }
+    
+    [Fact]
+    public async Task UnitTestTestNoCheepsOnEmptyPage()
+    {
+        //Arrange
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(new DBFacade(dbContext), dbContext);
+        
+        List<CheepDTO> cheeps = new List<CheepDTO>();
+        
+        //Act
+        cheeps = await cheepRepository.GetCheeps(100000, 32);
+        
+        _output.WriteLine("cheeps: {0}", cheeps.Count);
+
+        //Assert
+        Assert.Empty(cheeps);
     }
 }

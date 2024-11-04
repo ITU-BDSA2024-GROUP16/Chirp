@@ -1,4 +1,5 @@
 using Chirp;
+using Chirp.Core;
 using Chirp.Infrastructure;
 using Chirp.Web;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using Microsoft.AspNetCore.Identity;
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -16,6 +21,10 @@ builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(conne
 
 builder.Services.AddScoped<DBFacade>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+
+builder.Services.AddDefaultIdentity<Author>(options =>
+    options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 var app = builder.Build();
@@ -52,6 +61,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+//This makes the program public, then the test class can access it
+public partial class Program { }
