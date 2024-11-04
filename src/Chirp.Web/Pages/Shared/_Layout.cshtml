@@ -1,4 +1,7 @@
 ﻿<!DOCTYPE html>
+@{
+var userName = User.FindFirst("Name")?.Value ?? "User";
+}
 <html lang="en">
 <head>
     <title>@ViewData["Title"]</title>
@@ -12,9 +15,9 @@
         @if (User.Identity.IsAuthenticated) // Displays authenticated user's navigation
         {
             <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="/@(User.Identity.Name)">my timeline</a> |
+                <a href="/@(userName)">my timeline</a> |
                 <a href="/">public timeline</a> |
-                <partial name="_LoginPartial" />
+                <partial name="_LoginPartial"/>
             </div>
         }
         else // Displays unauthenticated user's navigation

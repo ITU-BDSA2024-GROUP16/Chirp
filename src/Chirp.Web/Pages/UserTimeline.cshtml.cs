@@ -30,7 +30,7 @@ public class UserTimelineModel : PageModel
     public async Task<ActionResult> OnPost(string Message, string author)
     {
         
-        Author authorPlaceHolder = await _cheepRepository.FindAuthorWithEmail(author);
+        Author authorPlaceHolder = await _cheepRepository.FindAuthorWithName(author);
         
         if (authorPlaceHolder == null)
         {

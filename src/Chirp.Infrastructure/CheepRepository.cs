@@ -50,7 +50,8 @@ namespace Chirp.Infrastructure
             var result = await query.ToListAsync();
     
             return result
-                .Where(cheep => cheep.Author != null && cheep.Author.Name == userName) // Use userName for filtering
+                .Where(cheep => cheep.Author != null && cheep.Author.Name == userName)
+                .OrderByDescending(cheep => cheep.TimeStamp)// Use userName for filtering
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
