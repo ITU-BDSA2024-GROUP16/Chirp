@@ -40,8 +40,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             IUserStore<Author> userStore,
             SignInManager<Author> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            ICheepRepository cheepRepository)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -49,7 +48,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _cheepRepository = cheepRepository;
         }
 
         /// <summary>
@@ -137,9 +135,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                     var claim = new Claim("Name", Input.Username);
                     await _userManager.AddClaimAsync(user, claim);
                     _logger.LogInformation("User created a new account with password.");
-                    
-                    await _cheepRepository.CreateAuthor(Input.Username, Input.Email);
-                    
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

@@ -24,12 +24,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Register.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Register.cshtml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_Layout.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -331,7 +329,7 @@
       <workItem from="1730635478248" duration="1670000" />
       <workItem from="1730650441236" duration="6333000" />
       <workItem from="1730725887645" duration="163000" />
-      <workItem from="1730726084239" duration="1263000" />
+      <workItem from="1730726084239" duration="1601000" />
     </task>
     <servers />
   </component>
