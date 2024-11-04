@@ -1,4 +1,5 @@
-﻿using Chirp.Core;
+﻿using System.Security.Claims;
+using Chirp.Core;
 using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -29,19 +30,13 @@ public class UserTimelineModel : PageModel
     
     public async Task<ActionResult> OnPost(string Message, string author)
     {
+        // author may not be needed, when you can find name with claim.
+        //Author authorPlaceHolder = await _cheepRepository.FindAuthorWithName(author);
         
-        Author authorPlaceHolder = await _cheepRepository.FindAuthorWithName(author);
         
-        if (authorPlaceHolder == null)
-        {
-            Console.WriteLine("Author not found for email: " + author);
-            // Return an appropriate error response or create a new author if necessary.
-            ModelState.AddModelError(string.Empty, "Author not found.");
-            return Page();
-        }
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
         
-        Console.WriteLine("This is the author " + author);
-        Console.WriteLine("This is the auhtorPlaceHolder " + authorPlaceHolder.Name);
+        Author authorPlaceHolder = await _cheepRepository.FindAuthorWithEmail(authorName);
         
         var cheep = new Cheep
         {

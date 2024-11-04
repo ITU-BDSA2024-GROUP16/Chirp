@@ -1,4 +1,5 @@
-﻿using Chirp.Core;
+﻿using System.Security.Claims;
+using Chirp.Core;
 using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -27,4 +28,36 @@ public class PublicModel : PageModel
         return Page();
     }
     
+    public async Task<ActionResult> OnPost(string message)
+    {
+        // 
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+        if (string.IsNullOrEmpty(authorName))
+        {
+            ModelState.AddModelError(string.Empty, "You must be logged in to post a cheep.");
+            return Page();
+        }
+
+        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+
+        if (author == null)
+        {
+            ModelState.AddModelError(string.Empty, "Author not found.");
+            return Page();
+        }
+
+        var newCheep = new Cheep
+        {
+            AuthorId = author.AuthorId,
+            Text = message,
+            TimeStamp = DateTime.Now,
+            Author = author
+        };
+
+        await _cheepRepository.SaveCheep(newCheep);
+
+        return RedirectToPage();
+    }
 }
+
