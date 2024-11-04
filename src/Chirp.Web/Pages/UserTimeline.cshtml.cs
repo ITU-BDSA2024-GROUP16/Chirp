@@ -11,6 +11,7 @@ public class UserTimelineModel : PageModel
     private const int PageSize = 32;
     public int PageNumber { get; set; }
 
+
     public UserTimelineModel(ICheepRepository cheepRepository)
     {
         _cheepRepository = cheepRepository;
@@ -24,5 +25,33 @@ public class UserTimelineModel : PageModel
 
         Cheeps = await _cheepRepository.ReadCheeps(author, PageNumber, PageSize);
         return Page();
+    }
+    
+    public async Task<ActionResult> OnPost(string Message, string author)
+    {
+        
+        Author authorPlaceHolder = await _cheepRepository.FindAuthorWithEmail(author);
+        
+        if (authorPlaceHolder == null)
+        {
+            Console.WriteLine("Author not found for email: " + author);
+            // Return an appropriate error response or create a new author if necessary.
+            ModelState.AddModelError(string.Empty, "Author not found.");
+            return Page();
+        }
+        
+        Console.WriteLine("This is the author " + author);
+        Console.WriteLine("This is the auhtorPlaceHolder " + authorPlaceHolder.Name);
+        
+        var cheep = new Cheep
+        {
+            AuthorId = authorPlaceHolder.AuthorId,
+            Text = Message,
+            TimeStamp = DateTime.Now,
+            Author = authorPlaceHolder
+        };
+        //authorPlaceHolder.Cheeps.Add(cheep);
+        await _cheepRepository.SaveCheep(cheep);
+        return RedirectToPage();
     }
 }

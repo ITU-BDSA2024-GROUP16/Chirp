@@ -11,6 +11,7 @@ namespace Chirp.Infrastructure
         Task<Author> FindAuthorWithName(string userName);
         Task<Author> FindAuthorWithEmail(string email);
         Task CreateAuthor(string name, string email);
+        Task SaveCheep(Cheep cheep);
     }
 
     public class CheepRepository : ICheepRepository
@@ -122,6 +123,12 @@ namespace Chirp.Infrastructure
                     Console.WriteLine("User Already exists");
                 }
             }
+        }
+
+        public async Task SaveCheep(Cheep cheep)
+        {
+            await _dbContext.Cheeps.AddAsync(cheep);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

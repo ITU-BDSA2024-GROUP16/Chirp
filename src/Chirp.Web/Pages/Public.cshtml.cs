@@ -11,7 +11,6 @@ public class PublicModel : PageModel
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
-    
 
     public PublicModel(ICheepRepository cheepRepository)
     {
@@ -27,4 +26,5 @@ public class PublicModel : PageModel
         Cheeps = await _cheepRepository.GetCheeps(PageNumber, PageSize);
         return Page();
     }
+    
 }
