@@ -12,6 +12,7 @@ namespace Chirp.Infrastructure
         Task<Author> FindAuthorWithEmail(string email);
         Task CreateAuthor(string name, string email);
         Task SaveCheep(Cheep cheep);
+        Task UpdateAuthorAsync(Author author);
     }
 
     public class CheepRepository : ICheepRepository
@@ -131,5 +132,12 @@ namespace Chirp.Infrastructure
             await _dbContext.Cheeps.AddAsync(cheep);
             await _dbContext.SaveChangesAsync();
         }
+        
+        public async Task UpdateAuthorAsync(Author author)
+        {
+            _dbContext.Authors.Update(author);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

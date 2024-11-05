@@ -4,11 +4,13 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Chirp.Core;
 using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +22,15 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
     private readonly UserManager<Author> _userManager;
     private readonly SignInManager<Author> _signInManager;
     private readonly CheepDBContext _context;
+    private readonly ICheepRepository _cheepRepository;
 
-    public IndexModel(UserManager<Author> userManager, SignInManager<Author> signInManager, CheepDBContext context)
+    public IndexModel(UserManager<Author> userManager, SignInManager<Author> signInManager, CheepDBContext context, ICheepRepository cheepRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _context = context;
+        _cheepRepository = cheepRepository;
+        
     }
 
     public string Email { get; set; }
@@ -99,9 +104,33 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
         
         if (user.Name != Input.NewUserName)
         {
+            
+            //Gets the existing claim (Which is made in Register when a new user is created).
+            var existingClaim = (await _userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "Name");
+            if (existingClaim != null)
+            {
+                //Removes the claim if the claim exists
+                var removeResult = await _userManager.RemoveClaimAsync(user, existingClaim);
+                if (!removeResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to remove existing name claim.";
+                    return RedirectToPage();
+                }
+            }
+            
+            //Creates a new claim with the new username.
+            var newClaim = new Claim("Name", Input.NewUserName);
+            // Adds the claim to database
+            var addClaimResult = await _userManager.AddClaimAsync(user, newClaim);
+            if (!addClaimResult.Succeeded)
+            {
+                StatusMessage = "Unexpected error when trying to add new name claim.";
+                return RedirectToPage();
+            }
+            
+            //This updates the users (authors) name, which also makes sure that the cheeps have the NewUserName
             user.Name = Input.NewUserName; 
             var updateResult = await _userManager.UpdateAsync(user);
-            
             if (!updateResult.Succeeded)
             {
                 foreach (var error in updateResult.Errors)
