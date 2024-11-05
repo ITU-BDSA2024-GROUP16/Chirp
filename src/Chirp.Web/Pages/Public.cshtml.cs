@@ -33,21 +33,9 @@ public class PublicModel : PageModel
         // 
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
 
-        if (string.IsNullOrEmpty(authorName))
-        {
-            ModelState.AddModelError(string.Empty, "You must be logged in to post a cheep.");
-            return Page();
-        }
 
         var author = await _cheepRepository.FindAuthorWithEmail(authorName);
-
-        if (author == null)
-        {
-            ModelState.AddModelError(string.Empty, "Author not found.");
-            return Page();
-        }
-
-        var newCheep = new Cheep
+        var cheep = new Cheep
         {
             AuthorId = author.AuthorId,
             Text = message,
@@ -55,8 +43,10 @@ public class PublicModel : PageModel
             Author = author
         };
 
-        await _cheepRepository.SaveCheep(newCheep);
-
+        await _cheepRepository.SaveCheep(cheep);
+        
+        author.Cheeps.Add(cheep);
+        
         return RedirectToPage();
     }
 }

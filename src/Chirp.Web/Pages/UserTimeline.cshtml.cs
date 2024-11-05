@@ -28,7 +28,7 @@ public class UserTimelineModel : PageModel
         return Page();
     }
     
-    public async Task<ActionResult> OnPost(string Message, string author)
+    public async Task<ActionResult> OnPost(string Message)
     {
         // author may not be needed, when you can find name with claim.
         //Author authorPlaceHolder = await _cheepRepository.FindAuthorWithName(author);
@@ -36,17 +36,19 @@ public class UserTimelineModel : PageModel
         
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
         
-        Author authorPlaceHolder = await _cheepRepository.FindAuthorWithEmail(authorName);
+        Author author = await _cheepRepository.FindAuthorWithEmail(authorName);
         
         var cheep = new Cheep
         {
-            AuthorId = authorPlaceHolder.AuthorId,
+            AuthorId = author.AuthorId,
             Text = Message,
             TimeStamp = DateTime.Now,
-            Author = authorPlaceHolder
+            Author = author
         };
-        //authorPlaceHolder.Cheeps.Add(cheep);
+        
         await _cheepRepository.SaveCheep(cheep);
+        author.Cheeps.Add(cheep);
+        
         return RedirectToPage();
     }
 }

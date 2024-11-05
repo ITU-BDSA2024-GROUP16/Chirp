@@ -17,7 +17,7 @@ namespace Chirp.Infrastructure
     public class CheepRepository : ICheepRepository
     {
         private readonly DBFacade _dbFacade;
-        private readonly CheepDBContext _dbContext;
+        public readonly CheepDBContext _dbContext;
 
         public CheepRepository(DBFacade dbFacade, CheepDBContext dbContext)
         {
