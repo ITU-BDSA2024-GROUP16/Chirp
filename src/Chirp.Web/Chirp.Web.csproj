@@ -5,7 +5,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-    </PropertyGroup>
+      <UserSecretsId>7c41881e-39a3-4cc1-afc8-343e67afa656</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <AdditionalFiles Include="Pages\Public.cshtml" />
@@ -38,6 +39,7 @@
         <!--
       <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
       -->
+      <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="8.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
@@ -56,10 +58,6 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Areas\Identity\Data\" />
     </ItemGroup>
     
 
