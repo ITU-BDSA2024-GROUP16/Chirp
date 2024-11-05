@@ -24,18 +24,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/Index.cshtml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/Index.cshtml.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/ManageNavPages.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/_ViewImports.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Areas/Identity/Pages/Account/Manage/_ManageNav.cshtml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chirp.Web.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_LoginPartial.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/Shared/_LoginPartial.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,18 +71,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "account-and-email-page",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;oAuth&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Chirp.CSVDBService: http">
     <configuration name="Chirp.CLI" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -331,6 +326,8 @@
       <workItem from="1729592130617" duration="172000" />
       <workItem from="1729592330607" duration="1109000" />
       <workItem from="1730108309650" duration="2448000" />
+      <workItem from="1730807908949" duration="17000" />
+      <workItem from="1730807947606" duration="1502000" />
     </task>
     <servers />
   </component>
