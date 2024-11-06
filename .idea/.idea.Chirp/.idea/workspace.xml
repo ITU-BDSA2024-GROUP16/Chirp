@@ -24,11 +24,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="36edbfec-7ffd-4e05-8662-e4f0b4c65e01" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Chirp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-shm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Chat.db-wal" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/IntegrationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/test/Chirp.Infrastructure.Test/IntegrationTest.cs" afterDir="false" />
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/Public.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/Public.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/Public.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/Public.cshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Chirp.Web/Pages/UserTimeline.cshtml.cs" afterDir="false" />
+>>>>>>> update-account-info
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +59,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c32d3221297241cb92f1d473861e236212b08/5f/950f24c0/UserManager`1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ddfe5f2cab585726db85fc046e76ea5725f69d647c242379a11c6da8029c727/ClaimsPrincipal.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Chirp.Core/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Chirp.Web/Program.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -69,18 +72,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;further-testing&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+<<<<<<< HEAD
+    "git-widget-placeholder": "Fix-author-cheeps-collection",
+=======
+    "git-widget-placeholder": "write-and-post-cheeps",
+>>>>>>> update-account-info
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Chirp.CSVDBService: http">
     <configuration name="Chirp.CLI" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -327,7 +334,14 @@
       <workItem from="1730630019499" duration="3626000" />
       <workItem from="1730634020322" duration="1051000" />
       <workItem from="1730635371357" duration="71000" />
-      <workItem from="1730635478248" duration="1373000" />
+      <workItem from="1730635478248" duration="1670000" />
+      <workItem from="1730650441236" duration="6333000" />
+      <workItem from="1730725887645" duration="163000" />
+      <workItem from="1730726084239" duration="1601000" />
+      <workItem from="1730729481258" duration="3000" />
+      <workItem from="1730802467025" duration="138000" />
+      <workItem from="1730802644487" duration="3272000" />
+      <workItem from="1730818071172" duration="3885000" />
     </task>
     <servers />
   </component>

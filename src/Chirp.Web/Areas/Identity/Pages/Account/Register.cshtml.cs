@@ -33,13 +33,15 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<Author> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ICheepRepository _cheepRepository;
 
         public RegisterModel(
             UserManager<Author> userManager,
             IUserStore<Author> userStore,
             SignInManager<Author> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ICheepRepository cheepRepository)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -47,6 +49,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _cheepRepository = cheepRepository;
         }
 
         /// <summary>
@@ -126,15 +129,15 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 user.Email = Input.Email;
                 user.Name = Input.Username;
                 user.AuthorId = await _userManager.Users.CountAsync() + 1;
-                
+                user.Cheeps = new List<Cheep>();
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
+                
                 if (result.Succeeded)
                 {
                     var claim = new Claim("Name", Input.Username);
+                    
                     await _userManager.AddClaimAsync(user, claim);
                     _logger.LogInformation("User created a new account with password.");
-
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

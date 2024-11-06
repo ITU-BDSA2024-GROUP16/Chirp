@@ -1,4 +1,5 @@
-﻿using Chirp.Core;
+﻿using System.Security.Claims;
+using Chirp.Core;
 using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,7 +12,8 @@ public class PublicModel : PageModel
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
-    
+    [BindProperty]
+    public string Text { get; set; }
 
     public PublicModel(ICheepRepository cheepRepository)
     {
@@ -27,4 +29,23 @@ public class PublicModel : PageModel
         Cheeps = await _cheepRepository.GetCheeps(PageNumber, PageSize);
         return Page();
     }
+    
+    public async Task<ActionResult> OnPost()
+    {
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        
+        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        var cheep = new Cheep
+        {
+            AuthorId = author.AuthorId,
+            Text = Text,
+            TimeStamp = DateTime.Now,
+            Author = author
+        };
+        
+        await _cheepRepository.SaveCheep(cheep, author);
+        
+        return RedirectToPage();
+    }
 }
+

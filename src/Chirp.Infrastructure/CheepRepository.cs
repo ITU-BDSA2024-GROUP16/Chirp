@@ -11,18 +11,29 @@ namespace Chirp.Infrastructure
         Task<Author> FindAuthorWithName(string userName);
         Task<Author> FindAuthorWithEmail(string email);
         Task CreateAuthor(string name, string email);
+        Task SaveCheep(Cheep cheep, Author author);
+        Task UpdateAuthorAsync(Author author);
+        Task<List<Cheep>> GetCheepsByAuthor(int authorId);
     }
 
     public class CheepRepository : ICheepRepository
     {
         private readonly DBFacade _dbFacade;
-        private readonly CheepDBContext _dbContext;
+        public readonly CheepDBContext _dbContext;
 
         public CheepRepository(DBFacade dbFacade, CheepDBContext dbContext)
         {
             _dbFacade = dbFacade;
             _dbContext = dbContext;
             SQLitePCL.Batteries.Init();
+        }
+        
+        public async Task<List<Cheep>> GetCheepsByAuthor(int authorId)
+        {
+            return await _dbContext.Cheeps
+                .Where(c => c.AuthorId == authorId)
+                .OrderByDescending(c => c.TimeStamp)
+                .ToListAsync();
         }
 
         public async Task<List<CheepDTO>> GetCheeps(int pageNumber, int pageSize)
@@ -49,7 +60,8 @@ namespace Chirp.Infrastructure
             var result = await query.ToListAsync();
     
             return result
-                .Where(cheep => cheep.Author != null && cheep.Author.Name == userName) // Use userName for filtering
+                .Where(cheep => cheep.Author != null && cheep.Author.Name == userName)
+                .OrderByDescending(cheep => cheep.TimeStamp)// Use userName for filtering
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
@@ -79,7 +91,10 @@ namespace Chirp.Infrastructure
 
         public async Task<Author> FindAuthorWithName(string userName)
         {
-            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
+            var author = await _dbContext.Authors
+                .Include(a => a.Cheeps)
+                .FirstOrDefaultAsync(author => author.Name == userName);
+           // var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with name {userName} not found.");
@@ -123,5 +138,20 @@ namespace Chirp.Infrastructure
                 }
             }
         }
+
+        public async Task SaveCheep(Cheep cheep, Author author)
+        {
+            await _dbContext.Cheeps.AddAsync(cheep);
+            await _dbContext.SaveChangesAsync();
+
+            await _dbContext.Entry(author).Collection(a => a.Cheeps).LoadAsync();
+        }
+        
+        public async Task UpdateAuthorAsync(Author author)
+        {
+            _dbContext.Authors.Update(author);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Chat" uuid="41c911cc-8ebb-4222-bb48-a1b5675e4eb8">
+    <data-source source="LOCAL" name="Chat" uuid="f890efcc-a064-4dd9-b353-dc63310ce118">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\jacqu\ITU\3. sem\BDSA\Chirp3\Chirp\src\Chirp.Infrastructure\Chat.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\jacqu\ITU\3. sem\BDSA\Chirp3\Chirp\src\Chirp.Web\Chat.db</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
       </jdbc-additional-properties>
@@ -19,11 +19,11 @@
         </library>
       </libraries>
     </data-source>
-    <data-source source="LOCAL" name="Chat [2]" uuid="c7788a25-6b3f-402f-ab88-b27b11b84c3c">
+    <data-source source="LOCAL" name="Chat [2]" uuid="8430e33d-5477-45ef-b1d3-c6d27428bb9d">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\jacqu\ITU\3. sem\BDSA\Chirp3\Chirp\src\Chirp.Web\Chat.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/src/Chirp.Web/Chat.db</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
       </jdbc-additional-properties>

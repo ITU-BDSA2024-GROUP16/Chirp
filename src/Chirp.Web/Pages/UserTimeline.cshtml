@@ -4,10 +4,22 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var userName = User.FindFirst("Name")?.Value ?? "User";
+    //var userName = User.FindFirst("Name")?.Value ?? "User";
+    var userName = HttpContext.GetRouteValue("author");
 }
 
 <div>
+    @if (User.FindFirst("Name")?.Value == userName.ToString())
+    {
+    <div class="cheepbox">
+        <h3>What's on your mind @userName?</h3>
+        <form method="post">
+            <input style="float: left" type="text" asp-for="Text">
+            <input type="submit" value="Share">
+        </form>
+    </div> 
+    }
+
     <h2> @userName's Timeline </h2>
 
     @if (Model.Cheeps.Any())

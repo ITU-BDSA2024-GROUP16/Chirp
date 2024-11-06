@@ -2,6 +2,7 @@ using Chirp;
 using Chirp.Core;
 using Chirp.Infrastructure;
 using Chirp.Web;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,20 @@ builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 builder.Services.AddDefaultIdentity<Author>(options =>
     options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();
 
+
+builder.Services.AddAuthentication(options =>
+    {
+        //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        //options.DefaultChallengeScheme = "GitHub";
+    })
+    //.AddCookie()
+    .AddGitHub(o =>
+    {
+        o.ClientId = builder.Configuration["authentication:github:clientId"];
+        o.ClientSecret = builder.Configuration["authentication:github:clientSecret"];
+        o.CallbackPath = "/signin-github";
+    });
 // Add services to the container.
 builder.Services.AddRazorPages();
 var app = builder.Build();
