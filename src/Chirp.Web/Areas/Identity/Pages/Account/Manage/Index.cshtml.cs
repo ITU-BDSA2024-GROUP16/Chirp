@@ -90,16 +90,44 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             await LoadAsync(user);
             return Page();
         }
-
-        var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-        if (Input.PhoneNumber != phoneNumber)
+        
+        if (user.PhoneNumber != Input.PhoneNumber)
         {
-            var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-            if (!setPhoneResult.Succeeded)
+            var existingClaim = (await _userManager.GetClaimsAsync(user)).FirstOrDefault(c => c.Type == "PhoneNumber");
+            if (existingClaim != null)
             {
-                StatusMessage = "Unexpected error when trying to set phone number.";
+                //Removes the claim if the claim exists
+                var removeResult = await _userManager.RemoveClaimAsync(user, existingClaim);
+                if (!removeResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to remove existing phone number claim.";
+                    return RedirectToPage();
+                }
+            }
+            
+            //Creates a new claim with the new username.
+            var newClaim = new Claim("PhoneNumber", Input.PhoneNumber);
+            // Adds the claim to database
+            var addClaimResult = await _userManager.AddClaimAsync(user, newClaim);
+            if (!addClaimResult.Succeeded)
+            {
+                StatusMessage = "Unexpected error when trying to add new phone number claim.";
                 return RedirectToPage();
             }
+            
+            //This updates the users (authors) name, which also makes sure that the cheeps have the NewUserName
+            user.PhoneNumber = Input.PhoneNumber; 
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                foreach (var error in updateResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                StatusMessage = "Unexpected error when trying to update phone number.";
+                return RedirectToPage();
+            }
+            
         }
         
         if (user.Name != Input.NewUserName)
