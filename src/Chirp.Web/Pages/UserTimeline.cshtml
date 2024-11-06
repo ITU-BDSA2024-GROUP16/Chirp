@@ -11,11 +11,13 @@
 <div>
     @if (User.FindFirst("Name")?.Value == userName.ToString())
     {
-        <h1>Whats on your mind @userName ?</h1>
+    <div class="cheepbox">
+        <h3>What's on your mind @userName?</h3>
         <form method="post">
-            <input type="text" name="Message" value="">
+            <input style="float: left" type="text" asp-for="Text">
             <input type="submit" value="Share">
-        </form>  
+        </form>
+    </div> 
     }
 
     <h2> @userName's Timeline </h2>

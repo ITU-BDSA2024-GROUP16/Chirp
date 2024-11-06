@@ -6,18 +6,20 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
     var userName = User.FindFirst("Name")?.Value ?? "User";
-@inject SignInManager<Author> SignInManager
+    @inject SignInManager<Author> SignInManager
 }
 
 <div>
     <h2> Public Timeline </h2>
     @if (SignInManager.IsSignedIn(User))
     {
-        <h1>Whats on your mind @userName ?</h1>
-        <form method="post">
-            <input type="text" name="Message" value="">
-            <input type="submit" value="Share">
-        </form>
+        <div class="cheepbox">
+            <h3>What's on your mind @userName?</h3>
+            <form method="post">
+                <input style="float: left" type="text" asp-for="Text">
+                <input type="submit" value="Share">
+            </form>
+        </div>
     }
 
     @if (Model.Cheeps.Any())
