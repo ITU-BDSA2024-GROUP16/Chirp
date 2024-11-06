@@ -24,7 +24,8 @@ public class UserTimelineModel : PageModel
         var pageQuery = Request.Query["page"];
         PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
-        var authorName = User.FindFirst("Name")?.Value;
+        //var authorName = User.FindFirst("Name")?.Value;
+        var authorName = HttpContext.GetRouteValue("author").ToString();
         
         Author author = await _cheepRepository.FindAuthorWithName(authorName);
         List<CheepDTO> cheeps = author.Cheeps.Select(cheep => new CheepDTO

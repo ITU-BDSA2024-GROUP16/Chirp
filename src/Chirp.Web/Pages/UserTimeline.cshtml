@@ -4,7 +4,8 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var userName = User.FindFirst("Name")?.Value ?? "User";
+    //var userName = User.FindFirst("Name")?.Value ?? "User";
+    var userName = HttpContext.GetRouteValue("author");
 }
 
 <div>
