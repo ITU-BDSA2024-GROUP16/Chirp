@@ -11,6 +11,8 @@ public class UserTimelineModel : PageModel
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
+    [BindProperty]
+    public string Text { get; set; }
 
 
     public UserTimelineModel(ICheepRepository cheepRepository)
@@ -28,12 +30,8 @@ public class UserTimelineModel : PageModel
         return Page();
     }
     
-    public async Task<ActionResult> OnPost(string Message)
+    public async Task<ActionResult> OnPost()
     {
-        // author may not be needed, when you can find name with claim.
-        //Author authorPlaceHolder = await _cheepRepository.FindAuthorWithName(author);
-        
-        
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
         
         Author author = await _cheepRepository.FindAuthorWithEmail(authorName);
@@ -41,7 +39,7 @@ public class UserTimelineModel : PageModel
         var cheep = new Cheep
         {
             AuthorId = author.AuthorId,
-            Text = Message,
+            Text = Text,
             TimeStamp = DateTime.Now,
             Author = author
         };

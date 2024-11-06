@@ -12,6 +12,8 @@ public class PublicModel : PageModel
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
+    [BindProperty]
+    public string Text { get; set; }
 
     public PublicModel(ICheepRepository cheepRepository)
     {
@@ -28,23 +30,20 @@ public class PublicModel : PageModel
         return Page();
     }
     
-    public async Task<ActionResult> OnPost(string message)
+    public async Task<ActionResult> OnPost()
     {
-        // 
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-
-
+        
         var author = await _cheepRepository.FindAuthorWithEmail(authorName);
         var cheep = new Cheep
         {
             AuthorId = author.AuthorId,
-            Text = message,
+            Text = Text,
             TimeStamp = DateTime.Now,
             Author = author
         };
 
         await _cheepRepository.SaveCheep(cheep);
-        
         author.Cheeps.Add(cheep);
         
         return RedirectToPage();
