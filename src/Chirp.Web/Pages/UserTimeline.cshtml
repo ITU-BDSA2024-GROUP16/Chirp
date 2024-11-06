@@ -9,12 +9,15 @@
 }
 
 <div>
-    <h1>Whats on your mind @userName ?</h1>
-    <form method="post">
-        <input type="text" name="Message" value="">
-        <input type="submit" value="Share">
-    </form>
-    
+    @if (User.FindFirst("Name")?.Value == userName.ToString())
+    {
+        <h1>Whats on your mind @userName ?</h1>
+        <form method="post">
+            <input type="text" name="Message" value="">
+            <input type="submit" value="Share">
+        </form>  
+    }
+
     <h2> @userName's Timeline </h2>
 
     @if (Model.Cheeps.Any())
