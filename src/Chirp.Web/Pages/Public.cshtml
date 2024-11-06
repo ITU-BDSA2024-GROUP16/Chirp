@@ -1,20 +1,24 @@
 ﻿@page "/"
+@using Chirp.Core
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
     var userName = User.FindFirst("Name")?.Value ?? "User";
-
+@inject SignInManager<Author> SignInManager
 }
 
 <div>
     <h2> Public Timeline </h2>
-
-    <h1>Whats on your mind @userName ?</h1>
-    <form method="post">
-        <input type="text" name="Message" value="">
-        <input type="submit" value="Share">
-    </form>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <h1>Whats on your mind @userName ?</h1>
+        <form method="post">
+            <input type="text" name="Message" value="">
+            <input type="submit" value="Share">
+        </form>
+    }
 
     @if (Model.Cheeps.Any())
     {
