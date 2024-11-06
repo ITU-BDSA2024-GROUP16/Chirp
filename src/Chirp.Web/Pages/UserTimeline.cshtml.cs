@@ -18,13 +18,25 @@ public class UserTimelineModel : PageModel
         _cheepRepository = cheepRepository;
     }
 
-    public async Task<ActionResult> OnGet(string author)
+    public async Task<ActionResult> OnGet()
     {
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
+        
+        var authorName = User.FindFirst("Name")?.Value;
+        
+        Author author = await _cheepRepository.FindAuthorWithName(authorName);
+        List<CheepDTO> cheeps = author.Cheeps.Select(cheep => new CheepDTO
+        {
+            Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
+            Text = cheep.Text,
+            TimeStamp = cheep.TimeStamp.ToString("g")
+        }).ToList();
 
-        Cheeps = await _cheepRepository.ReadCheeps(author, PageNumber, PageSize);
+        Cheeps = cheeps;
+
+        //Cheeps = await _cheepRepository.ReadCheeps(author, PageNumber, PageSize);
         return Page();
     }
     
@@ -34,9 +46,9 @@ public class UserTimelineModel : PageModel
         //Author authorPlaceHolder = await _cheepRepository.FindAuthorWithName(author);
         
         
-        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var authorName = User.FindFirst("Name")?.Value;
         
-        Author author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        Author author = await _cheepRepository.FindAuthorWithName(authorName);
         
         var cheep = new Cheep
         {
@@ -46,8 +58,14 @@ public class UserTimelineModel : PageModel
             Author = author
         };
         
-        await _cheepRepository.SaveCheep(cheep);
+        await _cheepRepository.SaveCheep(cheep, author);
         author.Cheeps.Add(cheep);
+        //author.Cheeps = await _cheepRepository.GetCheepsByAuthor(author.AuthorId);
+        Console.WriteLine("FØRLOOPET");
+        foreach (Cheep authorCheep in author.Cheeps)
+        {
+            Console.WriteLine(authorCheep.Text);
+        }
         
         return RedirectToPage();
     }

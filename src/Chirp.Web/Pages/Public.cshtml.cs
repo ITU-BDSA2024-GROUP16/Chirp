@@ -43,7 +43,7 @@ public class PublicModel : PageModel
             Author = author
         };
 
-        await _cheepRepository.SaveCheep(cheep);
+        await _cheepRepository.SaveCheep(cheep, author);
         
         author.Cheeps.Add(cheep);
         
