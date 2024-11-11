@@ -32,7 +32,15 @@ namespace Chirp.Infrastructure.Test
         public async Task CanAccessHomePage()
         {
             // Act
-            var response = await _client.GetAsync("/");
+            HttpResponseMessage response = await _client.GetAsync("/");
+
+            // Handle and output error response details if not successful
+            if (!response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                _output.WriteLine($"Failed to access home page. Status code: {response.StatusCode}, Response content: {content}");
+            }
+
             // Assert
             response.EnsureSuccessStatusCode();
         }
