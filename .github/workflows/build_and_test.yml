@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
-      - name: Test
+      - name: Tests
         run: |
           export Authentication_Github_ClientId="${{ secrets.GITHUBCLIENTID }}"
           export Authentication_Github_ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
