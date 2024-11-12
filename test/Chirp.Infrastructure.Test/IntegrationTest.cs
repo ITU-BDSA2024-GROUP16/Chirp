@@ -68,14 +68,14 @@ namespace Chirp.Infrastructure.Test
             
             var testAuthor1 = new Author
             {
-                Name = "Lars McKoy8",
-                Email = "McManden8@gmail.com",
+                Name = "Lars McKoy9",
+                Email = "McManden9@gmail.com",
                 Cheeps = new List<Cheep>()
             };
 
             var TestCheep = new Cheep()
             {
-                CheepId = 1000008,
+                CheepId = 1000009,
                 Text = "Lorem ipsum dolor sit amet",
                 TimeStamp = DateTime.Now,
                 Author = testAuthor1,
