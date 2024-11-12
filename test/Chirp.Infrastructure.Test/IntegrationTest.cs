@@ -32,7 +32,15 @@ namespace Chirp.Infrastructure.Test
         public async Task CanAccessHomePage()
         {
             // Act
-            var response = await _client.GetAsync("/");
+            HttpResponseMessage response = await _client.GetAsync("/");
+
+            // Handle and output error response details if not successful
+            if (!response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                _output.WriteLine($"Failed to access home page. Status code: {response.StatusCode}, Response content: {content}");
+            }
+
             // Assert
             response.EnsureSuccessStatusCode();
         }
@@ -60,14 +68,14 @@ namespace Chirp.Infrastructure.Test
             
             var testAuthor1 = new Author
             {
-                Name = "Lars McKoy",
-                Email = "McManden@gmail.com",
+                Name = "Lars McKoy11",
+                Email = "McManden11@gmail.com",
                 Cheeps = new List<Cheep>()
             };
 
             var TestCheep = new Cheep()
             {
-                CheepId = 100000,
+                CheepId = 10000010,
                 Text = "Lorem ipsum dolor sit amet",
                 TimeStamp = DateTime.Now,
                 Author = testAuthor1,

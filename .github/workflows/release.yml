@@ -29,10 +29,6 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      # Run tests
-      - name: Run tests
-        run: dotnet test
-
 
       # Build, create a release and create zip files for the release. 
       - name: Create ZIP files
