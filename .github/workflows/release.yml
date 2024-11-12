@@ -30,8 +30,11 @@ jobs:
         run: dotnet restore
 
       # Run tests
-      - name: Run tests
-        run: dotnet test
+      - name: Test
+        run: |
+          export GitHub__ClientId="${{ secrets.GITHUBCLIENTID }}"
+          export GitHub__ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
+          dotnet test --no-build --verbosity normal
 
 
       # Build, create a release and create zip files for the release. 
