@@ -6,7 +6,7 @@ permissions:
 
 on:
   push:
-    branches: main
+    branches: test-fixing
     tags:
       - "v*.*.*"
   pull_request:
