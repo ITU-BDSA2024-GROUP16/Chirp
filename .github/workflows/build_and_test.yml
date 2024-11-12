@@ -28,6 +28,6 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: |
-          export authentication_github_clientId="${{ secrets.GITHUBCLIENTID }}"
-          export authentication_github_clientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
+          export Authentication_Github_ClientId="${{ secrets.GITHUBCLIENTID }}"
+          export Authentication_Github_ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
           dotnet test --no-build --verbosity normal
