@@ -1,3 +1,7 @@
+using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
+
 namespace Chirp.Web.Playwright.Test
 {
     using Microsoft.Playwright;
@@ -5,183 +9,291 @@ namespace Chirp.Web.Playwright.Test
     using System.Text.RegularExpressions;
     
     [TestFixture]
-    class UITest : PageTest
+    class UITest : PageTest, IClassFixture<CustomTestWebApplicationFactory>, IDisposable
     {
-        private string _uniqueUsername = $"Johan{Guid.NewGuid()}";
-        private string _uniqueEmail = $"{Guid.NewGuid()}@itu.dk";
+        private IBrowserContext? _context;
+        private IBrowser? _browser;
+        private CustomTestWebApplicationFactory _factory;
+        private string _serverAddress;
+        private HttpClient _client;
+
+        [SetUp]
+        public async Task SetUp()
+        {
+            _factory = new CustomTestWebApplicationFactory();
+            _serverAddress = _factory.ServerAddress;
+            _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = true,
+                HandleCookies = true,
+            });
         
+            await InitializeBrowserAndCreateBrowserContextAsync();
+        }
+        
+        private async Task InitializeBrowserAndCreateBrowserContextAsync()
+        {
+            var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+            _browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = true, //Set to false if you want to see the browser
+            });
+            
+            _context = await _browser.NewContextAsync(new BrowserNewContextOptions());
+        }
+
         [Test]
         public async Task startupPage()
         {
-            await Page.GotoAsync("http://localhost:5273/");
-            await Page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Register");
-            await Expect(Page).ToHaveURLAsync("http://localhost:5273/Identity/Account/Register");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
+            
+            Console.WriteLine(_serverAddress);
+            await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
+            await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/Register"));
         }
         
         [Test]
         public async Task UsersCanRegister()
         {
-            await Page.GotoAsync("http://localhost:5273/");
-            await Page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Register");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
+            
+            await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
+            await _page.WaitForURLAsync(new Regex("/Identity/Account/Register"));
 
             //Username
-            var usernameInput = Page.GetByLabel("Username");
+            var usernameInput = _page.GetByLabel("Username");
             await usernameInput.ClickAsync();
             await Expect(usernameInput).ToBeFocusedAsync();
-            await usernameInput.FillAsync("Johan2");
-            await Expect(usernameInput).ToHaveValueAsync("Johan2");
-            await Page.GetByLabel("Username").PressAsync("Tab");
+            await usernameInput.FillAsync("Cecilie");
+            await Expect(usernameInput).ToHaveValueAsync("Cecilie");
+            await _page.GetByLabel("Username").PressAsync("Tab");
             
             //Email
-            var emailInput = Page.GetByPlaceholder("name@example.com");
-            await emailInput.FillAsync("jing2@itu.dk");
-            await Expect(emailInput).ToHaveValueAsync("jing2@itu.dk");
+            var emailInput = _page.GetByPlaceholder("name@example.com");
+            await emailInput.FillAsync("ceel@itu.dk");
+            await Expect(emailInput).ToHaveValueAsync("ceel@itu.dk");
             
             //password
-            var passwordInput = Page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" });
+            var passwordInput = _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" });
             await passwordInput.ClickAsync();
             await passwordInput.FillAsync("Johan1234!");
             await Expect(passwordInput).ToHaveValueAsync("Johan1234!");
             await passwordInput.PressAsync("Tab");
             await Expect(passwordInput).Not.ToBeFocusedAsync();
 
-            var confirmPassword = Page.GetByLabel("Confirm Password");
+            var confirmPassword = _page.GetByLabel("Confirm Password");
             await confirmPassword.FillAsync("Johan1234!");
             await Expect(confirmPassword).ToHaveValueAsync("Johan1234!");
             
             //click on register button
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
-            await Expect(Page).ToHaveURLAsync(new Regex("http://localhost:5273/Identity/Account/RegisterConfirmation"));
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
+            await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
             
             //click on confirm account link
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync();
-            await Expect(Page).ToHaveURLAsync(new Regex("http://localhost:5273/Identity/Account/ConfirmEmail"));
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync();
+            await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         }
 
         [Test]
         public async Task UserCanLogin()
         {
-            await Page.GotoAsync("http://localhost:5273/");
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Login");
-            await Expect(Page).ToHaveURLAsync(new Regex("http://localhost:5273/Identity/Account/Login"));
+            //go to base server address
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
+            
+            //first register user, because a new in memory database is created for each test. 
+            await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
+            await _page.WaitForURLAsync(new Regex("/Identity/Account/Register"));
+            await _page.GetByLabel("Username").ClickAsync();
+            await _page.GetByLabel("Username").FillAsync("Cecilie");
+            await _page.GetByLabel("Username").PressAsync("Tab");
+            await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk");
+            await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).FillAsync("Cecilie1234!");
+            await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).PressAsync("Tab");
+            await _page.GetByLabel("Confirm Password").FillAsync("Cecilie1234!");
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
+            await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync();
+            await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
+            
+            //next login to account that has just been made by user
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync();
+            await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/Login"));
             
             //fill in email
-            var emailField = Page.GetByPlaceholder("name@example.com");
+            var emailField = _page.GetByPlaceholder("name@example.com");
             await emailField.ClickAsync();
-            await emailField.FillAsync(_uniqueEmail);
-            await Expect(emailField).ToHaveValueAsync(_uniqueEmail);
+            await emailField.FillAsync("ceel@itu.dk");
+            await Expect(emailField).ToHaveValueAsync("ceel@itu.dk");
             
             //fill in password
-            var passwordField = Page.GetByPlaceholder("password");
+            var passwordField = _page.GetByPlaceholder("password");
             await passwordField.ClickAsync();
-            await passwordField.FillAsync("Johan1234!");
-            await Expect(passwordField).ToHaveValueAsync("Johan1234!");
+            await passwordField.FillAsync("Cecilie1234!");
+            await Expect(passwordField).ToHaveValueAsync("Cecilie1234!");
             
             //log in button
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
-            await Expect(Page).ToHaveURLAsync(new Regex("http://localhost:5273/"));
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
+            await Expect(_page).ToHaveURLAsync(_serverAddress);
         }
 
         [Test]
         public async Task UserCanShareCheep()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
+            
+            //need to register and login before because test user is not saved. A new database is created for each test. 
 
-            var cheepTextField = Page.Locator("input[name=\"Text\"]");
+            var cheepTextField = _page.Locator("input[name=\"Text\"]");
             await cheepTextField.ClickAsync();
             await Expect(cheepTextField).ToBeFocusedAsync();
             
             await cheepTextField.FillAsync("Hello, my group is the best group!");
             await Expect(cheepTextField).ToHaveValueAsync("Hello, my group is the best group!");
             
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Share" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Share" }).ClickAsync();
             
-            await Page.WaitForURLAsync("http://localhost:5273/");
+            //check if there is a cheep with that text on the page after share button has been clicked. 
+            var cheep = _page.GetByText("Hello, my group is the best group!");
+            await Expect(cheep).ToHaveValueAsync("Hello, my group is the best group!");
             
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
         }
         
         [Test]
         public async Task UserCanGoToMyTimelineByClickingOnName()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
             
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "Johan" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Johan");
+            //need to register and login before because test user is not saved. A new database is created for each test. 
+            
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Johan" }).ClickAsync();
+            //await _page.WaitForURLAsync(_serverAddress + $"/Johan");
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Johan"));
         }
         
+        [Test]
         public async Task UserCanGoToMyTimelineByClickingOnMyTimeline()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
             
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "my timeline" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Johan");
+            //need to register and login before because test user is not saved. A new database is created for each test. 
+            
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "my timeline" }).ClickAsync();
+            //await _page.WaitForURLAsync(_serverAddress + $"/Johan");
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Johan"));
         }
         
+        [Test]
         public async Task UserCanGoToPublicTimeline()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
             
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/");
+            //need to register and login before because test user is not saved. A new database is created for each test. 
+            
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
+            //await _page.WaitForURLAsync(_serverAddress);
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
         }
         
+        [Test]
         public async Task UserCanChangeAccountInformation()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
+            
+            //need to register and login before because test user is not saved. A new database is created for each test. 
             
             //go to account
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
+            //await _page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Identity/Account/Manage"));
             
             //change username 
-            await Page.GetByPlaceholder("Username").ClickAsync();
-            await Page.GetByPlaceholder("Username").FillAsync("JohanIngeholm");
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Save" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
+            var usernameField = _page.Locator("Username"); 
+            await usernameField.ClickAsync();
+            await usernameField.FillAsync("JohanIngeholm");
+            await Expect(usernameField).ToHaveValueAsync("JohanIngeholm");
             
             //enter phonenumber
-            await Page.GetByPlaceholder("Please enter your phone number.").ClickAsync();
-            await Page.GetByPlaceholder("Please enter your phone number.").FillAsync("31690155");
+            var phonenumberField = _page.Locator("PhoneNumber");
+            await phonenumberField.ClickAsync();
+            await phonenumberField.FillAsync("31690155");
+            await Expect(phonenumberField).ToHaveValueAsync("31690155");
             
             //save changes
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Save" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
-            await Page.GetByText("Your profile has been updated").ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Save" }).ClickAsync();
+            //await _page.WaitForURLAsync(new Regex(_serverAddress + $"/Identity/Account/Manage"));
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Identity/Account/Manage"));
+            await _page.GetByText("Your profile has been updated").ClickAsync();
+            
+            //text with changes has been saved is visible on screen to illustrate save button has been pressed.
+            var textSavings = _page.GetByText("Your profile has been updated");
+            await textSavings.ClickAsync();
+            await Expect(textSavings).ToBeVisibleAsync();
         }
         
+        [Test]
         public async Task UserCanChangeEmail()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
+            
+            //need to register and login before because test user is not saved. A new database is created for each test. 
             
             //go to account
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Identity/Account/Manage"));
             
             //go to email in account
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "Email" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage/Email");
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "Email" }).ClickAsync();
+            //await _page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage/Email");
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Identity/Account/Manage/Email"));
             
             //enter new email
-            await Page.GetByPlaceholder("Please enter new email").ClickAsync();
-            await Page.GetByPlaceholder("Please enter new email").FillAsync("jing1@itu.dk");
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Change email" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage/Email");
+            var emailField = _page.GetByPlaceholder("Please enter new email");
+            await emailField.ClickAsync();
+            await emailField.FillAsync("jing1@itu.dk");
+            await Expect(emailField).ToHaveValueAsync("jing1@itu.dk");
             
+            //change email button
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Change email" }).ClickAsync();
+            //await _page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage/Email");
+            //maybe change so a text is shown when changing email,
+            //or check if its possible to test with expect that old email is being changed in field above. 
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Identity/Account/Manage/Email"));
         }
 
+        [Test]
         public async Task UserCanLogOut()
         {
-            await Page.GotoAsync("http://localhost:5273/");
+            var _page = await _context!.NewPageAsync();
+            await _page.GotoAsync(_serverAddress);
             
-            await Page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/");
+            //need to register and login before because test user is not saved. A new database is created for each test. 
+
+            await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
+            //await _page.WaitForURLAsync(_serverAddress);
+            await Expect(_page).ToHaveURLAsync(_serverAddress);
             
             //user can log out
-            await Page.GetByRole(AriaRole.Button, new() { NameString = "Logout" }).ClickAsync();
-            await Page.WaitForURLAsync("http://localhost:5273/Identity/Account/Logout");
+            await _page.GetByRole(AriaRole.Button, new() { NameString = "Logout" }).ClickAsync();
+            //await _page.WaitForURLAsync("http://localhost:5273/Identity/Account/Logout");
+            await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"/Identity/Account/Logout"));
+        }
+        
+        //dispose browser and context after each test
+        public void Dispose()
+        {
+            _context?.DisposeAsync().GetAwaiter().GetResult();
+            _browser?.DisposeAsync().GetAwaiter().GetResult();
         }
         
         /*
