@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Chirp.Core;
 using Chirp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ public class UserTimelineModel : PageModel
     private const int PageSize = 32;
     public int PageNumber { get; set; }
     [BindProperty]
+    [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
     public string Text { get; set; }
 
 
