@@ -88,7 +88,7 @@ namespace Chirp.Web.Playwright.Test
             _context = await _browser.NewContextAsync(new BrowserNewContextOptions());
         }
         
-        [Test, Category("SkipSetUp")]
+        [Fact, Category("SkipSetUp")]
         public async Task UsersCanRegister()
         {
             var _page = await _context!.NewPageAsync();
@@ -131,7 +131,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         }
 
-        [Test, Category("SkipSetUp")]
+        [Fact, Category("SkipSetUp")]
         public async Task UserCanRegisterAndLogin()
         {
             //go to base server address
@@ -181,7 +181,7 @@ namespace Chirp.Web.Playwright.Test
             await Task.Delay(2000);
         }
 
-        [Test]
+        [Fact]
         public async Task UserCanShareCheep()
         {
             var _page = await _context!.NewPageAsync();
@@ -204,7 +204,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
         }
         
-        [Test]
+        [Fact]
         public async Task UserCanGoToMyTimelineByClickingOnMyTimeline()
         {
             var _page = await _context!.NewPageAsync();
@@ -214,7 +214,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
         }
         
-        [Test]
+        [Fact]
         public async Task UserCanGoToPublicTimeline()
         {
             var _page = await _context!.NewPageAsync();
@@ -224,7 +224,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
         }
         
-        [Test]
+        [Fact]
         public async Task UserCanChangeAccountInformation()
         {
             var _page = await _context!.NewPageAsync();
@@ -257,7 +257,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page.Locator("text=Your profile has been updated")).ToBeVisibleAsync();
         }
         
-        [Test]
+        [Fact]
         public async Task UserCanChangeEmail()
         {
             var _page = await _context!.NewPageAsync();
@@ -297,7 +297,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
         }
 
-        [Test]
+        [Fact]
         public async Task UserCanLogOut()
         {
             var _page = await _context!.NewPageAsync();
