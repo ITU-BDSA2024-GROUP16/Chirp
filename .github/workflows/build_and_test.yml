@@ -29,8 +29,8 @@ jobs:
       # Install Playwright and dependencies
       - name: Install Playwright
         run: |
-          pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
-          pwsh bin/Debug/net8.0/playwright.ps1 install       
+          pwsh test/Chirp.Web.Playwright.Test/bin/Debug/net8.0/playwright.ps1 install --with-deps
+          pwsh test/Chirp.Web.Playwright.Test/bin/Debug/net8.0/playwright.ps1 install       
         
       - name: Build
         run: dotnet build --no-restore
