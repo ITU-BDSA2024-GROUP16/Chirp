@@ -41,7 +41,7 @@ namespace Chirp.Web.Playwright.Test
         }
 
         
-        public async Task SetUpRegisterAndLogin()
+        private async Task SetUpRegisterAndLogin()
         {
             var _page = await _context!.NewPageAsync();
             await _page.GotoAsync(_serverAddress);
@@ -88,7 +88,7 @@ namespace Chirp.Web.Playwright.Test
             _context = await _browser.NewContextAsync(new BrowserNewContextOptions());
         }
         
-        [Fact, Category("SkipSetUp")]
+        [Test, Category("SkipSetUp")]
         public async Task UsersCanRegister()
         {
             var _page = await _context!.NewPageAsync();
@@ -131,7 +131,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         }
 
-        [Fact, Category("SkipSetUp")]
+        [Test, Category("SkipSetUp")]
         public async Task UserCanRegisterAndLogin()
         {
             //go to base server address
@@ -181,7 +181,7 @@ namespace Chirp.Web.Playwright.Test
             await Task.Delay(2000);
         }
 
-        [Fact]
+        [Test]
         public async Task UserCanShareCheep()
         {
             var _page = await _context!.NewPageAsync();
@@ -204,7 +204,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
         }
         
-        [Fact]
+        [Test]
         public async Task UserCanGoToMyTimelineByClickingOnMyTimeline()
         {
             var _page = await _context!.NewPageAsync();
@@ -214,7 +214,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
         }
         
-        [Fact]
+        [Test]
         public async Task UserCanGoToPublicTimeline()
         {
             var _page = await _context!.NewPageAsync();
@@ -224,7 +224,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
         }
         
-        [Fact]
+        [Test]
         public async Task UserCanChangeAccountInformation()
         {
             var _page = await _context!.NewPageAsync();
@@ -257,7 +257,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page.Locator("text=Your profile has been updated")).ToBeVisibleAsync();
         }
         
-        [Fact]
+        [Test]
         public async Task UserCanChangeEmail()
         {
             var _page = await _context!.NewPageAsync();
@@ -297,7 +297,7 @@ namespace Chirp.Web.Playwright.Test
             await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
         }
 
-        [Fact]
+        [Test]
         public async Task UserCanLogOut()
         {
             var _page = await _context!.NewPageAsync();
@@ -326,73 +326,5 @@ namespace Chirp.Web.Playwright.Test
             
         
         }
-        
-        
-        /*
-        public async Task Main()
-        {
-
-            await Page.GotoAsync("http://localhost:5273/");
-            
-            //share cheep
-            await page.Locator("input[name=\"Text\"]").ClickAsync();
-            await page.Locator("input[name=\"Text\"]").FillAsync("Hello, my group is the best group!");
-            await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/");
-            
-            //go to my timeline by clicking name
-            await page.GetByRole(AriaRole.Link, new() { Name = "Johan" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Johan");
-            
-            //go to public timeline
-            await page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/");
-            
-            //go to my timeline by clicking my timeline
-            await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Johan");
-            
-            //go to account an enter phonenumber
-            await page.GetByRole(AriaRole.Link, new() { Name = "Account" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
-            await page.GetByPlaceholder("Please enter your phone number.").ClickAsync();
-            await page.GetByPlaceholder("Please enter your phone number.").FillAsync("31690155");
-            await page.GetByRole(AriaRole.Button, new() { Name = "Save" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
-            await page.GetByText("Your profile has been updated").ClickAsync();
-            
-            //update username 
-            await page.GetByPlaceholder("Username").ClickAsync();
-            await page.GetByPlaceholder("Username").FillAsync("JohanIngeholm");
-            await page.GetByRole(AriaRole.Button, new() { Name = "Save" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
-            
-            //update email
-            await page.GetByRole(AriaRole.Link, new() { Name = "Email" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage/Email");
-            await page.GetByPlaceholder("Please enter new email").ClickAsync();
-            await page.GetByPlaceholder("Please enter new email").FillAsync("jing1@itu.dk");
-            await page.GetByRole(AriaRole.Button, new() { Name = "Change email" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage/Email");
-            
-            //click on profile 
-            await page.GetByRole(AriaRole.Link, new() { Name = "Profile" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
-            
-            //see my timeline with new username
-            await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/JohanIngeholm");
-            await page.GetByRole(AriaRole.Link, new() { Name = "JohanIngeholm" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/JohanIngeholm");
-            
-            //go to public timeline
-            await page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/");
-            
-            //user can log out
-            await page.GetByRole(AriaRole.Button, new() { Name = "Logout" }).ClickAsync();
-            await page.WaitForURLAsync("http://localhost:5273/Identity/Account/Logout");
-        }
-        */
     }
 }
