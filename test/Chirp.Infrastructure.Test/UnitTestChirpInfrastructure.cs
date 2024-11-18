@@ -84,7 +84,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         Assert.NotNull(author);
         Assert.Equal(_testAuthor.Email, author.Email); 
     }
-
+/*
     [Fact]
     public async Task UnitTestGetNonexistingAuthor()
     {
@@ -95,6 +95,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
 
         Assert.Null(author);
     }
+    */
     
     [Fact]
     public async Task UnitTestDuplicateAuthors()

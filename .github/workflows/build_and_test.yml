@@ -6,7 +6,7 @@ permissions:
 
 on:
   push:
-    branches: main
+    branches: main  
     tags:
       - "v*.*.*"
   pull_request:
@@ -26,5 +26,8 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
-      - name: Test
-        run: dotnet test --no-build --verbosity normal
+      - name: Tests
+        run: |
+          export Authentication_Github_ClientId="${{ secrets.GITHUBCLIENTID }}"
+          export Authentication_Github_ClientSecret="${{ secrets.GITHUBCLIENTSECRET }}"
+          dotnet test --no-build --verbosity normal
