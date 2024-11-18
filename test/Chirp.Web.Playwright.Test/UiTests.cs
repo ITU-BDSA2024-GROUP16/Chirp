@@ -47,10 +47,10 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GetByLabel("Username").FillAsync("Cecilie"); 
         await _page.GetByLabel("Username").PressAsync("Tab"); 
         await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk");
-        await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).ClickAsync(); 
-        await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).FillAsync("Cecilie1234!"); 
-        await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).PressAsync("Tab"); 
-        await _page.GetByLabel("Confirm Password").FillAsync("Cecilie1234!"); 
+        await _page.Locator("input[id='Input_Password']").ClickAsync();
+        await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
+        await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
+        await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!"); 
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
         await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation")); 
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
@@ -105,14 +105,16 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(emailInput).ToHaveValueAsync("ceel@itu.dk");
         
         //password
-        var passwordInput = _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" });
+        //var passwordInput = _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" });
+        var passwordInput = _page.Locator("input[id='Input_Password']");
         await passwordInput.ClickAsync();
         await passwordInput.FillAsync("Johan1234!");
         await Expect(passwordInput).ToHaveValueAsync("Johan1234!");
         await passwordInput.PressAsync("Tab");
         await Expect(passwordInput).Not.ToBeFocusedAsync();
 
-        var confirmPassword = _page.GetByLabel("Confirm Password");
+        //var confirmPassword = _page.GetByLabel("Confirm Password");
+        var confirmPassword = _page.Locator("input[id='Input_ConfirmPassword']");
         await confirmPassword.FillAsync("Johan1234!");
         await Expect(confirmPassword).ToHaveValueAsync("Johan1234!");
         
@@ -133,21 +135,21 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GotoAsync(_serverAddress);
         
         //first register user, because a new in memory database is created for each test. 
-        await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register"));
-        await _page.GetByLabel("Username").ClickAsync();
-        await _page.GetByLabel("Username").FillAsync("Cecilie");
-        await _page.GetByLabel("Username").PressAsync("Tab");
+        await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync(); 
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register")); 
+        await _page.GetByLabel("Username").ClickAsync(); 
+        await _page.GetByLabel("Username").FillAsync("Cecilie"); 
+        await _page.GetByLabel("Username").PressAsync("Tab"); 
         await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk");
         await Task.Delay(2000);
-        await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).ClickAsync();
-        await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).FillAsync("Cecilie1234!");
-        await _page.GetByRole(AriaRole.Textbox, new() { NameString = "Password" }).PressAsync("Tab");
-        await _page.GetByLabel("Confirm Password").FillAsync("Cecilie1234!");
+        await _page.Locator("input[id='Input_Password']").ClickAsync();
+        await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
+        await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
+        await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!"); 
         await Task.Delay(2000);
-        await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation")); 
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
         await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         await Task.Delay(2000);
         
