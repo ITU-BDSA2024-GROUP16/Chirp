@@ -29,8 +29,8 @@ jobs:
       # Install Playwright and dependencies
       - name: Install Playwright
         run: |
-          npx playwright install-deps
-          npx playwright install        
+          pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+          pwsh bin/Debug/net8.0/playwright.ps1 install       
         
       - name: Build
         run: dotnet build --no-restore
