@@ -26,14 +26,20 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
         
-      # Install Playwright and dependencies
-      - name: Install Playwright
-        run: |
-          dotnet tool install --global Microsoft.Playwright.CLI
-          pwsh -Command "playwright install-deps"
-        
-      - name: Build
+      - name: Add Playwright package
+        run: dotnet add test/Chirp.Web.Playwright.Test package Microsoft.Playwright
+
+      - name: Build project
         run: dotnet build --no-restore
+
+      - name: Install Playwright CLI
+        run: dotnet tool install --global Microsoft.Playwright.CLI
+
+      - name: Install Playwright dependencies
+        run: pwsh -Command "playwright install-deps"
+
+      - name: Install Playwright browsers
+        run: pwsh -Command "playwright install"
         
       - name: Tests
         run: |
