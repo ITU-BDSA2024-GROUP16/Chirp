@@ -7,7 +7,6 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-      <UserSecretsId>acecf2c9-1608-4533-9a6f-a4dc2e82a6ee</UserSecretsId>
   </PropertyGroup>
 
     <ItemGroup>
