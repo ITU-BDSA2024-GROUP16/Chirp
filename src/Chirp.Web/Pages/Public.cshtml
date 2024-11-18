@@ -16,7 +16,7 @@
         <div class="cheepbox">
             <h3>What's on your mind @userName?</h3>
             <form method="post">
-                <input style="float: left" type="text" asp-for="Text">
+                <input id="Text" style="float: left" type="text" asp-for="Text" value="Write here">
                 <input type="submit" value="Share">
             </form>
         </div>
@@ -28,7 +28,7 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 <li>
-                    <p>
+                    <p id="cheep">
                         <strong>
                             <a href="/@cheep.Author">@cheep.Author</a>
                         </strong>

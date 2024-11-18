@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    public const string AuthenticationScheme = "Test";
+    public const string AuthenticationScheme = "Identity.Application";
 
     public TestAuthenticationHandler (
         IOptionsMonitor<AuthenticationSchemeOptions> options,

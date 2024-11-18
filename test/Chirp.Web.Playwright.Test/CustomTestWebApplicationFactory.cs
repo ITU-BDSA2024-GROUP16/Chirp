@@ -37,6 +37,10 @@ public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
     {
         //building the test host.
         var testHost = builder.Build();
+        var randomPort = new Random().Next(5000, 6000); // Choose a range of ports
+
+        // Set up the custom URL with the random port
+        var baseUrl = $"http://127.0.0.1:{randomPort}";
 
         //builder that configures the services needed for testing
         builder.ConfigureServices(services =>
@@ -85,14 +89,12 @@ public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
             }
 
             //configures the test authentication with a custom scheme in "TestAuthenticationHandler" for Playwright tests
-            services.AddAuthentication(TestAuthenticationHandler.AuthenticationScheme)
-                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(
-                    TestAuthenticationHandler.AuthenticationScheme, options => { });
+            services.AddAuthentication(TestAuthenticationHandler.AuthenticationScheme);
         });
 
         builder.UseEnvironment("Development");
         //configuring the server to use Kestrel, the ASP.NET Core web server
-        builder.ConfigureWebHost(webHostBuilder => webHostBuilder.UseKestrel());
+        builder.ConfigureWebHost(webHostBuilder => webHostBuilder.UseKestrel().UseUrls(baseUrl));
 
         //building and starting the custom host for the test environment
         _host = builder.Build();
