@@ -22,10 +22,19 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
+          
       - name: Restore dependencies
         run: dotnet restore
+        
+      # Install Playwright and dependencies
+      - name: Install Playwright
+        run: |
+          npx playwright install-deps
+          npx playwright install        
+        
       - name: Build
         run: dotnet build --no-restore
+        
       - name: Tests
         run: |
           export Authentication_Github_ClientId="${{ secrets.GITHUBCLIENTID }}"
