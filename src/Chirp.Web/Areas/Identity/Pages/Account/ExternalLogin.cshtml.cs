@@ -134,7 +134,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             _logger.LogInformation("User signed in with {Name} provider.", info.LoginProvider);
 
             // Redirect to the login page after successful registration or sign-in
-            return Redirect("http://localhost:5273/");
+            return Redirect("~/");
         }
 
         // Final confirmation after external login
