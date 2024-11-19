@@ -30,7 +30,7 @@ jobs:
         run: dotnet restore
 
       - name: Add Playwright package
-        run: dotnet add test/Chirp.Web.Playwright.Test package Microsoft.Playwright.NUnit
+        run: dotnet add test/Chirp.Web.Playwright.Test package Microsoft.Playwright
 
       - name: Build project
         run: dotnet build --no-restore
