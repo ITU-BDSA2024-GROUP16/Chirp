@@ -29,11 +29,18 @@
             {
                 <li>
                     <p>
+                        <div>
                         <strong>
                             <a href="/@cheep.Author">@cheep.Author</a>
                         </strong>
+                        <form method="OnFollow" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.Author" style="display:inline;">
+                            <button type="submit">Follow</button>
+                        </form>
+                        </div>
                         @cheep.Text
+                        <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
+                        
                     </p>
                 </li>
             }

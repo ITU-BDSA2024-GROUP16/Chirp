@@ -22,6 +22,27 @@ public class PublicModel : PageModel
         _cheepRepository = cheepRepository;
     }
 
+    public async Task<ActionResult> OnFollow(string followAuthorName)
+    {
+        //Finds the logged in user
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        
+        //Finds the user that the current user wants to follow
+        var author2 = await _cheepRepository.FindAuthorWithEmail(followAuthorName);
+
+        
+        author.FollowedAuthors.Add(author2);
+
+        Console.WriteLine("Follower count " + author.FollowedAuthors.Count);
+        foreach (Author auth in author.FollowedAuthors)
+        {
+            Console.WriteLine("THis is the autor name " + auth.Name);
+        }
+        return Page();
+
+    }
+
     public async Task<ActionResult> OnGet()
     {
         //default to page number 1 if no page is specified
