@@ -9,6 +9,6 @@ namespace Chirp.Core
     public int AuthorId { get; set; }
     public string? Name { get; set; }
     public ICollection<Cheep>? Cheeps { get; set; }
-    public ICollection<Author>? FollowedAuthors { get; set; }
+    public List<Author>? FollowedAuthors { get; set; }
     }
 }

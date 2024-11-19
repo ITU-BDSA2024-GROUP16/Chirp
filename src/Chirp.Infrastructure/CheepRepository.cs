@@ -14,6 +14,9 @@ namespace Chirp.Infrastructure
         Task SaveCheep(Cheep cheep, Author author);
         Task UpdateAuthorAsync(Author author);
         Task<List<Cheep>> GetCheepsByAuthor(int authorId);
+        Task<bool> IsFollowingAsync(int followerId, int followedId);
+        Task<List<Author>> getFollowing(int followerId);
+
     }
 
     public class CheepRepository : ICheepRepository
@@ -27,7 +30,7 @@ namespace Chirp.Infrastructure
             _dbContext = dbContext;
             SQLitePCL.Batteries.Init();
         }
-        
+
         public async Task<List<Cheep>> GetCheepsByAuthor(int authorId)
         {
             return await _dbContext.Cheeps
@@ -56,12 +59,12 @@ namespace Chirp.Infrastructure
         public async Task<List<CheepDTO>> ReadCheeps(string userName, int pageNumber, int pageSize)
         {
             var query = _dbContext.Cheeps.Select(cheep => new { cheep.Author, cheep.Text, cheep.TimeStamp });
-    
+
             var result = await query.ToListAsync();
-    
+
             return result
                 .Where(cheep => cheep.Author != null && cheep.Author.Name == userName)
-                .OrderByDescending(cheep => cheep.TimeStamp)// Use userName for filtering
+                .OrderByDescending(cheep => cheep.TimeStamp) // Use userName for filtering
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
@@ -73,19 +76,19 @@ namespace Chirp.Infrastructure
                 .ToList();
         }
 
-        
+
         public async Task<int> CreateCheep(CheepDTO dto)
         {
             Cheep newCheep = new()
             {
-                Text = dto.Text, 
-                Author = new Author() {Name = dto.Author}, 
+                Text = dto.Text,
+                Author = new Author() { Name = dto.Author },
                 TimeStamp = DateTime.TryParse(dto.TimeStamp, out var dateTime) ? dateTime : DateTime.Now
-                
-            };
-            var queryResult = await _dbContext.Cheeps.AddAsync(newCheep); 
 
-            await _dbContext.SaveChangesAsync(); 
+            };
+            var queryResult = await _dbContext.Cheeps.AddAsync(newCheep);
+
+            await _dbContext.SaveChangesAsync();
             return queryResult.Entity.CheepId;
         }
 
@@ -94,7 +97,7 @@ namespace Chirp.Infrastructure
             var author = await _dbContext.Authors
                 .Include(a => a.Cheeps)
                 .FirstOrDefaultAsync(author => author.Name == userName);
-           // var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
+            // var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Name == userName);
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with name {userName} not found.");
@@ -121,7 +124,7 @@ namespace Chirp.Infrastructure
                 Name = name,
                 Email = email,
                 AuthorId = _dbContext.Authors.Count() + 1,
-                Cheeps = new List<Cheep>() 
+                Cheeps = new List<Cheep>()
             };
 
             try
@@ -132,7 +135,7 @@ namespace Chirp.Infrastructure
             catch (DbUpdateException ex)
             {
                 if (ex.InnerException is Microsoft.Data.Sqlite.SqliteException sqliteEx &&
-                    sqliteEx.SqliteErrorCode == 19) 
+                    sqliteEx.SqliteErrorCode == 19)
                 {
                     Console.WriteLine("User Already exists");
                 }
@@ -146,12 +149,57 @@ namespace Chirp.Infrastructure
 
             await _dbContext.Entry(author).Collection(a => a.Cheeps).LoadAsync();
         }
-        
+
         public async Task UpdateAuthorAsync(Author author)
         {
             _dbContext.Authors.Update(author);
             await _dbContext.SaveChangesAsync();
         }
 
-    }
+        public async Task FollowUserAsync(int followerId, int followedId)
+        {
+            var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+                .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+
+            var followed = await _dbContext.Authors.FindAsync(followedId);
+
+            if (!await IsFollowingAsync(followerId, followedId))
+            {
+                follower.FollowedAuthors.Add(followed);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task UnFollowUserAsync(int followerId, int followedId)
+        {
+            var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+                .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+
+            var followed = await _dbContext.Authors.FindAsync(followedId);
+
+            if (follower != null && followed != null)
+            {
+                follower.FollowedAuthors.Remove(followed);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
+
+        public async Task<bool> IsFollowingAsync(int followerId, int followedId)
+        {
+            var loggedInUser = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+                .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+
+            return loggedInUser?.FollowedAuthors.Any(f => f.AuthorId == followedId) ?? false;
+
+        }
+
+        public async Task<List<Author>> getFollowing(int followerId)
+        {
+            var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+                .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+            return follower.FollowedAuthors;
+        }
+
+}
 }

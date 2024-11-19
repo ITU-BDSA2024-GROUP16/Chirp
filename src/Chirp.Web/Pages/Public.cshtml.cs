@@ -16,6 +16,8 @@ public class PublicModel : PageModel
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
     public string Text { get; set; }
+    public List<Author> Authors { get; set; } = new List<Author>();
+    public List<Author> followedAuthors { get; set; } = new List<Author>();
 
     public PublicModel(ICheepRepository cheepRepository)
     {
@@ -30,9 +32,17 @@ public class PublicModel : PageModel
         
         //Finds the user that the current user wants to follow
         var author2 = await _cheepRepository.FindAuthorWithEmail(followAuthorName);
-
+        var currentUserId = author2.Id;
         
-        author.FollowedAuthors.Add(author2);
+        
+        
+        /*
+        foreach (var authorid in Authors)
+        {
+            FollowingStatus[authorid.AuthorId] =  _cheepRepository.Aut
+        }  
+        */
+        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
 
         Console.WriteLine("Follower count " + author.FollowedAuthors.Count);
         foreach (Author auth in author.FollowedAuthors)
@@ -70,5 +80,7 @@ public class PublicModel : PageModel
         
         return RedirectToPage();
     }
+    
+    
 }
 
