@@ -82,6 +82,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         Dispose();
     }
         
+    [Fact]
     [Test, Category("SkipSetUp")] 
     public async Task UsersCanRegister()
     {
@@ -127,6 +128,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
     }
 
+    [Fact]
     [Test, Category("SkipSetUp")]
     public async Task UserCanRegisterAndLogin()
     {
@@ -177,6 +179,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Task.Delay(2000);
     }
 
+    [Fact]
     [Test]
     public async Task UserCanShareCheep()
     {
@@ -200,6 +203,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
     }
     
+    [Fact]
     [Test]
     public async Task UserCanGoToMyTimelineByClickingOnMyTimeline()
     {
@@ -210,6 +214,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
     }
     
+    [Fact]
     [Test]
     public async Task UserCanGoToPublicTimeline()
     {
@@ -220,6 +225,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
     }
     
+    [Fact]
     [Test]
     public async Task UserCanChangeAccountInformation()
     {
@@ -253,6 +259,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page.Locator("text=Your profile has been updated")).ToBeVisibleAsync();
     }
     
+    [Fact]
     [Test]
     public async Task UserCanChangeEmail()
     {
@@ -293,6 +300,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
     }
 
+    [Fact]
     [Test]
     public async Task UserCanLogOut()
     {
@@ -319,7 +327,5 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
        _factory?.DisposeAsync().GetAwaiter().GetResult();
        _serverAddress = null;
        _client = null;
-        
-    
     }
 }
