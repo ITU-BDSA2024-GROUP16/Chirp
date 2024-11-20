@@ -9,7 +9,7 @@ namespace Chirp.Web.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly ICheepRepository _cheepRepository;
+    public readonly ICheepRepository _cheepRepository;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
@@ -24,7 +24,7 @@ public class PublicModel : PageModel
         _cheepRepository = cheepRepository;
     }
 
-    public async Task<ActionResult> OnFollow(string followAuthorName)
+    public async Task<ActionResult> OnPostFollow(string followAuthorName)
     {
         //Finds the logged in user
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -32,26 +32,32 @@ public class PublicModel : PageModel
         
         //Finds the user that the current user wants to follow
         var author2 = await _cheepRepository.FindAuthorWithEmail(followAuthorName);
-        var currentUserId = author2.Id;
-        
-        
-        
-        /*
-        foreach (var authorid in Authors)
-        {
-            FollowingStatus[authorid.AuthorId] =  _cheepRepository.Aut
-        }  
-        */
+       
         followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
+        _cheepRepository.FollowUserAsync(author.AuthorId, author2.AuthorId);
+        
+        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
 
-        Console.WriteLine("Follower count " + author.FollowedAuthors.Count);
-        foreach (Author auth in author.FollowedAuthors)
-        {
-            Console.WriteLine("THis is the autor name " + auth.Name);
-        }
         return Page();
-
     }
+    
+    public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
+    {
+        //Finds the logged in user
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        
+        //Finds the user that the current user wants to follow
+        var author2 = await _cheepRepository.FindAuthorWithEmail(followAuthorName);
+       
+        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
+        _cheepRepository.UnFollowUserAsync(author.AuthorId, author2.AuthorId);
+        
+        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
+
+        return Page();
+    }
+    
 
     public async Task<ActionResult> OnGet()
     {

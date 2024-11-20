@@ -16,7 +16,8 @@ namespace Chirp.Infrastructure
         Task<List<Cheep>> GetCheepsByAuthor(int authorId);
         Task<bool> IsFollowingAsync(int followerId, int followedId);
         Task<List<Author>> getFollowing(int followerId);
-
+        Task FollowUserAsync(int followerId, int followedId);
+        Task UnFollowUserAsync(int followerId, int followedId);
     }
 
     public class CheepRepository : ICheepRepository
@@ -191,7 +192,6 @@ namespace Chirp.Infrastructure
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
 
             return loggedInUser?.FollowedAuthors.Any(f => f.AuthorId == followedId) ?? false;
-
         }
 
         public async Task<List<Author>> getFollowing(int followerId)
