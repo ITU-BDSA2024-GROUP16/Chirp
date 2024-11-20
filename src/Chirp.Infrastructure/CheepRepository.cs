@@ -112,7 +112,18 @@ namespace Chirp.Infrastructure
             var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
             if (author == null)
             {
-                throw new InvalidOperationException($"Author with name {email} not found.");
+                throw new InvalidOperationException($"Author with email {email} not found.");
+            }
+
+            return author;
+        }
+        
+        public async Task<Author> FindAuthorWithId(int authorId)
+        {
+            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.AuthorId == authorId);
+            if (author == null)
+            {
+                throw new InvalidOperationException($"Author with ID {authorId} was not found.");
             }
 
             return author;
@@ -159,11 +170,14 @@ namespace Chirp.Infrastructure
 
         public async Task FollowUserAsync(int followerId, int followedId)
         {
-            var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
-                .FirstOrDefaultAsync(a => a.AuthorId == followerId);
-
-            var followed = await _dbContext.Authors.FindAsync(followedId);
-
+            //logged in user
+            var follower = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followerId);
+            //the user that the logged in user wants to follow
+            var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
+            
+            Console.WriteLine("Logged in author: " + follower.Name + "author wants to follow: " + followed.Name);
+            
+            
             if (!await IsFollowingAsync(followerId, followedId))
             {
                 follower.FollowedAuthors.Add(followed);
@@ -173,13 +187,15 @@ namespace Chirp.Infrastructure
 
         public async Task UnFollowUserAsync(int followerId, int followedId)
         {
-            var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
-                .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+            //logged in user
+            var follower = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followerId);
+            //the user that the logged in user wants to follow
+            var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
 
-            var followed = await _dbContext.Authors.FindAsync(followedId);
-
+            Console.WriteLine("hejsa");
             if (follower != null && followed != null)
             {
+                Console.WriteLine("hej");
                 follower.FollowedAuthors.Remove(followed);
                 await _dbContext.SaveChangesAsync();
             }

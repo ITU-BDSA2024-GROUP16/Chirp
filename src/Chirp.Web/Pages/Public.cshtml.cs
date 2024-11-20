@@ -24,41 +24,6 @@ public class PublicModel : PageModel
         _cheepRepository = cheepRepository;
     }
 
-    public async Task<ActionResult> OnPostFollow(string followAuthorName)
-    {
-        //Finds the logged in user
-        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
-        
-        //Finds the user that the current user wants to follow
-        var author2 = await _cheepRepository.FindAuthorWithEmail(followAuthorName);
-       
-        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
-        _cheepRepository.FollowUserAsync(author.AuthorId, author2.AuthorId);
-        
-        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
-
-        return Page();
-    }
-    
-    public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
-    {
-        //Finds the logged in user
-        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
-        
-        //Finds the user that the current user wants to follow
-        var author2 = await _cheepRepository.FindAuthorWithEmail(followAuthorName);
-       
-        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
-        _cheepRepository.UnFollowUserAsync(author.AuthorId, author2.AuthorId);
-        
-        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
-
-        return Page();
-    }
-    
-
     public async Task<ActionResult> OnGet()
     {
         //default to page number 1 if no page is specified
@@ -66,6 +31,14 @@ public class PublicModel : PageModel
         PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
         Cheeps = await _cheepRepository.GetCheeps(PageNumber, PageSize);
+        
+        if (User.Identity.IsAuthenticated)
+        {
+            var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+            var loggedInAuthor = await _cheepRepository.FindAuthorWithEmail(authorEmail);
+            followedAuthors = await _cheepRepository.getFollowing(loggedInAuthor.AuthorId);
+        }
+        
         return Page();
     }
     
@@ -87,6 +60,42 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
     
-    
+    public async Task<ActionResult> OnPostFollow(string followAuthorName)
+    {
+        //Finds the author thats logged in
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        
+        //Finds the author that the logged in author wants to follow
+        var followAuthor = await _cheepRepository.FindAuthorWithName(followAuthorName);
+        
+        await _cheepRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        
+        //updates the current author's list of followed authors
+        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
+        
+        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
+
+        return RedirectToPage();
+    }
+
+    public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
+    {
+        //Finds the author thats logged in
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        
+        //Finds the author that the logged in author wants to follow
+        var followAuthor = await _cheepRepository.FindAuthorWithName(followAuthorName);
+        
+        await _cheepRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        
+        //updates the current author's list of followed authors
+        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
+        
+        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
+
+        return RedirectToPage();
+    }
 }
 
