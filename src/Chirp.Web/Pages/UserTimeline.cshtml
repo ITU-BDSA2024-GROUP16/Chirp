@@ -1,15 +1,18 @@
 ﻿@page "/{author}"
+@using Chirp.Core
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.AspNetCore.Routing
 @model Chirp.Web.Pages.UserTimelineModel
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    //var userName = User.FindFirst("Name")?.Value ?? "User";
+    var AuthorName = User.FindFirst("Name")?.Value ?? "User";
     var userName = HttpContext.GetRouteValue("author");
+    @inject SignInManager<Author> SignInManager
 }
 
 <div>
-    @if (User.FindFirst("Name")?.Value == userName.ToString())
+    @if (AuthorName == userName.ToString())
     {
     <div class="cheepbox">
         <h3>What's on your mind @userName?</h3>
@@ -20,7 +23,7 @@
     </div> 
     }
 
-    <h2> @userName's Timeline </h2>
+    <h2> @AuthorName's Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
@@ -29,9 +32,26 @@
             {
                 <li>
                     <p>
+                    <div>
                         <strong>
                             <a href="/@cheep.Author">@cheep.Author</a>
                         </strong>
+                        @if (SignInManager.IsSignedIn(User) && AuthorName != @cheep.Author)
+                        {
+                            @if (Model.followedAuthors.Any(a => a.Name == cheep.Author))
+                            {
+                            <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.Author" style="display:inline;">
+                                <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
+                            </form>
+                            }
+                            else
+                            {
+                            <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.Author" style="display:inline;">
+                                <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
+                            </form>
+                            }
+                        }
+                    </div>
                         @cheep.Text
                         <small>&mdash; @cheep.TimeStamp</small>
                     </p>

@@ -8,6 +8,7 @@ namespace Chirp.Infrastructure
     {
         public DbSet<Cheep> Cheeps { get; set; }
         public DbSet<Author> Authors { get; set; }
+        //public DbSet<Author> FollowedAuthors { get; set; }
 
         public CheepDBContext(DbContextOptions<CheepDBContext> dbContextOptions)
             : base(dbContextOptions)

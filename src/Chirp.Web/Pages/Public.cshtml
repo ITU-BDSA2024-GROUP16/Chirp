@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var userName = User.FindFirst("Name")?.Value ?? "User";
+    var authorName = User.FindFirst("Name")?.Value ?? "User";
     @inject SignInManager<Author> SignInManager
 }
 
@@ -14,7 +14,7 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="cheepbox">
-            <h3>What's on your mind @userName?</h3>
+            <h3>What's on your mind @authorName?</h3>
             <form method="post">
                 <input style="float: left" type="text" asp-for="Text" maxlength="160">
                 <input type="submit" value="Share">
@@ -29,11 +29,30 @@
             {
                 <li>
                     <p>
-                        <strong>
-                            <a href="/@cheep.Author">@cheep.Author</a>
-                        </strong>
+                        <div>
+                            <strong>
+                                <a href="/@cheep.Author">@cheep.Author</a>
+                            </strong>
+                                @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.Author)
+                                {
+                                    @if (Model.followedAuthors.Any(a => a.Name == cheep.Author))
+                                    {
+                                        <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.Author" style="display:inline;">
+                                            <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.Author" style="display:inline;">
+                                            <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
+                                        </form>
+                                    }
+                                }
+                        </div>
                         @cheep.Text
+                        <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
+                        
                     </p>
                 </li>
             }
