@@ -26,35 +26,76 @@ public class UserTimelineModel : PageModel
 
     public async Task<ActionResult> OnGet()
     {
-        //default to page number 1 if no page is specified
-        var pageQuery = Request.Query["page"];
-        PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
-        
-        //var authorName = User.FindFirst("Name")?.Value;
-        var authorName = HttpContext.GetRouteValue("author").ToString();
-        
-        Author author = await _cheepRepository.FindAuthorWithName(authorName);
-        
-        List<CheepDTO> cheeps = author.Cheeps
-            .OrderByDescending(cheep => cheep.TimeStamp)
-            .Select(cheep => new CheepDTO
-        {
-            Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
-            Text = cheep.Text,
-            TimeStamp = cheep.TimeStamp.ToString("g")
-        }).ToList();
+        //Gets the authorName from the currently LOGGED IN user
+        var authorName = User.FindFirst("Name")?.Value ?? "User";
+        //Gets the author name from the URL.
+        var pageUser = HttpContext.GetRouteValue("author").ToString();
 
-        Cheeps = cheeps;
-        
-        if (User.Identity.IsAuthenticated)
+        // This checks if the logged in user's USERNAME equals to the value from the UserTimeline URL
+        if (authorName == pageUser)
         {
-            var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-            var loggedInAuthor = await _cheepRepository.FindAuthorWithEmail(authorEmail);
-            followedAuthors = await _cheepRepository.getFollowing(loggedInAuthor.AuthorId);
+            // Keeps track of which page the user is currently at
+            var pageQuery = Request.Query["page"];
+            PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
+            
+            //Loads the author with their cheeps and followers using the authors name
+            Author author = await _cheepRepository.FindAuthorWithName(authorName);
+
+            //Creates a list to gather the author and all its followers
+            var allAuthors = new List<Author> { author };
+            //Adds all the followers to the list
+            allAuthors.AddRange(author.FollowedAuthors);
+
+            //Sorts and converts the cheeps into cheepdto
+            List<CheepDTO> cheeps = allAuthors
+                .SelectMany(a => a.Cheeps)
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .Select(cheep => new CheepDTO
+                {
+                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    Text = cheep.Text,
+                    TimeStamp = cheep.TimeStamp.ToString("g")
+                })
+                .ToList();
+
+            // Assign the combined list to Cheeps
+            Cheeps = cheeps;
+            if (User.Identity.IsAuthenticated)
+            {
+                var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+                var loggedInAuthor = await _cheepRepository.FindAuthorWithEmail(authorEmail);
+                followedAuthors = await _cheepRepository.getFollowing(loggedInAuthor.AuthorId);
+            }
+
+            return Page();
         }
+        else
+        {
+            //Only loads the cheep that the author has written
+            Author author = await _cheepRepository.FindAuthorWithName(pageUser);
 
-        //Cheeps = await _cheepRepository.ReadCheeps(author, PageNumber, PageSize);
-        return Page();
+            //Sorts and converts the cheeps into cheepdto
+            List<CheepDTO> cheeps = author.Cheeps
+                .OrderByDescending(cheep => cheep.TimeStamp)
+                .Select(cheep => new CheepDTO
+                {
+                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    Text = cheep.Text,
+                    TimeStamp = cheep.TimeStamp.ToString("g")
+                }).ToList();
+
+
+            Cheeps = cheeps;
+            if (User.Identity.IsAuthenticated)
+            {
+                var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+                var loggedInAuthor = await _cheepRepository.FindAuthorWithEmail(authorEmail);
+                followedAuthors = await _cheepRepository.getFollowing(loggedInAuthor.AuthorId);
+            }
+            return Page();
+        }
     }
     
     public async Task<ActionResult> OnPost()
