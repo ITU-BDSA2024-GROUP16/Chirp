@@ -20,8 +20,8 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.AddDbContext<CheepDBContext>(options => options.UseSqlite(connectionString));
 
 
-builder.Services.AddScoped<DBFacade>();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 builder.Services.AddDefaultIdentity<Author>(options =>
     options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();

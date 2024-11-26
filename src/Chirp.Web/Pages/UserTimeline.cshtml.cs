@@ -8,7 +8,8 @@ namespace Chirp.Web.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    private readonly ICheepRepository _cheepRepository;
+    public readonly IAuthorRepository _authorRepository;
+    public readonly ICheepRepository _cheepRepository;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
@@ -19,9 +20,10 @@ public class UserTimelineModel : PageModel
 
 
 
-    public UserTimelineModel(ICheepRepository cheepRepository)
+    public UserTimelineModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository)
     {
         _cheepRepository = cheepRepository;
+        _authorRepository = authorRepository;
     }
 
     public async Task<ActionResult> OnGet()
@@ -39,7 +41,7 @@ public class UserTimelineModel : PageModel
             PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
             
             //Loads the author with their cheeps and followers using the authors name
-            Author author = await _cheepRepository.FindAuthorWithName(authorName);
+            Author author = await _authorRepository.FindAuthorWithName(authorName);
 
             //Creates a list to gather the author and all its followers
             var allAuthors = new List<Author> { author };
@@ -65,8 +67,8 @@ public class UserTimelineModel : PageModel
             if (User.Identity.IsAuthenticated)
             {
                 var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-                var loggedInAuthor = await _cheepRepository.FindAuthorWithEmail(authorEmail);
-                followedAuthors = await _cheepRepository.getFollowing(loggedInAuthor.AuthorId);
+                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
+                followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
 
             return Page();
@@ -74,7 +76,7 @@ public class UserTimelineModel : PageModel
         else
         {
             //Only loads the cheep that the author has written
-            Author author = await _cheepRepository.FindAuthorWithName(pageUser);
+            Author author = await _authorRepository.FindAuthorWithName(pageUser);
 
             //Sorts and converts the cheeps into cheepdto
             List<CheepDTO> cheeps = author.Cheeps
@@ -91,8 +93,8 @@ public class UserTimelineModel : PageModel
             if (User.Identity.IsAuthenticated)
             {
                 var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-                var loggedInAuthor = await _cheepRepository.FindAuthorWithEmail(authorEmail);
-                followedAuthors = await _cheepRepository.getFollowing(loggedInAuthor.AuthorId);
+                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
+                followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
             return Page();
         }
@@ -102,7 +104,7 @@ public class UserTimelineModel : PageModel
     {
         var authorName = User.FindFirst("Name")?.Value;
         
-        Author author = await _cheepRepository.FindAuthorWithName(authorName);
+        Author author = await _authorRepository.FindAuthorWithName(authorName);
         
         var cheep = new Cheep
         {
@@ -121,15 +123,15 @@ public class UserTimelineModel : PageModel
     {
         //Finds the author thats logged in
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        var author = await _authorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
-        var followAuthor = await _cheepRepository.FindAuthorWithName(followAuthorName);
+        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
         
-        await _cheepRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
+        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
         
         Console.WriteLine("Number of followed authors" + followedAuthors.Count);
 
@@ -140,15 +142,15 @@ public class UserTimelineModel : PageModel
     {
         //Finds the author thats logged in
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        var author = await _authorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
-        var followAuthor = await _cheepRepository.FindAuthorWithName(followAuthorName);
+        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
         
-        await _cheepRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        await _authorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        followedAuthors = await _cheepRepository.getFollowing(author.AuthorId);
+        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
         
         Console.WriteLine("Number of followed authors" + followedAuthors.Count);
 
