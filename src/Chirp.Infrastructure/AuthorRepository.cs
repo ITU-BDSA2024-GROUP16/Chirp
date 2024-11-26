@@ -9,6 +9,7 @@ namespace Chirp.Infrastructure
         Task<Author> FindAuthorWithEmail(string email);
         Task<bool> IsFollowingAsync(int followerId, int followedId);
         Task<List<Author>> getFollowing(int followerId);
+        Task<bool> FindIfAuthorExistsWithEmail(string email);
         Task FollowUserAsync(int followerId, int followedId);
         Task UnFollowUserAsync(int followerId, int followedId);
     }
@@ -48,6 +49,17 @@ namespace Chirp.Infrastructure
             }
 
             return author;
+        }
+        
+        public async Task<bool> FindIfAuthorExistsWithEmail(string email)
+        {
+            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
+            if (author == null)
+            {
+                return false;
+            }
+
+            return true;
         }
         
         public async Task<Author> FindAuthorWithId(int authorId)
