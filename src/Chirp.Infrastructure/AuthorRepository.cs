@@ -82,7 +82,18 @@ namespace Chirp.Infrastructure
             //the user that the logged in user wants to follow
             var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
             
-            Console.WriteLine("Logged in author: " + follower.Name + "author wants to follow: " + followed.Name);
+            if (follower == null || follower.Name == null)
+            {
+                throw new InvalidOperationException("Follower or follower's name is null.");
+            }
+
+            if (followed == null || followed.Name == null)
+            {
+                throw new InvalidOperationException("Followed author or followed author's name is null.");
+            }
+
+            Console.WriteLine("Logged in author: " + follower.Name + " author wants to follow: " + followed.Name);
+
             
             
             if (!await IsFollowingAsync(followerId, followedId))
@@ -121,6 +132,10 @@ namespace Chirp.Infrastructure
         {
             var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+            if (follower == null || follower.FollowedAuthors == null)
+            {
+                throw new InvalidOperationException("Follower or followed authors is null.");
+            }
             return follower.FollowedAuthors;
         }
 

@@ -50,8 +50,13 @@ namespace Chirp.Infrastructure
         {
             await _dbContext.Cheeps.AddAsync(cheep);
             await _dbContext.SaveChangesAsync();
+            
+            if (author.Cheeps == null)
+            {
+                throw new InvalidOperationException("Author's Cheeps collection is null.");
+            }
 
-            await _dbContext.Entry(author).Collection(a => a.Cheeps).LoadAsync();
+            await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
 
     }
