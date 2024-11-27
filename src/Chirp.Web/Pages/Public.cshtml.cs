@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Chirp.Core;
 using Chirp.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,6 +12,7 @@ public class PublicModel : PageModel
 {
     public readonly IAuthorRepository _authorRepository;
     public readonly ICheepRepository _cheepRepository;
+    public readonly SignInManager<Author> _signInManager;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
@@ -20,14 +22,22 @@ public class PublicModel : PageModel
     public List<Author> Authors { get; set; } = new List<Author>();
     public List<Author> followedAuthors { get; set; } = new List<Author>();
 
-    public PublicModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository)
+    public PublicModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository, SignInManager<Author> signInManager)
     {
         _cheepRepository = cheepRepository;
         _authorRepository = authorRepository;
+        _signInManager = signInManager;
     }
 
     public async Task<ActionResult> OnGet()
     {
+        //check if logged-in user exists in database, otherwise log out and redirect to public timeline
+        if (_signInManager.IsSignedIn(User) && await _authorRepository.FindIfAuthorExistsWithEmail(User.Identity.Name) == false)
+        {
+            await _signInManager.SignOutAsync();
+            return Redirect("http://localhost:5273/");
+        }
+        
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
