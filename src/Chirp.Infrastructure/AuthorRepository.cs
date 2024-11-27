@@ -31,6 +31,7 @@ namespace Chirp.Infrastructure
                 .Include(a => a.FollowedAuthors)
                 .ThenInclude(fa => fa.Cheeps)
                 .Include(a => a.Cheeps)
+                .Include(a => a.Followers)
                 .FirstOrDefaultAsync(author => author.Name == userName);
             if (author == null)
             {
@@ -85,9 +86,11 @@ namespace Chirp.Infrastructure
             Console.WriteLine("Logged in author: " + follower.Name + "author wants to follow: " + followed.Name);
             
             
+            
             if (!await IsFollowingAsync(followerId, followedId))
             {
                 follower.FollowedAuthors.Add(followed);
+                followed.Followers.Add(follower);
                 await _dbContext.SaveChangesAsync();
             }
         }
@@ -99,11 +102,12 @@ namespace Chirp.Infrastructure
             //the user that the logged in user wants to follow
             var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
 
-            Console.WriteLine("hejsa");
+            
             if (follower != null && followed != null)
             {
                 Console.WriteLine("hej");
                 follower.FollowedAuthors.Remove(followed);
+                followed.Followers.Remove(follower);
                 await _dbContext.SaveChangesAsync();
             }
         }
