@@ -112,16 +112,17 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 await _context.SaveChangesAsync();
             } 
             
-            var result = await _userManager.DeleteAsync(user);
+            /* var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user.");
             }
+            */
 
             await _signInManager.SignOutAsync();
 
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+            //_logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
 
             return Redirect("~/");
         }
