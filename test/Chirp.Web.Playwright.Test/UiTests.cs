@@ -13,6 +13,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     private string _serverAddress;
     private IPlaywright _playwright;
     private HttpClient _client;
+    private IPage _page;
 
     [SetUp]
     public async Task SetUp()
@@ -49,7 +50,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GotoAsync(_serverAddress);
         
         await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register"));
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register$"));
 
         //Username
         var usernameInput = _page.GetByLabel("Username");
@@ -96,7 +97,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         
         //first register user, because a new in memory database is created for each test. 
         await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register")); 
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register$")); 
         await _page.GetByLabel("Username").ClickAsync(); 
         await _page.GetByLabel("Username").FillAsync("Cecilie"); 
         await _page.GetByLabel("Username").PressAsync("Tab"); 
@@ -133,9 +134,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanShareCheep()
     {
-        var _page = await _context!.NewPageAsync();
-        await _page.GotoAsync(_serverAddress);
-        
         //send cheep   
         var cheepTextField = _page.Locator("input[id='Text']");
         await cheepTextField.ClickAsync();
@@ -156,9 +154,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanGoToMyTimelineByClickingOnMyTimeline()
     {
-        var _page = await _context!.NewPageAsync();
-        await _page.GotoAsync(_serverAddress);
-        
         await _page.GetByRole(AriaRole.Link, new() { NameString = "my timeline" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
     }
@@ -166,9 +161,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanGoToPublicTimeline()
     {
-        var _page = await _context!.NewPageAsync();
-        await _page.GotoAsync(_serverAddress);
-        
         await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
     }
@@ -176,12 +168,8 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanChangeAccountInformation()
     {
-        var _page = await _context!.NewPageAsync();
-        await _page.GotoAsync(_serverAddress);
-        
         //go to account
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
-        //await _page.WaitForURLAsync("http://localhost:5273/Identity/Account/Manage");
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
         
         //change username 
@@ -209,9 +197,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanChangeEmail()
     {
-        var _page = await _context!.NewPageAsync();
-        await _page.GotoAsync(_serverAddress);
-        
         //go to account
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
@@ -241,9 +226,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanLogOut()
     {
-        var _page = await _context!.NewPageAsync();
-        await _page.GotoAsync(_serverAddress);
-        
         await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(_serverAddress);
         
@@ -254,12 +236,13 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     
     private async Task SetUpRegisterAndLogin()
     { 
-        var _page = await _context!.NewPageAsync(); 
+        _page = await _context!.NewPageAsync(); 
         await _page.GotoAsync(_serverAddress);
-            
+        await Task.Delay(4000);
         //first register user, because a new in memory database is created for each test.
-        await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register")); 
+        await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
+        await Task.Delay(2000);
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register$"));
         await _page.GetByLabel("Username").ClickAsync(); 
         await _page.GetByLabel("Username").FillAsync("Cecilie"); 
         await _page.GetByLabel("Username").PressAsync("Tab"); 
@@ -269,7 +252,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!");
         await Task.Delay(2000);
-        await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
+        await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
         await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
         await Task.Delay(2000);
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
@@ -289,7 +272,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
         _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Headless = true, //Set to false if you want to see the browser
+            Headless = false, //Set to false if you want to see the browser
         });
             
         _context = await _browser.NewContextAsync(new BrowserNewContextOptions());
@@ -300,6 +283,5 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     {
        _context?.DisposeAsync().GetAwaiter().GetResult();
        _browser?.DisposeAsync().GetAwaiter().GetResult();
-       _client.Dispose();
     }
 }
