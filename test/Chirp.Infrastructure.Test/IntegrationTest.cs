@@ -63,14 +63,14 @@ namespace Chirp.Infrastructure.Test
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<CheepDBContext>();
-
-            
             
             var testAuthor1 = new Author
             {
                 Name = "Lars McKoy11",
                 Email = "McManden11@gmail.com",
-                Cheeps = new List<Cheep>()
+                Cheeps = new List<Cheep>(),
+                FollowedAuthors = new List<Author>(),
+                Followers = new List<Author>()
             };
 
             var TestCheep = new Cheep()
@@ -83,7 +83,6 @@ namespace Chirp.Infrastructure.Test
             };
             
             testAuthor1.Cheeps.Add(TestCheep);
-            
 
             // Add the new author to the database
             await dbContext.Authors.AddAsync(testAuthor1);
