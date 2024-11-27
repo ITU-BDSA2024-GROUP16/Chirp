@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Chirp.Core;
 using Chirp.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,26 +10,47 @@ namespace Chirp.Web.Pages;
 
 public class PublicModel : PageModel
 {
-    private readonly ICheepRepository _cheepRepository;
+    public readonly IAuthorRepository _authorRepository;
+    public readonly ICheepRepository _cheepRepository;
+    public readonly SignInManager<Author> _signInManager;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
     public int PageNumber { get; set; }
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
     public string Text { get; set; }
+    public List<Author> Authors { get; set; } = new List<Author>();
+    public List<Author> followedAuthors { get; set; } = new List<Author>();
 
-    public PublicModel(ICheepRepository cheepRepository)
+    public PublicModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository, SignInManager<Author> signInManager)
     {
         _cheepRepository = cheepRepository;
+        _authorRepository = authorRepository;
+        _signInManager = signInManager;
     }
 
     public async Task<ActionResult> OnGet()
     {
+        //check if logged-in user exists in database, otherwise log out and redirect to public timeline
+        if (_signInManager.IsSignedIn(User) && await _authorRepository.FindIfAuthorExistsWithEmail(User.Identity.Name) == false)
+        {
+            await _signInManager.SignOutAsync();
+            return Redirect("http://localhost:5273/");
+        }
+        
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
         PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
         
         Cheeps = await _cheepRepository.GetCheeps(PageNumber, PageSize);
+        
+        if (User.Identity.IsAuthenticated)
+        {
+            var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+            var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
+            followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+        }
+        
         return Page();
     }
     
@@ -36,7 +58,7 @@ public class PublicModel : PageModel
     {
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
         
-        var author = await _cheepRepository.FindAuthorWithEmail(authorName);
+        var author = await _authorRepository.FindAuthorWithEmail(authorName);
         var cheep = new Cheep
         {
             AuthorId = author.AuthorId,
@@ -47,6 +69,42 @@ public class PublicModel : PageModel
         
         await _cheepRepository.SaveCheep(cheep, author);
         
+        return RedirectToPage();
+    }
+    
+    public async Task<ActionResult> OnPostFollow(string followAuthorName)
+    {
+        //Finds the author thats logged in
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+        
+        //Finds the author that the logged in author wants to follow
+        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
+        
+        await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        
+        //updates the current author's list of followed authors
+        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        
+        return RedirectToPage();
+    }
+
+    public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
+    {
+        //Finds the author thats logged in
+        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+        
+        //Finds the author that the logged in author wants to follow
+        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
+        
+        await _authorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        
+        //updates the current author's list of followed authors
+        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        
+        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
+
         return RedirectToPage();
     }
 }
