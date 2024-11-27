@@ -38,7 +38,7 @@
                         </strong>
                         @if (SignInManager.IsSignedIn(User) && AuthorName != @cheep.Author)
                         {
-                            @if (Model.followedAuthors.Any(a => a.Name == cheep.Author))
+                            @if (Model.FollowedAuthors.Any(a => a.Name == cheep.Author))
                             {
                                 <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.Author" style="display:inline;">
                                     <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>

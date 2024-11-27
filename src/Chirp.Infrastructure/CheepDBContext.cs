@@ -19,23 +19,12 @@ namespace Chirp.Infrastructure
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Name)
                 .IsUnique();
-            
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Email)
                 .IsUnique();
-            
-            modelBuilder.Entity<Cheep>()
-                .Property(c => c.Text)
-                .HasMaxLength(160);
-            
-            modelBuilder.Entity<Cheep>()
-                .HasOne(c => c.Author) 
-                .WithMany(a => a.Cheeps) 
-                .HasForeignKey(c => c.AuthorId) 
-                .OnDelete(DeleteBehavior.Cascade); 
+            modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
 
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

@@ -23,7 +23,7 @@ namespace Chirp.Infrastructure
         public async Task<List<Cheep>> GetCheepsByAuthor(int authorId)
         {
             return await _dbContext.Cheeps
-                .Where(c => c.AuthorId == authorId)
+                .Where(c => c.CheepAuthorId == authorId)
                 .OrderByDescending(c => c.TimeStamp)
                 .ToListAsync();
         }

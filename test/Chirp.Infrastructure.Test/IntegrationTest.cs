@@ -79,7 +79,7 @@ namespace Chirp.Infrastructure.Test
                 Text = "Lorem ipsum dolor sit amet",
                 TimeStamp = DateTime.Now,
                 Author = testAuthor1,
-                AuthorId = 1
+                CheepAuthorId = 1
             };
             
             testAuthor1.Cheeps.Add(TestCheep);

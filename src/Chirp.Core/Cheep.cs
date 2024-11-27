@@ -9,6 +9,6 @@ public class Cheep
     public DateTime TimeStamp { get; set; }
     
     //Put AuthorId as foreign key form Author. DbInitializer could not handle the value unless this was put
-    public int AuthorId { get; set; }
+    public int CheepAuthorId { get; set; }
     public Author? Author { get; set; }
 }
