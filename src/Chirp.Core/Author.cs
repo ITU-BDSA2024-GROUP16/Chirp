@@ -10,5 +10,7 @@ namespace Chirp.Core
     public string? Name { get; set; }
     public ICollection<Cheep>? Cheeps { get; set; }
     public List<Author>? FollowedAuthors { get; set; } = new List<Author>();
+    
+    public List<Author>? Followers { get; set; } = new List<Author>();
     }
 }

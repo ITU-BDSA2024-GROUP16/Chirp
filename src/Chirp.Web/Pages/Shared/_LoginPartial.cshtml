@@ -16,7 +16,11 @@
             <li class="nav-item" style="display: inline; gap: 10px; align-items: center;">
                 <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
                     <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
+                    <span style="margin: 0 5px;">|</span>
                 </form>
+            </li>
+            <li class="nav-item" style="display: inline; gap: 10px; align-items: center;">
+                <a id="personal-data" class="navigation" asp-area="Identity" asp-page="/Account/Manage/PersonalData"> about me </a>
             </li>
             
         }
