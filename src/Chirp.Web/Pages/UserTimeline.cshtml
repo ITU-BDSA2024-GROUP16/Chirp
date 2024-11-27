@@ -12,7 +12,7 @@
 }
 
 <div>
-    @if (AuthorName == userName.ToString())
+    @if (AuthorName == userName?.ToString())
     {
     <div class="cheepbox">
         <h3>What's on your mind @userName?</h3>

@@ -144,7 +144,7 @@ public class UserTimelineModel : PageModel
         
         var cheep = new Cheep
         {
-            CheepAuthorId = author.AuthorId,
+            AuthorId = author.AuthorId,
             Text = Text,
             TimeStamp = DateTime.Now,
             Author = author

@@ -72,7 +72,7 @@ public class PublicModel : PageModel
         var author = await _authorRepository.FindAuthorWithEmail(authorName);
         var cheep = new Cheep
         {
-            CheepAuthorId = author.AuthorId,
+            AuthorId = author.AuthorId,
             Text = Text,
             TimeStamp = DateTime.Now,
             Author = author
