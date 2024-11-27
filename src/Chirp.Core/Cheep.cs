@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Chirp.Core;
 
@@ -10,5 +11,6 @@ public class Cheep
     
     //Put AuthorId as foreign key form Author. DbInitializer could not handle the value unless this was put
     public int AuthorId { get; set; }
+    [JsonIgnore]
     public Author? Author { get; set; }
 }

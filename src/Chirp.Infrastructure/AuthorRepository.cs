@@ -127,6 +127,5 @@ namespace Chirp.Infrastructure
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
             return follower.FollowedAuthors;
         }
-
-}
+    }
 }

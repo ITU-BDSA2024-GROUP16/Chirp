@@ -23,8 +23,15 @@ namespace Chirp.Infrastructure
                 .HasIndex(a => a.Email)
                 .IsUnique();
             modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
-
+            
             base.OnModelCreating(modelBuilder);
+            /*
+           modelBuilder.Entity<Cheep>()
+                .HasOne(c => c.Author)
+                .WithMany(a => a.Cheeps)
+                .HasForeignKey(c => c.AuthorId)
+                .HasPrincipalKey(a => a.Id); */
+                
         }
     }
 }
