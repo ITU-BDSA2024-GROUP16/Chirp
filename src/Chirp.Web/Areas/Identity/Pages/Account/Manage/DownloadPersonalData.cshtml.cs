@@ -61,9 +61,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 Phonenumber = author.PhoneNumber,                                                                                                       
                 FollowedAuthors = followedAuthorsLinks,                                                                                                 
                 Cheeps = author.Cheeps                                                                                                                  
-            };                                                                                                                                          
-                                                                                                                                                        
-            var jsonData = JsonSerializer.Serialize(data);                                                                                              
+            };  
+            
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true // Enables pretty printing
+            };
+
+            var jsonData = JsonSerializer.Serialize(data, options);
             var bytes = Encoding.UTF8.GetBytes(jsonData);                                                                                               
             return File(bytes, "application/json", "PersonalData.json");                                                                                
                                                                                                                                                         
