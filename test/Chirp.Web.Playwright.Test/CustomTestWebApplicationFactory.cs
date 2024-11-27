@@ -18,6 +18,22 @@ Referenced from: https://learn.microsoft.com/en-us/aspnet/core/test/integration-
 public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
 {
     private IHost? _host;
+    private static readonly Queue<int> PortQueue = new Queue<int>(Enumerable.Range(5000, 10));  // Range af porte, f.eks. 5000-5999
+
+    // Hent den næste ledige port
+    private static int GetNextAvailablePort()
+    {
+        lock (PortQueue)
+        {
+            if (PortQueue.Count > 0)
+            {
+                return PortQueue.Dequeue();  // Hent næste port
+            }
+
+            // Hvis køen er tom, så kør en exception eller reinitialize køen
+            throw new InvalidOperationException("No available ports left in the range.");
+        }
+    }
 
     //Property for getting the server's base address
     public string ServerAddress
@@ -37,10 +53,10 @@ public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
     {
         //building the test host.
         var testHost = builder.Build();
-        var randomPort = new Random().Next(5000, 6000); // Choose a range of ports
+        var port = GetNextAvailablePort(); // Choose a range of ports
 
         // Set up the custom URL with the random port
-        var baseUrl = $"http://127.0.0.1:{randomPort}";
+        var baseUrl = $"http://127.0.0.1:{port}";
 
         //builder that configures the services needed for testing
         builder.ConfigureServices(services =>
@@ -110,5 +126,10 @@ public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
         //starting the initial test host instance
         testHost.Start();
         return testHost;
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+        _host?.Dispose();
     }
 }

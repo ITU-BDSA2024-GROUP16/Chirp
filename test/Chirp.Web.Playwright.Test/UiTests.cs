@@ -4,13 +4,14 @@ using Xunit;
 
 namespace Chirp.Web.Playwright.Test;
 
-[TestFixture]
+[TestFixture, NonParallelizable]
 public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>, IDisposable
 {
     private IBrowserContext? _context;
     private IBrowser? _browser;
     private CustomTestWebApplicationFactory _factory;
     private string _serverAddress;
+    private IPlaywright _playwright;
     private HttpClient _client;
 
     [SetUp]
@@ -35,54 +36,12 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         }
     }
     
-    private async Task SetUpRegisterAndLogin()
-    { 
-        var _page = await _context!.NewPageAsync(); 
-        await _page.GotoAsync(_serverAddress);
-            
-        //first register user, because a new in memory database is created for each test.
-        await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register")); 
-        await _page.GetByLabel("Username").ClickAsync(); 
-        await _page.GetByLabel("Username").FillAsync("Cecilie"); 
-        await _page.GetByLabel("Username").PressAsync("Tab"); 
-        await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk");
-        await _page.Locator("input[id='Input_Password']").ClickAsync();
-        await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
-        await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
-        await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!"); 
-        await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation")); 
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
-        
-        //next login to account that has just been made by user
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync(); 
-        await _page.GetByPlaceholder("name@example.com").ClickAsync(); 
-        await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk"); 
-        await _page.GetByPlaceholder("password").ClickAsync(); 
-        await _page.GetByPlaceholder("password").FillAsync("Cecilie1234!"); 
-        await _page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
-    }
-
-    private async Task InitializeBrowserAndCreateBrowserContextAsync() 
-    {
-        var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-        _browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-        {
-            Headless = false, //Set to false if you want to see the browser
-        });
-            
-        _context = await _browser.NewContextAsync(new BrowserNewContextOptions());
-    }
-    
     [TearDown] 
     public async Task TearDown() 
     { 
         Dispose();
     }
-        
-    [Fact]
+    
     [Test, Category("SkipSetUp")] 
     public async Task UsersCanRegister()
     {
@@ -127,8 +86,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
     }
-
-    [Fact]
+    
     [Test, Category("SkipSetUp")]
     public async Task UserCanRegisterAndLogin()
     {
@@ -143,43 +101,35 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GetByLabel("Username").FillAsync("Cecilie"); 
         await _page.GetByLabel("Username").PressAsync("Tab"); 
         await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk");
-        await Task.Delay(2000);
         await _page.Locator("input[id='Input_Password']").ClickAsync();
         await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!"); 
-        await Task.Delay(2000);
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
         await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation")); 
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
         await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
-        await Task.Delay(2000);
         
         //next login to account that has just been made by user
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/Login"));
-        await Task.Delay(2000);
         
         //fill in email
         var emailField = _page.GetByPlaceholder("name@example.com");
         await emailField.ClickAsync();
         await emailField.FillAsync("ceel@itu.dk");
         await Expect(emailField).ToHaveValueAsync("ceel@itu.dk");
-        await Task.Delay(2000);
         
         //fill in password
         var passwordField = _page.GetByPlaceholder("password");
         await passwordField.ClickAsync();
         await passwordField.FillAsync("Cecilie1234!");
         await Expect(passwordField).ToHaveValueAsync("Cecilie1234!");
-        await Task.Delay(2000);
         
         //log in button
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
-        await Task.Delay(2000);
     }
-
-    [Fact]
+    
     [Test]
     public async Task UserCanShareCheep()
     {
@@ -203,7 +153,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
     }
     
-    [Fact]
     [Test]
     public async Task UserCanGoToMyTimelineByClickingOnMyTimeline()
     {
@@ -214,7 +163,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
     }
     
-    [Fact]
     [Test]
     public async Task UserCanGoToPublicTimeline()
     {
@@ -225,7 +173,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
     }
     
-    [Fact]
     [Test]
     public async Task UserCanChangeAccountInformation()
     {
@@ -259,7 +206,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page.Locator("text=Your profile has been updated")).ToBeVisibleAsync();
     }
     
-    [Fact]
     [Test]
     public async Task UserCanChangeEmail()
     {
@@ -269,38 +215,29 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         //go to account
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
-        await Task.Delay(1000);
-
         
         //go to email in account
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Email" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage/Email"));
-        await Task.Delay(1000);
-
         
         //enter new email
         var emailField = _page.GetByPlaceholder("Please enter new email");
         await emailField.ClickAsync();
         await emailField.FillAsync("jing@itu.dk");
         await Expect(emailField).ToHaveValueAsync("jing@itu.dk");
-        await Task.Delay(1000);
-
         
         //change email button
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Change email" }).ClickAsync();
-        await Task.Delay(1000);
         
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Account" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
         
         var emailFieldInAccount = _page.GetByPlaceholder("Email");
         await Expect(emailFieldInAccount).ToHaveValueAsync("jing@itu.dk");
-        await Task.Delay(1000);
         
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage"));
     }
-
-    [Fact]
+    
     [Test]
     public async Task UserCanLogOut()
     {
@@ -309,23 +246,59 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         
         await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(_serverAddress);
-        await Task.Delay(4000);
         
         //user can log out
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Logout" }).ClickAsync();
-        await Task.Delay(4000);
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Logout"));
-        await Task.Delay(2000);
     }
+    
+    private async Task SetUpRegisterAndLogin()
+    { 
+        var _page = await _context!.NewPageAsync(); 
+        await _page.GotoAsync(_serverAddress);
+            
+        //first register user, because a new in memory database is created for each test.
+        await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync(); 
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/Register")); 
+        await _page.GetByLabel("Username").ClickAsync(); 
+        await _page.GetByLabel("Username").FillAsync("Cecilie"); 
+        await _page.GetByLabel("Username").PressAsync("Tab"); 
+        await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk");
+        await _page.Locator("input[id='Input_Password']").ClickAsync();
+        await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
+        await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
+        await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!");
+        await Task.Delay(2000);
+        await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
+        await Task.Delay(2000);
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
+        await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         
-        
+        //next login to account that has just been made by user
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync(); 
+        await _page.GetByPlaceholder("name@example.com").ClickAsync(); 
+        await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk"); 
+        await _page.GetByPlaceholder("password").ClickAsync(); 
+        await _page.GetByPlaceholder("password").FillAsync("Cecilie1234!"); 
+        await _page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
+    }
+
+    private async Task InitializeBrowserAndCreateBrowserContextAsync() 
+    {
+        _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = false, //Set to false if you want to see the browser
+        });
+            
+        _context = await _browser.NewContextAsync(new BrowserNewContextOptions());
+    }
+    
     //dispose browser and context after each test
     public void Dispose()
     {
        _context?.DisposeAsync().GetAwaiter().GetResult();
        _browser?.DisposeAsync().GetAwaiter().GetResult();
-       _factory?.DisposeAsync().GetAwaiter().GetResult();
-       _serverAddress = null;
-       _client = null;
     }
 }
