@@ -37,8 +37,8 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     }
     
     [TearDown] 
-    public async Task TearDown() 
-    { 
+    public async Task TearDown()
+    {
         Dispose();
     }
     
@@ -300,5 +300,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     {
        _context?.DisposeAsync().GetAwaiter().GetResult();
        _browser?.DisposeAsync().GetAwaiter().GetResult();
+       _client.Dispose();
     }
 }

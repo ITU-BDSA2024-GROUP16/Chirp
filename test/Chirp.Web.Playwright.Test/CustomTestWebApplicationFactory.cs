@@ -130,6 +130,8 @@ public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
     
     protected override void Dispose(bool disposing)
     {
+        _host?.StopAsync().Wait();
+        Thread.Sleep(2000);
         _host?.Dispose();
     }
 }
