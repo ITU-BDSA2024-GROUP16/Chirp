@@ -76,8 +76,6 @@ public class PublicModel : PageModel
         //updates the current author's list of followed authors
         followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
-
         return RedirectToPage();
     }
 

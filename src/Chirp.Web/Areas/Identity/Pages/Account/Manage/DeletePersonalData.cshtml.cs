@@ -99,10 +99,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                                                                                                                                             
             var author = await _authorRepository.FindAuthorWithName(authorName);
             
-            // Fjern relaterede data før brugeren slettes
             if (author != null)
             {
-                // Fjern relaterede Cheeps og Forfatter
                 var cheepsToDelete = author.Cheeps.ToList();
                 foreach (var cheep in cheepsToDelete)
                 {
@@ -112,18 +110,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 await _context.SaveChangesAsync();
             } 
             
-            /* var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException($"Unexpected error occurred deleting user.");
-            }
-            */
-
             await _signInManager.SignOutAsync();
-
-            //_logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
-
+            
             return Redirect("~/");
         }
     }

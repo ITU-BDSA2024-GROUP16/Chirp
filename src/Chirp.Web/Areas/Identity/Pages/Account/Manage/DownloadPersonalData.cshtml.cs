@@ -49,12 +49,10 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             }
 
             var authorName = User.FindFirst("Name")?.Value ?? "User";                                                                                   
-                                                                                                                                            
             var author = await _authorRepository.FindAuthorWithName(authorName);                                                                        
-                                                                                                                                            
-            // makes a list of links, of users from the FollowedAuthors list                                                                            
-            var followedAuthorsLinks = author.FollowedAuthors?.Select(followedAuthor =>                                                                 
-                $"http://localhost:5273/{{Uri.EscapeDataString(followedAuthor.UserName)}}").ToList() ?? new List<string>();                             
+            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
+            var followedAuthorsLinks = author.FollowedAuthors?.Select(author =>                                                                 
+                $"{baseUrl}/{Uri.EscapeDataString(author.Name)}").ToList() ?? new List<string>();                             
                                                                                                                                             
             var data = new                                                                                                                              
             {                                                                                                                                           
@@ -65,13 +63,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 Cheeps = author.Cheeps                                                                                                                  
             };                                                                                                                                          
                                                                                                                                                         
-            // Serializering ata to JSON                                                                                                                
             var jsonData = JsonSerializer.Serialize(data);                                                                                              
-                                                                                                                                                        
-            // Converting JSON to byte-array                                                                                                            
             var bytes = Encoding.UTF8.GetBytes(jsonData);                                                                                               
-                                                                                                                                                        
-            // Returns the complete file to the user                                                                                                    
             return File(bytes, "application/json", "PersonalData.json");                                                                                
                                                                                                                                                         
         }
