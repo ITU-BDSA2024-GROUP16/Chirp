@@ -232,7 +232,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
     }
 
     [Fact]
-    public async Task UnitTestFollowerAddedToUsersFollowers()
+    public async Task UnitTestAddedToFollowersAndFollowedAuthorsWhenFollowing()
     {
         await using var dbContext = CreateContext();
         var authorRepository = new AuthorRepository(dbContext);
@@ -269,5 +269,48 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         Assert.Contains(testAuthor1, testAuthor2.Followers);
         Assert.Contains(testAuthor2, testAuthor1.FollowedAuthors);
 
+    }
+    
+    [Fact]
+    public async Task UnitTestRemovedFromFollowersAndFollowedAuthorsWhenUnFollowing()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext);
+
+        //arrange
+        var testAuthor1 = new Author
+        {
+            AuthorId = 1,
+            Name = "Delilah",
+            Email = "angelfromabove4@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+
+        };
+
+        var testAuthor2 = new Author
+        {
+            AuthorId = 2,
+            Name = "Clint",
+            Email = "satanthedevil13@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+
+        dbContext.Authors.Add(testAuthor1);
+        dbContext.Authors.Add(testAuthor2);
+        await dbContext.SaveChangesAsync();
+
+        //Act - testAuthor1 follows testAuthor2
+        await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
+        //testAuthor1 unfollows testAuthor2
+        await authorRepository.UnFollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
+        
+        //assert
+        Assert.DoesNotContain(testAuthor1, testAuthor2.Followers);
+        Assert.DoesNotContain(testAuthor2, testAuthor1.FollowedAuthors);
+        
     }
 }
