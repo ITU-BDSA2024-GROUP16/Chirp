@@ -107,9 +107,9 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!"); 
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation")); 
+        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
+        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         
         //next login to account that has just been made by user
         await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync();
@@ -141,11 +141,12 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         
         await cheepTextField.FillAsync("Hello, my group is the best group");
         await Expect(cheepTextField).ToHaveValueAsync("Hello, my group is the best group");
-        
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Share" }).ClickAsync();
-        
         //check if there is a cheep with that text on the page after share button has been clicked. 
-        var cheep = _page.Locator("#messagelist p#cheep", new() { HasTextString = "Hello, my group is the best group" });
+        var cheep = _page.GetByText("Hello, my group is the best group");
+        await cheep.HighlightAsync();
+        
+        //await Expect(cheep).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
         await Expect(cheep).ToBeVisibleAsync();
         
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
