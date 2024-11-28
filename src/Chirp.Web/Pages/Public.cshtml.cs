@@ -39,7 +39,6 @@ public class PublicModel : PageModel
             await _signInManager.SignOutAsync();
             return Redirect("http://localhost:5273/");
         }
-
         
         //default to page number 1 if no page is specified
         var pageQuery = Request.Query["page"];
@@ -97,7 +96,11 @@ public class PublicModel : PageModel
         //Finds the author that the logged in author wants to follow
         var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
         
+        Console.WriteLine("1 : = " + author.AuthorId + ", 2 : = " + followAuthor.AuthorId);
+        
         await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        
+        Console.WriteLine(" __1 : = " + author.AuthorId + ", __2 : = " + followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
         followedAuthors = await _authorRepository.getFollowing(author.AuthorId);

@@ -25,15 +25,25 @@ namespace Chirp.Infrastructure
                 .HasIndex(a => a.Email)
                 .IsUnique();
             
+            // Configure many-to-many relationship for FollowedAuthors
+            modelBuilder.Entity<Author>()
+                .HasMany(a => a.FollowedAuthors)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "AuthorFollows",
+                    j => j.HasOne<Author>().WithMany().HasForeignKey("FollowedId").OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Author>().WithMany().HasForeignKey("FollowerId").OnDelete(DeleteBehavior.Cascade));
+            
             // Configure maximum length for Cheep text
             modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
 
+            /*
             modelBuilder.Entity<Cheep>()
                 .HasOne(c => c.Author)
                 .WithMany(a => a.Cheeps)
                 .HasForeignKey(c => c.AuthorId)
                 .OnDelete(DeleteBehavior.Restrict); // Optional: define delete behavior
-
+            */
             base.OnModelCreating(modelBuilder);
         }
     }

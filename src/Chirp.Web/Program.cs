@@ -41,11 +41,13 @@ builder.Services.AddAuthentication(options =>
         o.CallbackPath = "/signin-github";
         o.Scope.Add("user:email");
     });
+
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
-//Here we are seeding the CheepDBContext
+//Seeding the CheepDBContext
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
