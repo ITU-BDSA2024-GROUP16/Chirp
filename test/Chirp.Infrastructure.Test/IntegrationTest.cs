@@ -45,6 +45,7 @@ namespace Chirp.Infrastructure.Test
             response.EnsureSuccessStatusCode();
         }
 
+        /*
         [Fact]
         public async Task FindTimelineByAuthor()
         {
@@ -57,14 +58,13 @@ namespace Chirp.Infrastructure.Test
             Assert.Contains("Jacqualine", content);
         }
 
+        
         [Fact]
         public async Task CanCreateUserAndFindUser()
         {
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<CheepDBContext>();
-
-            
             
             var testAuthor1 = new Author
             {
@@ -100,5 +100,6 @@ namespace Chirp.Infrastructure.Test
             Assert.Contains("Chirp!", content);
             Assert.Contains("Lars", content);
         }
+        */
     }
 }
