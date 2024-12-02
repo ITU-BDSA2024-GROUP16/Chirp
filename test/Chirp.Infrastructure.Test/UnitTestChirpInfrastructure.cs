@@ -11,7 +11,7 @@ namespace Chirp.Infrastructure.Test;
 
 public class UnitTestChirpInfrastructure : IAsyncLifetime
 {
-    private SqliteConnection _connection;
+    private SqliteConnection? _connection;
     private readonly ITestOutputHelper _output;
     
     public UnitTestChirpInfrastructure(ITestOutputHelper output)
@@ -27,19 +27,28 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _connection.DisposeAsync();
+        if (_connection != null)
+            {
+                await _connection.DisposeAsync();
+            }
     }
 
     private CheepDBContext CreateContext()
     {
+        if (_connection == null)
+        {
+            throw new InvalidOperationException("Connection is null.");
+        }
+    
         var options = new DbContextOptionsBuilder<CheepDBContext>()
             .UseSqlite(_connection) 
             .Options;
-
+    
         var context = new CheepDBContext(options);
         context.Database.EnsureCreated(); 
         return context;
     }
+
 
     [Fact]
     public async Task UnitTestGetAuthorFromName()

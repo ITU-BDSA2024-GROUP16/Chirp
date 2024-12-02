@@ -18,7 +18,7 @@ public class PublicModel : PageModel
     public int PageNumber { get; set; }
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
-    public string Text { get; set; }
+    public string? Text { get; set; }
     public List<Author> Authors { get; set; } = new List<Author>();
     public List<Author> followedAuthors { get; set; } = new List<Author>();
 
@@ -32,7 +32,9 @@ public class PublicModel : PageModel
     public async Task<ActionResult> OnGet()
     {
         //check if logged-in user exists in database, otherwise log out and redirect to public timeline
-        if (_signInManager.IsSignedIn(User) && await _authorRepository.FindIfAuthorExistsWithEmail(User.Identity.Name) == false)
+        if (_signInManager.IsSignedIn(User) 
+            && !string.IsNullOrEmpty(User.Identity?.Name) 
+            && await _authorRepository.FindIfAuthorExistsWithEmail(User.Identity.Name) == false)
         {
             await _signInManager.SignOutAsync();
             return Redirect("http://localhost:5273/");
@@ -44,12 +46,16 @@ public class PublicModel : PageModel
         
         Cheeps = await _cheepRepository.GetCheeps(PageNumber, PageSize);
         
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity?.IsAuthenticated == true)
         {
             var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-            var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-            followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+            if (!string.IsNullOrEmpty(authorEmail))
+            {
+                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
+                followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+            }
         }
+
         
         return Page();
     }
@@ -57,6 +63,10 @@ public class PublicModel : PageModel
     public async Task<ActionResult> OnPost()
     {
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
         
         var author = await _authorRepository.FindAuthorWithEmail(authorName);
         var cheep = new Cheep
@@ -76,12 +86,21 @@ public class PublicModel : PageModel
     {
         //Finds the author thats logged in
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+        
         var author = await _authorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
         var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
         
+        Console.WriteLine("1 : = " + author.AuthorId + ", 2 : = " + followAuthor.AuthorId);
+        
         await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        
+        Console.WriteLine(" __1 : = " + author.AuthorId + ", __2 : = " + followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
         followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
@@ -93,6 +112,11 @@ public class PublicModel : PageModel
     {
         //Finds the author thats logged in
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+        
         var author = await _authorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
