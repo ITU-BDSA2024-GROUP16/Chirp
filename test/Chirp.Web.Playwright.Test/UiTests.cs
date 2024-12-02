@@ -81,11 +81,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         
         //click on register button
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
-        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
-        
-        //click on confirm account link
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync();
-        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
     }
     
     [Test, Category("SkipSetUp")]
@@ -107,28 +103,10 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!"); 
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync(); 
-        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
-        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
         
-        //next login to account that has just been made by user
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync();
-        await Expect(_page).ToHaveURLAsync(new Regex("/Identity/Account/Login"));
-        
-        //fill in email
-        var emailField = _page.GetByPlaceholder("name@example.com");
-        await emailField.ClickAsync();
-        await emailField.FillAsync("ceel@itu.dk");
-        await Expect(emailField).ToHaveValueAsync("ceel@itu.dk");
-        
-        //fill in password
-        var passwordField = _page.GetByPlaceholder("password");
-        await passwordField.ClickAsync();
-        await passwordField.FillAsync("Cecilie1234!");
-        await Expect(passwordField).ToHaveValueAsync("Cecilie1234!");
-        
-        //log in button
-        await _page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
+        var loggedIn = _page.GetByText("What's on your mind");
+        await Expect(loggedIn).ToBeVisibleAsync();
     }
     
     [Test]
@@ -146,9 +124,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         var cheep = _page.GetByText("Hello, my group is the best group");
         await cheep.HighlightAsync();
         
-        //await Expect(cheep).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
         await Expect(cheep).ToBeVisibleAsync();
-        
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
     }
     
@@ -254,18 +230,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!");
         await Task.Delay(2000);
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/RegisterConfirmation"));
-        await Task.Delay(2000);
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Click here to confirm your account" }).ClickAsync(); 
-        await _page.WaitForURLAsync(new Regex("/Identity/Account/ConfirmEmail"));
-        
-        //next login to account that has just been made by user
-        await _page.GetByRole(AriaRole.Link, new() { NameString = "Login" }).ClickAsync(); 
-        await _page.GetByPlaceholder("name@example.com").ClickAsync(); 
-        await _page.GetByPlaceholder("name@example.com").FillAsync("ceel@itu.dk"); 
-        await _page.GetByPlaceholder("password").ClickAsync(); 
-        await _page.GetByPlaceholder("password").FillAsync("Cecilie1234!"); 
-        await _page.GetByRole(AriaRole.Button, new() { NameString = "Log in" }).ClickAsync();
+        await _page.WaitForURLAsync(_serverAddress);
     }
 
     private async Task InitializeBrowserAndCreateBrowserContextAsync() 
