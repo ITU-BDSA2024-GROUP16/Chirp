@@ -11,7 +11,7 @@ namespace Chirp.Infrastructure.Test;
 
 public class UnitTestChirpInfrastructure : IAsyncLifetime
 {
-    private SqliteConnection _connection;
+    private SqliteConnection? _connection;
     private readonly ITestOutputHelper _output;
     
     public UnitTestChirpInfrastructure(ITestOutputHelper output)

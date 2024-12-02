@@ -1,8 +1,12 @@
 using System.Collections.Generic; // Ensure this is included for List<T>
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Chirp.Core; // Ensure this includes Author and CheepDBContext
+using Chirp.Core;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity; // Ensure this includes Author and CheepDBContext
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,16 +14,17 @@ using Assert = Xunit.Assert;
 
 namespace Chirp.Infrastructure.Test
 {
-    public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class IntegrationTests : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _output;
-        private readonly WebApplicationFactory<Program> _factory;
+        private readonly CustomWebApplicationFactory _factory;
 
-        public IntegrationTests(WebApplicationFactory<Program> factory, ITestOutputHelper output)
+        public IntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
         {
             _output = output;
             _factory = factory;
+            //_signInManager = signInManager;
 
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
@@ -38,7 +43,8 @@ namespace Chirp.Infrastructure.Test
             if (!response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
-                _output.WriteLine($"Failed to access home page. Status code: {response.StatusCode}, Response content: {content}");
+                _output.WriteLine(
+                    $"Failed to access home page. Status code: {response.StatusCode}, Response content: {content}");
             }
 
             // Assert
@@ -63,7 +69,7 @@ namespace Chirp.Infrastructure.Test
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<CheepDBContext>();
-            
+
             var testAuthor1 = new Author
             {
                 Name = "Lars McKoy11",
@@ -81,7 +87,7 @@ namespace Chirp.Infrastructure.Test
                 Author = testAuthor1,
                 AuthorId = 1
             };
-            
+
             testAuthor1.Cheeps.Add(TestCheep);
 
             // Add the new author to the database
