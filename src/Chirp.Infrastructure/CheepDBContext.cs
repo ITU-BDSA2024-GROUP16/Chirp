@@ -28,7 +28,7 @@ namespace Chirp.Infrastructure
             // Configure many-to-many relationship for FollowedAuthors
             modelBuilder.Entity<Author>()
                 .HasMany(a => a.FollowedAuthors)
-                .WithMany()
+                .WithMany(a => a.Followers)
                 .UsingEntity<Dictionary<string, object>>(
                     "AuthorFollows",
                     j => j.HasOne<Author>().WithMany().HasForeignKey("FollowedId").OnDelete(DeleteBehavior.Restrict),

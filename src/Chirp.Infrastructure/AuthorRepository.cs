@@ -28,7 +28,7 @@ namespace Chirp.Infrastructure
         public async Task<Author> FindAuthorWithName(string userName)
         {
             var author = await _dbContext.Authors
-                .Include(a => a.FollowedAuthors)
+                .Include(a => a.FollowedAuthors!)
                 .ThenInclude(fa => fa.Cheeps)
                 .Include(a => a.Cheeps)
                 .Include(a => a.Followers)
@@ -97,10 +97,10 @@ namespace Chirp.Infrastructure
             Console.WriteLine("Logged in author: " + follower.Name + " wants to follow: " + followed.Name);
             
             
-            if (!await IsFollowingAsync(followerId, followedId))
+            if (!await IsFollowingAsync(followerId, followedId) && followed != null && follower != null)
             {
-                follower.FollowedAuthors.Add(followed);
-                followed.Followers.Add(follower);
+                follower.FollowedAuthors?.Add(followed);
+                followed.Followers?.Add(follower);
                 await _dbContext.SaveChangesAsync();
             }
         }
@@ -119,7 +119,7 @@ namespace Chirp.Infrastructure
 
             if (follower != null && followed != null)
             {
-                if (follower.FollowedAuthors.Contains(followed))
+                if (follower.FollowedAuthors?.Contains(followed) == true)
                 {
                     follower.FollowedAuthors.Remove(followed);
                     await _dbContext.SaveChangesAsync();
@@ -134,7 +134,7 @@ namespace Chirp.Infrastructure
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
 
-            return loggedInUser?.FollowedAuthors.Any(f => f.AuthorId == followedId) ?? false;
+            return loggedInUser?.FollowedAuthors?.Any(f => f.AuthorId == followedId) ?? false;
         }
 
         public async Task<List<Author>> getFollowing(int followerId)

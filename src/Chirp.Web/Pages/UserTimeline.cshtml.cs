@@ -53,8 +53,9 @@ public class UserTimelineModel : PageModel
 
             //Creates a list to gather the author and all its followers
             var allAuthors = new List<Author> { author };
+            
             //Adds all the followers to the list
-            allAuthors.AddRange(author.FollowedAuthors);
+            allAuthors.AddRange(author.FollowedAuthors ?? Enumerable.Empty<Author>());
             
             // Ensure PageNumber is valid and greater than 0
             PageNumber = Math.Max(1, PageNumber); // This ensures PageNumber is never less than 1
