@@ -14,7 +14,7 @@ public class PublicModel : PageModel
     public readonly ICheepRepository _cheepRepository;
     public readonly SignInManager<Author> _signInManager;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    private const int PageSize = 32;
+    public  int PageSize = 32;
     public int PageNumber { get; set; }
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
@@ -37,7 +37,8 @@ public class PublicModel : PageModel
             && await _authorRepository.FindIfAuthorExistsWithEmail(User.Identity.Name) == false)
         {
             await _signInManager.SignOutAsync();
-            return Redirect("http://localhost:5273/");
+            var baseUrl = $"{Request.Scheme}://{Request.Host}"; 
+            return Redirect($"{baseUrl}/");
         }
         
         //default to page number 1 if no page is specified
@@ -55,7 +56,6 @@ public class PublicModel : PageModel
                 followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
         }
-        
         return Page();
     }
     
