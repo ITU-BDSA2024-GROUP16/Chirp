@@ -32,26 +32,26 @@
             {
                 <li>
                     <p>
-                    <div>
-                        <strong>
-                            <a href="/@cheep.AuthorDTO">@cheep.AuthorDTO</a>
-                        </strong>
-                        @if (SignInManager.IsSignedIn(User) && AuthorName != @cheep.AuthorDTO)
-                        {
-                            @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
+                        <div>
+                            <strong>
+                                <a href="/@cheep.AuthorDTO">@cheep.AuthorDTO</a>
+                            </strong>
+                            @if (SignInManager.IsSignedIn(User) && AuthorName != @cheep.AuthorDTO)
                             {
-                                <form method="Post" asp-page-handler="Unfollow" asp-route-unFollowAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                    <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
-                                </form>
+                                @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
+                                {
+                                    <form method="Post" asp-page-handler="Unfollow" asp-route-unFollowAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                        <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                        <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
+                                    </form>
+                                }
                             }
-                            else
-                            {
-                                <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                    <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
-                                </form>
-                            }
-                        }
-                    </div>
+                        </div>
                         @cheep.Text
                         <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
@@ -59,6 +59,20 @@
                 </li>
             }
         </ul>
+        
+        <div class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <a href="?page=@(Model.PageNumber - 1)" class="previous">Previous</a>
+            }
+
+            <span>Page @Model.PageNumber</span>
+            
+            @if (Model.Cheeps.Count == Model.PageSize)
+            {
+                <a href="?page=@(Model.PageNumber + 1)" class="next">Next</a>
+            }
+        </div>
     }
     else
     {
