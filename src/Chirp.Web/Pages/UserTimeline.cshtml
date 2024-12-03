@@ -40,7 +40,7 @@
                         {
                             @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
                             {
-                                <form method="Post" asp-page-handler="Unfollow" asp-route-unFollowAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                <form method="Post" asp-page-handler="Unfollow" asp-route-FollowAuthorName="@cheep.AuthorDTO" style="display:inline;">
                                     <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
                                 </form>
                             }

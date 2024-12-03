@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Identity.Client;
 using Microsoft.Playwright;
 using Xunit;
 
@@ -209,6 +210,58 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         //user can log out
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Logout" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Logout"));
+    }
+
+    [Test]
+    public async Task FollowAndUnfollowOnPublicTimeline()
+    {
+        //find the follow-button for a specific cheep
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "Coffee House now is what we hear the worst." 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+
+        //unfollow author
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Follow");
+    }
+    
+    [Test]
+    public async Task UnfollowOnUserTimeline()
+    {
+        //find the follow-button for a specific cheep
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "Coffee House now is what we hear the worst." 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+        
+        //go to my timeline
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "my timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
+        
+        //locate cheep from the author we just followed
+        await Expect(_page.Locator("li:has-text('Coffee House now is what we hear the worst.')")).ToBeVisibleAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+        
+        //unfollow author
+        await followButton.ClickAsync();
+        await Expect(followButton).ToBeHiddenAsync();
+        await Expect(_page.Locator("text=There are no cheeps so far.")).ToBeVisibleAsync();
+        
+        //go back to public timeline to check the unfollow-button has changed back to follow
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
+        await Expect(followButton).ToHaveTextAsync("Follow");
     }
     
     private async Task SetUpRegisterAndLogin()
