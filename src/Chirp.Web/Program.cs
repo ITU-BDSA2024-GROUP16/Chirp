@@ -27,6 +27,7 @@ builder.Services.AddDefaultIdentity<Author>(options =>
     options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<CheepDBContext>();
 
 
+
 builder.Services.AddAuthentication(options =>
     {
         //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -44,6 +45,8 @@ builder.Services.AddAuthentication(options =>
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddHsts(o => o.MaxAge = TimeSpan.FromHours(8760));
+
 
 var app = builder.Build();
 
