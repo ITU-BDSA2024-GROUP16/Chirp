@@ -12,6 +12,7 @@ namespace Chirp.Infrastructure
         Task<bool> FindIfAuthorExistsWithEmail(string email);
         Task FollowUserAsync(int followerId, int followedId);
         Task UnFollowUserAsync(int followerId, int followedId);
+        Task<List<Author>> SearchAuthorsAsync(string searchWord);
     }
 
     public class AuthorRepository : IAuthorRepository
@@ -112,7 +113,6 @@ namespace Chirp.Infrastructure
             }
         }
 
-
         public async Task<bool> IsFollowingAsync(int followerId, int followedId)
         {
             var loggedInUser = await _dbContext.Authors.Include(a => a.FollowedAuthors)
@@ -126,6 +126,29 @@ namespace Chirp.Infrastructure
             var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
             return follower.FollowedAuthors;
+        }
+        
+        public async Task<List<Author>> SearchAuthorsAsync(string searchWord)
+        {
+            if (string.IsNullOrWhiteSpace(searchWord))
+            {
+                return new List<Author>(); // Return empty list if no search word is provided
+            }
+
+            if (searchWord.Length > 2)
+            {
+                // Perform a case-insensitive search for authors whose name contains the search word
+
+                return await _dbContext.Authors
+                    .Where(a => EF.Functions.Like(a.Name, $"%{searchWord}%"))
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _dbContext.Authors
+                    .Where(a => EF.Functions.Like(a.Name, $"{searchWord}%"))
+                    .ToListAsync();
+            }
         }
     }
 }
