@@ -1,10 +1,8 @@
-using System.Collections.Generic; // Ensure this is included for List<T>
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Chirp.Core;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity; // Ensure this includes Author and CheepDBContext
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +22,6 @@ namespace Chirp.Infrastructure.Test
         {
             _output = output;
             _factory = factory;
-            //_signInManager = signInManager;
 
             _client = factory.CreateClient(new WebApplicationFactoryClientOptions
             {
