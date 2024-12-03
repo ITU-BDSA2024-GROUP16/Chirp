@@ -176,8 +176,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         //Assert
         foreach (CheepDTO cheep in cheeps)
         {
-            _output.WriteLine("cheep Author: {0}", cheep.Author);
-            Assert.Equal(AuthorName, cheep.Author);
+            _output.WriteLine("cheep Author: {0}", cheep.AuthorDTO);
+            Assert.Equal(AuthorName, cheep.AuthorDTO);
         }
     }
 

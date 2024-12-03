@@ -175,8 +175,6 @@ public class UserTimelineModel : PageModel
         //updates the current author's list of followed authors
         FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + FollowedAuthors.Count);
-
         return RedirectToPage();
     }
 
@@ -198,8 +196,6 @@ public class UserTimelineModel : PageModel
         //updates the current author's list of followed authors
         FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + FollowedAuthors.Count);
-
         return RedirectToPage();
     }
     

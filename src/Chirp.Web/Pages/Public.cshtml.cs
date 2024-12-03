@@ -55,7 +55,6 @@ public class PublicModel : PageModel
                 followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
         }
-
         
         return Page();
     }
@@ -96,11 +95,7 @@ public class PublicModel : PageModel
         //Finds the author that the logged in author wants to follow
         var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
         
-        Console.WriteLine("1 : = " + author.AuthorId + ", 2 : = " + followAuthor.AuthorId);
-        
         await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
-        
-        Console.WriteLine(" __1 : = " + author.AuthorId + ", __2 : = " + followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
         followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
@@ -127,8 +122,6 @@ public class PublicModel : PageModel
         //updates the current author's list of followed authors
         followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
-
         return RedirectToPage();
     }
 }
