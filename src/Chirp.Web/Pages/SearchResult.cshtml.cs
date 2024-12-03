@@ -13,27 +13,22 @@ namespace Chirp.Web.Pages
     public class SearchResultsModel : PageModel
     {
         private readonly IAuthorRepository _authorRepository;
-        string SearchText { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string? SearchWord { get; set; }
+        public List<Author> Authors { get; set; } = new List<Author>();
+
         
-
-
+        
         public SearchResultsModel(IAuthorRepository authorRepository)
         {
             _authorRepository = authorRepository;
         }
-
-        [BindProperty(SupportsGet = true)]
-        public string SearchWord { get; set; }
-
-        public List<Author> Authors { get; set; } = new List<Author>();
-
         public async Task OnGet()
         {
             if (!string.IsNullOrEmpty(SearchWord))
             {
                 // Fetch authors filtered by the search word
                 Authors = await _authorRepository.SearchAuthorsAsync(SearchWord);
-                SearchText = SearchWord;
             }
         }
         
