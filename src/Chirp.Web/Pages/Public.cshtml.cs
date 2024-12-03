@@ -55,7 +55,6 @@ public class PublicModel : PageModel
                 followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
         }
-        
         return Page();
     }
     
