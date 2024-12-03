@@ -8,22 +8,22 @@ namespace Chirp.Web.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    public readonly IAuthorRepository _authorRepository;
-    public readonly ICheepRepository _cheepRepository;
+    public readonly IAuthorRepository AuthorRepository;
+    public readonly ICheepRepository CheepRepository;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     private const int PageSize = 32;
-    public int PageNumber { get; set; }
+    public int PageNumber { get; set; } = 1;
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
-    public string Text { get; set; }
-    public List<Author> followedAuthors { get; set; } = new List<Author>();
+    public string? Text { get; set; }
+    public List<Author> FollowedAuthors { get; set; } = new List<Author>();
 
 
 
     public UserTimelineModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository)
     {
-        _cheepRepository = cheepRepository;
-        _authorRepository = authorRepository;
+        CheepRepository = cheepRepository;
+        AuthorRepository = authorRepository;
     }
 
     public async Task<ActionResult> OnGet()
@@ -31,26 +31,38 @@ public class UserTimelineModel : PageModel
         //Gets the authorName from the currently LOGGED IN user
         var authorName = User.FindFirst("Name")?.Value ?? "User";
         //Gets the author name from the URL.
-        var pageUser = HttpContext.GetRouteValue("author").ToString();
+        var pageUser = HttpContext.GetRouteValue("author")?.ToString() ?? "DefaultUser";
+
 
         // This checks if the logged in user's USERNAME equals to the value from the UserTimeline URL
         if (authorName == pageUser)
         {
-            // Keeps track of which page the user is currently at
             var pageQuery = Request.Query["page"];
-            PageNumber = int.TryParse(pageQuery, out int page) ? page : 1;
+            if (!string.IsNullOrEmpty(pageQuery))
+            {
+                PageNumber = int.TryParse(pageQuery.ToString(), out int page) ? page : 1;
+            }
+            else
+            {
+                PageNumber = 1;
+            }
+
             
             //Loads the author with their cheeps and followers using the authors name
-            Author author = await _authorRepository.FindAuthorWithName(authorName);
+            Author author = await AuthorRepository.FindAuthorWithName(authorName);
 
             //Creates a list to gather the author and all its followers
             var allAuthors = new List<Author> { author };
+            
             //Adds all the followers to the list
-            allAuthors.AddRange(author.FollowedAuthors);
+            allAuthors.AddRange(author.FollowedAuthors ?? Enumerable.Empty<Author>());
+            
+            // Ensure PageNumber is valid and greater than 0
+            PageNumber = Math.Max(1, PageNumber); // This ensures PageNumber is never less than 1
 
-            //Sorts and converts the cheeps into cheepdto
+            // Sorts and converts the cheeps into cheepdto
             List<CheepDTO> cheeps = allAuthors
-                .SelectMany(a => a.Cheeps)
+                .SelectMany(a => a.Cheeps ?? Enumerable.Empty<Cheep>())  
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)
@@ -64,11 +76,20 @@ public class UserTimelineModel : PageModel
 
             // Assign the combined list to Cheeps
             Cheeps = cheeps;
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+
+                // Check if authorEmail is null or empty
+                if (string.IsNullOrEmpty(authorEmail))
+                {
+                    // Throw an exception if the email is missing
+                    throw new InvalidOperationException("User's email is missing or not authenticated.");
+                }
+
+                // Proceed with the method call if the email is valid
+                var loggedInAuthor = await AuthorRepository.FindAuthorWithEmail(authorEmail);
+                FollowedAuthors = await AuthorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
 
             return Page();
@@ -76,25 +97,35 @@ public class UserTimelineModel : PageModel
         else
         {
             //Only loads the cheep that the author has written
-            Author author = await _authorRepository.FindAuthorWithName(pageUser);
+            Author author = await AuthorRepository.FindAuthorWithName(pageUser);
 
-            //Sorts and converts the cheeps into cheepdto
-            List<CheepDTO> cheeps = author.Cheeps
+            List<CheepDTO> cheeps = author.Cheeps?
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Select(cheep => new CheepDTO
                 {
                     Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
-                }).ToList();
+                })
+                .ToList() ?? new List<CheepDTO>(); // If Cheeps is null, use an empty list
+
 
 
             Cheeps = cheeps;
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 var authorEmail = User.FindFirst(ClaimTypes.Name)?.Value;
-                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+
+                // Check if authorEmail is null or empty
+                if (string.IsNullOrEmpty(authorEmail))
+                {
+                    // Throw an exception if the email is missing
+                    throw new InvalidOperationException("User's email is missing or not authenticated.");
+                }
+
+                // Proceed with the method call if the email is valid
+                var loggedInAuthor = await AuthorRepository.FindAuthorWithEmail(authorEmail);
+                FollowedAuthors = await AuthorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
             return Page();
         }
@@ -104,7 +135,13 @@ public class UserTimelineModel : PageModel
     {
         var authorName = User.FindFirst("Name")?.Value;
         
-        Author author = await _authorRepository.FindAuthorWithName(authorName);
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+
+        Author author = await AuthorRepository.FindAuthorWithName(authorName);
+
         
         var cheep = new Cheep
         {
@@ -114,7 +151,7 @@ public class UserTimelineModel : PageModel
             Author = author
         };
         
-        await _cheepRepository.SaveCheep(cheep, author);
+        await CheepRepository.SaveCheep(cheep, author);
         
         return RedirectToPage();
     }
@@ -123,17 +160,22 @@ public class UserTimelineModel : PageModel
     {
         //Finds the author thats logged in
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+        
+        var author = await AuthorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
-        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
+        var followAuthor = await AuthorRepository.FindAuthorWithName(followAuthorName);
         
-        await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        await AuthorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
+        Console.WriteLine("Number of followed authors" + FollowedAuthors.Count);
 
         return RedirectToPage();
     }
@@ -142,17 +184,21 @@ public class UserTimelineModel : PageModel
     {
         //Finds the author thats logged in
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
-        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+        var author = await AuthorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
-        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
+        var followAuthor = await AuthorRepository.FindAuthorWithName(followAuthorName);
         
-        await _authorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        await AuthorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + followedAuthors.Count);
+        Console.WriteLine("Number of followed authors" + FollowedAuthors.Count);
 
         return RedirectToPage();
     }

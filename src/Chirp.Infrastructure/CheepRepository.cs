@@ -23,10 +23,11 @@ namespace Chirp.Infrastructure
         public async Task<List<Cheep>> GetCheepsByAuthor(int authorId)
         {
             return await _dbContext.Cheeps
-                .Where(c => c.AuthorId == authorId)
+                .Where(c => c.AuthorId == authorId) // Use the updated property name here
                 .OrderByDescending(c => c.TimeStamp)
                 .ToListAsync();
         }
+
 
         public async Task<List<CheepDTO>> GetCheeps(int pageNumber, int pageSize)
         {
@@ -50,8 +51,13 @@ namespace Chirp.Infrastructure
         {
             await _dbContext.Cheeps.AddAsync(cheep);
             await _dbContext.SaveChangesAsync();
+            
+            if (author.Cheeps == null)
+            {
+                throw new InvalidOperationException("Author's Cheeps collection is null.");
+            }
 
-            await _dbContext.Entry(author).Collection(a => a.Cheeps).LoadAsync();
+            await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
 
     }

@@ -36,16 +36,18 @@ builder.Services.AddAuthentication(options =>
     //.AddCookie()
     .AddGitHub(o =>
     {
-        o.ClientId = builder.Configuration["Authentication_Github_ClientId"];
-        o.ClientSecret = builder.Configuration["Authentication_Github_ClientSecret"];
+        o.ClientId = builder.Configuration["Authentication_Github_ClientId"] ?? throw new ArgumentNullException("Authentication_Github_ClientId");
+        o.ClientSecret = builder.Configuration["Authentication_Github_ClientSecret"] ?? throw new ArgumentNullException("Authentication_Github_ClientSecret");
         o.CallbackPath = "/signin-github";
         o.Scope.Add("user:email");
     });
+
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
-//Here we are seeding the CheepDBConte
+//Seeding the CheepDBContext
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

@@ -28,10 +28,11 @@ namespace Chirp.Infrastructure
         public async Task<Author> FindAuthorWithName(string userName)
         {
             var author = await _dbContext.Authors
-                .Include(a => a.FollowedAuthors)
+                .Include(a => a.FollowedAuthors!)
                 .ThenInclude(fa => fa.Cheeps)
                 .Include(a => a.Cheeps)
                 .Include(a => a.Followers)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(author => author.Name == userName);
             if (author == null)
             {
@@ -83,48 +84,69 @@ namespace Chirp.Infrastructure
             //the user that the logged in user wants to follow
             var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
             
-            Console.WriteLine("Logged in author: " + follower.Name + "author wants to follow: " + followed.Name);
-            
-            
-            
-            if (!await IsFollowingAsync(followerId, followedId))
+            if (follower == null || follower.Name == null)
             {
-                follower.FollowedAuthors.Add(followed);
-                followed.Followers.Add(follower);
+                throw new InvalidOperationException("Follower or follower's name is null.");
+            }
+
+            if (followed == null || followed.Name == null)
+            {
+                throw new InvalidOperationException("Followed author or followed author's name is null.");
+            }
+
+            Console.WriteLine("Logged in author: " + follower.Name + " wants to follow: " + followed.Name);
+            
+            
+            if (!await IsFollowingAsync(followerId, followedId) && followed != null && follower != null)
+            {
+                follower.FollowedAuthors?.Add(followed);
+                followed.Followers?.Add(follower);
                 await _dbContext.SaveChangesAsync();
             }
         }
 
         public async Task UnFollowUserAsync(int followerId, int followedId)
         {
-            //logged in user
-            var follower = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followerId);
-            //the user that the logged in user wants to follow
-            var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
+            // The logged in Author
+            var follower = await _dbContext.Authors
+                .Include(a => a.FollowedAuthors) 
+                .AsSplitQuery()
+                .SingleOrDefaultAsync(a => a.AuthorId == followerId);
+        
+            // The author whom the logged in author is unfollowing
+            var followed = await _dbContext.Authors
+                .SingleOrDefaultAsync(a => a.AuthorId == followedId);
 
-            
             if (follower != null && followed != null)
             {
-                Console.WriteLine("hej");
-                follower.FollowedAuthors.Remove(followed);
-                followed.Followers.Remove(follower);
-                await _dbContext.SaveChangesAsync();
+                if (follower.FollowedAuthors?.Contains(followed) == true)
+                {
+                    follower.FollowedAuthors.Remove(followed);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
         }
-
-
+        
         public async Task<bool> IsFollowingAsync(int followerId, int followedId)
         {
             var loggedInUser = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+                .Include(a => a.FollowedAuthors)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
 
-            return loggedInUser?.FollowedAuthors.Any(f => f.AuthorId == followedId) ?? false;
+            return loggedInUser?.FollowedAuthors?.Any(f => f.AuthorId == followedId) ?? false;
         }
 
         public async Task<List<Author>> getFollowing(int followerId)
         {
             var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+                .Include(a => a.FollowedAuthors)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
+            if (follower == null || follower.FollowedAuthors == null)
+            {
+                throw new InvalidOperationException("Follower or followed authors is null.");
+            }
             return follower.FollowedAuthors;
         }
     }
