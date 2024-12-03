@@ -149,5 +149,6 @@ namespace Chirp.Infrastructure
             }
             return follower.FollowedAuthors;
         }
+        
     }
 }
