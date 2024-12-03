@@ -12,18 +12,18 @@ var userName = User.FindFirst("Name")?.Value ?? "User";
 <div class="page">
     <h1><img src="/images/icon1.png" alt="Icon1"/>Chirp!</h1>
     <div class="navigation">
-        @if (User.Identity.IsAuthenticated) // Displays authenticated user's navigation
+        @if (User.Identity?.IsAuthenticated == true) // Displays authenticated user's navigation
         {
             <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="/@(userName)">my timeline</a> |
-                <a href="/">public timeline</a> |
+                <a href="/@(userName)">My timeline</a> |
+                <a href="/">Public timeline</a> |
                 <partial name="_LoginPartial"/>
             </div>
         }
         else // Displays unauthenticated user's navigation
         {
             <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="/">public timeline</a> |
+                <a href="/">Public timeline</a> |
                 <partial name="_LoginPartial" />
             </div>
         }

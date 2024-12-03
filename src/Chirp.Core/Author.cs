@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Core
 {
-    public class Author : IdentityUser
+    public class Author : IdentityUser<int>
     {
     public int AuthorId { get; set; }
     public string? Name { get; set; }
     public ICollection<Cheep>? Cheeps { get; set; }
+
     public List<Author>? FollowedAuthors { get; set; }
     public List<Author>? Followers { get; set; }
-    
-    }   
+    }
 }
