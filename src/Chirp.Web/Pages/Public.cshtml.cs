@@ -37,7 +37,8 @@ public class PublicModel : PageModel
             && await _authorRepository.FindIfAuthorExistsWithEmail(User.Identity.Name) == false)
         {
             await _signInManager.SignOutAsync();
-            return Redirect("http://localhost:5273/");
+            var baseUrl = $"{Request.Scheme}://{Request.Host}"; 
+            return Redirect($"{baseUrl}/");
         }
         
         //default to page number 1 if no page is specified
