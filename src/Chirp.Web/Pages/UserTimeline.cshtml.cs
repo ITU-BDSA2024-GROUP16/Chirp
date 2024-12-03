@@ -11,7 +11,7 @@ public class UserTimelineModel : PageModel
     public readonly IAuthorRepository _authorRepository;
     public readonly ICheepRepository CheepRepository;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    private const int PageSize = 32;
+    public int PageSize = 32;
     public int PageNumber { get; set; } = 1;
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]

@@ -12,6 +12,13 @@
 
 <div>
     <h2> Public Timeline </h2>
+    <div class="search-box">
+        <form method="get" action="/SearchResults">
+            <input type="text" name="searchWord" placeholder="Search authors..." />
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="cheepbox" style="position: relative; display: inline-block; width: 98.2%; vertical-align: top;">
@@ -59,6 +66,19 @@
                 </li>
             }
         </ul>
+        <div class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <a href="?page=@(Model.PageNumber - 1)" class="previous">Previous</a>
+            }
+
+            <span>Page @Model.PageNumber</span>
+            
+            @if (Model.Cheeps.Count == Model.PageSize)
+            {
+                <a href="?page=@(Model.PageNumber + 1)" class="next">Next</a>
+            }
+        </div>
     }
     else
     {
