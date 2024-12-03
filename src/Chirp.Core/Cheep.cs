@@ -13,4 +13,5 @@ public class Cheep
     public int AuthorId { get; set; }
     [JsonIgnore]
     public Author? Author { get; set; }
+    public int? Likes { get; set; }
 }

@@ -128,14 +128,16 @@ div.page ul.cheeps {
 }
 
 div.page ul.cheeps li {
-  margin: 10px 0;
-  padding: 5px;
-  background: #F0FAF9;
-  border: 1px solid #DBF3F1;
-  border-radius: 2px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  min-height: 48px;
+    position: relative;
+    margin: 10px 0;
+    padding: 5px;
+    background: #F0FAF9;
+    border: 1px solid #DBF3F1;
+    border-radius: 2px;
+    min-height: 48px;
+    word-wrap: break-word;  /* Allow text to break into a new line */
+    overflow-wrap: break-word; /* Ensure long words also wrap */
+    padding-right: 40px; /* Add space to the right for the like button */
 }
 
 div.page ul.cheeps p {
@@ -286,4 +288,73 @@ ul.nav li a {
 
 ul.nav li a:hover {
     background-color: #8b4949;
+}
+
+/* Button styles for "not liked" state */
+.like-button-not-liked {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px; /* Increased padding for spacing */
+    background-color: transparent;
+    border: 2px solid black; /* Black outline */
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    text-align: center;
+    line-height: 1; /* Ensure proper alignment */
+    border-radius: 50%; /* Circular shape for the button */
+    width: 48px; /* Fixed width for button size consistency */
+    height: 48px; /* Fixed height for button size consistency */
+}
+
+/* Button styles for "liked" state */
+.like-button-liked {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px; /* Increased padding for spacing */
+    background-color: red; /* Red background */
+    border: 2px solid red; /* Red outline */
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    text-align: center;
+    line-height: 1; /* Ensure proper alignment */
+    border-radius: 50%; /* Circular shape for the button */
+    width: 48px; /* Fixed width for button size consistency */
+    height: 48px; /* Fixed height for button size consistency */
+}
+
+/* Heart icon styles */
+.heart {
+    font-family: 'Arial', sans-serif;
+    display: inline-block;
+    position: relative;
+    color: transparent; /* Transparent fill for "not liked" state */
+    -webkit-text-stroke: 2px black; /* Black outline for the heart */
+    font-size: 18px; /* Adjust font size to fit inside the button */
+}
+
+/* Heart icon when the cheep is "liked" */
+.like-button-liked .heart {
+    color: red; /* Red fill for "liked" state */
+    -webkit-text-stroke: 2px red; /* Red outline for the heart */
+}
+
+/* Hover effects */
+.like-button-not-liked:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Slightly gray background on hover for "not liked" */
+}
+
+.like-button-liked:hover {
+    background-color: darkred; /* Darker red background on hover for "liked" */
 }

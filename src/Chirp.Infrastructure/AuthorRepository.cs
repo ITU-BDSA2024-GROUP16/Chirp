@@ -12,6 +12,7 @@ namespace Chirp.Infrastructure
         Task<bool> FindIfAuthorExistsWithEmail(string email);
         Task FollowUserAsync(int followerId, int followedId);
         Task UnFollowUserAsync(int followerId, int followedId);
+        Task<List<Cheep>> getLikedCheeps(int userId);
     }
 
     public class AuthorRepository : IAuthorRepository
@@ -145,6 +146,18 @@ namespace Chirp.Infrastructure
                 throw new InvalidOperationException("Follower or followed authors is null.");
             }
             return follower.FollowedAuthors;
+        }
+
+        public async Task<List<Cheep>> getLikedCheeps(int userId)
+        {
+            var user = await _dbContext.Authors.Include(a => a.LikedCheeps)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(a => a.AuthorId == userId);
+            if (user == null || user.LikedCheeps == null)
+            {
+                throw new InvalidOperationException("User liked cheeps is null.");
+            }
+            return user.LikedCheeps;
         }
         
     }

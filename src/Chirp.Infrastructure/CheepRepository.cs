@@ -8,6 +8,8 @@ namespace Chirp.Infrastructure
         Task<List<CheepDTO>> GetCheeps(int pageNumber, int pageSize);
         Task SaveCheep(Cheep cheep, Author author);
         Task<List<Cheep>> GetCheepsByAuthor(int authorId);
+        Task<Cheep> GetCheepFromCheepDto(CheepDTO cheepDto);
+        Task<bool> DoesUserLikeCheep(Cheep cheep, Author author);
     }
 
     public class CheepRepository : ICheepRepository
@@ -59,6 +61,33 @@ namespace Chirp.Infrastructure
 
             await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
+        
+        public async Task<Cheep> GetCheepFromCheepDto(CheepDTO cheepDto)
+        {
+            var cheeps = await _dbContext.Cheeps.ToListAsync();
+            
+            foreach(Cheep cheep in cheeps)
+            {
+                if (cheep.Text == cheepDto.Text)
+                {
+                    return cheep;
+                }
+            }
+            return null;
+        }
 
+        public async Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
+        {
+            if (author.LikedCheeps != null)
+            {
+                return author.LikedCheeps.Contains(cheep);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        
     }
 }

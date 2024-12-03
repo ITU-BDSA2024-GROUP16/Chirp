@@ -27,32 +27,46 @@
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
-                <li>
+                <li style="position: relative;"> 
                     <p class="cheep">
                         <div>
                             <strong>
                                 <a href="/@cheep.AuthorDTO">@cheep.AuthorDTO</a>
                             </strong>
-                                @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO)
+                            @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO)
+                            {
+                                @if (Model.followedAuthors.Any(a => a.Name == cheep.AuthorDTO))
                                 {
-                                    @if (Model.followedAuthors.Any(a => a.Name == cheep.AuthorDTO))
-                                    {
-                                        <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                            <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                            <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
-                                        </form>
-                                    }
+                                    <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                        <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
+                                    </form>
                                 }
+                                else
+                                {
+                                    <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                        <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
+                                    </form>
+                                }
+                            }
                         </div>
                         @cheep.Text
                         <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
-                        
+                        @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO) //Like button
+                        {
+                            @if (await Model.UserLikesCheep(cheep) == true)
+                            {
+                                <button class="like-button-liked" asp-page-handler="UnLike">
+                                    <span class="heart">&#x2764;</span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="like-button-not-liked" asp-page-handler="Like">
+                                    <span class="heart">&#x2764;</span>
+                                </button>
+                            }
+                        }
                     </p>
                 </li>
             }
@@ -62,4 +76,6 @@
     {
         <em>There are no cheeps so far.</em>
     }
+
 </div>
+}
