@@ -68,7 +68,7 @@ public class UserTimelineModel : PageModel
                 .Take(PageSize)
                 .Select(cheep => new CheepDTO
                 {
-                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
                 })
@@ -103,7 +103,7 @@ public class UserTimelineModel : PageModel
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Select(cheep => new CheepDTO
                 {
-                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
                 })
@@ -175,8 +175,6 @@ public class UserTimelineModel : PageModel
         //updates the current author's list of followed authors
         FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + FollowedAuthors.Count);
-
         return RedirectToPage();
     }
 
@@ -198,8 +196,6 @@ public class UserTimelineModel : PageModel
         //updates the current author's list of followed authors
         FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
-        Console.WriteLine("Number of followed authors" + FollowedAuthors.Count);
-
         return RedirectToPage();
     }
     

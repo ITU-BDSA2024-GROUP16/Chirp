@@ -38,7 +38,7 @@ namespace Chirp.Infrastructure
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
                 {
-                    Author = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
                 })

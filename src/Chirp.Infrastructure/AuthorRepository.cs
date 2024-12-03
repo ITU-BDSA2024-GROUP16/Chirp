@@ -93,9 +93,6 @@ namespace Chirp.Infrastructure
             {
                 throw new InvalidOperationException("Followed author or followed author's name is null.");
             }
-
-            Console.WriteLine("Logged in author: " + follower.Name + " wants to follow: " + followed.Name);
-            
             
             if (!await IsFollowingAsync(followerId, followedId) && followed != null && follower != null)
             {
@@ -149,5 +146,6 @@ namespace Chirp.Infrastructure
             }
             return follower.FollowedAuthors;
         }
+        
     }
 }
