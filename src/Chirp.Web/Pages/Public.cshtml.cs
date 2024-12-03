@@ -50,7 +50,6 @@ public class PublicModel : PageModel
             var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
             followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
         }
-        
         return Page();
     }
     
@@ -107,18 +106,5 @@ public class PublicModel : PageModel
 
         return RedirectToPage();
     }
-
-    public async Task<ActionResult> OnPostSearch(string searchWord)
-    {
-        if (string.IsNullOrEmpty(searchWord))
-        {
-            // Redirect to SearchResults with no search term
-            return RedirectToPage("/SearchResults");
-        }
-
-        // Redirect to SearchResults page with the search word
-        return RedirectToPage("/SearchResults", new { SearchWord = searchWord });
-    }
-
 }
 

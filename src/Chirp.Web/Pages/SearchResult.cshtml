@@ -19,23 +19,7 @@ var AuthorName = User.FindFirst("Name")?.Value ?? "User";
     <li>
         <strong>
             <a href="/@author.Name">@author.Name</a>
-
         </strong>
-        @if (SignInManager.IsSignedIn(User) && AuthorName != author.Name)
-        {
-            @if (Model.followedAuthors.Any(a => a.Name == author.Name))
-            {
-                <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@author.Name" style="display:inline;">
-                    <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
-                </form>
-            }
-            else
-            {
-                <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@author.Name" style="display:inline;">
-                    <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
-                </form>
-            }
-        }
     </li>
     }
 </ul>
