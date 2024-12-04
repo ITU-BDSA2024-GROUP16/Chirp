@@ -43,9 +43,5 @@
         <ProjectReference Include="..\..\src\Chirp.Web\Chirp.Web.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="TestResults\" />
-    </ItemGroup>
-
 
 </Project>

@@ -247,8 +247,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
-        
-        List<Author> authors = new List<Author>();
+
+        List<Author> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("jacq");
         
@@ -263,8 +263,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
 
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
-        
-        List<Author> authors = new List<Author>();
+
+        List<Author> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("12345567");
         
@@ -301,6 +301,9 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await dbContext.SaveChangesAsync();
 
         await authorRepository.FollowUserAsync(author.AuthorId, author2.AuthorId);
+        
+        List<Author> UserFollwingThisUser = await authorRepository.getFollowing(author.AuthorId);
+        Assert.NotEmpty(UserFollwingThisUser);
 
         foreach (Author auth in author.FollowedAuthors)
         {
