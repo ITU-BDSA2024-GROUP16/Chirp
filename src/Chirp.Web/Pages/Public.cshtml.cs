@@ -53,7 +53,7 @@ public class PublicModel : PageModel
             if (!string.IsNullOrEmpty(authorEmail))
             {
                 var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                followedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+                followedAuthors = await _authorRepository.GetFollowing(loggedInAuthor.AuthorId);
             }
         }
         return Page();
@@ -98,7 +98,7 @@ public class PublicModel : PageModel
         await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        followedAuthors = await _authorRepository.GetFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
@@ -120,7 +120,7 @@ public class PublicModel : PageModel
         await _authorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        followedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        followedAuthors = await _authorRepository.GetFollowing(author.AuthorId);
         
         return RedirectToPage();
     }

@@ -1,8 +1,10 @@
-using System.Collections.Generic; // Ensure this is included for List<T>
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Chirp.Core; // Ensure this includes Author and CheepDBContext
+using Chirp.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,6 +17,7 @@ namespace Chirp.Infrastructure.Test
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _output;
         private readonly CustomWebApplicationFactory _factory;
+
 
         public IntegrationTests(CustomWebApplicationFactory  factory, ITestOutputHelper output)
         {
@@ -38,14 +41,15 @@ namespace Chirp.Infrastructure.Test
             if (!response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
-                _output.WriteLine($"Failed to access home page. Status code: {response.StatusCode}, Response content: {content}");
+                _output.WriteLine(
+                    $"Failed to access home page. Status code: {response.StatusCode}, Response content: {content}");
             }
 
             // Assert
             response.EnsureSuccessStatusCode();
         }
 
-        
+
         [Fact]
         public async Task FindTimelineByAuthor()
         {
@@ -58,19 +62,20 @@ namespace Chirp.Infrastructure.Test
             Assert.Contains("Jacqualine", content);
         }
 
-        
         [Fact]
         public async Task CanCreateUserAndFindUser()
         {
             using var scope = _factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var dbContext = services.GetRequiredService<CheepDBContext>();
-            
+
             var testAuthor1 = new Author
             {
                 Name = "Lars McKoy11",
                 Email = "McManden11@gmail.com",
-                Cheeps = new List<Cheep>()
+                Cheeps = new List<Cheep>(),
+                FollowedAuthors = new List<Author>(),
+                Followers = new List<Author>()
             };
 
             var TestCheep = new Cheep()
@@ -81,9 +86,8 @@ namespace Chirp.Infrastructure.Test
                 Author = testAuthor1,
                 AuthorId = 1
             };
-            
+
             testAuthor1.Cheeps.Add(TestCheep);
-            
 
             // Add the new author to the database
             await dbContext.Authors.AddAsync(testAuthor1);

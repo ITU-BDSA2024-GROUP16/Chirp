@@ -89,7 +89,7 @@ public class UserTimelineModel : PageModel
 
                 // Proceed with the method call if the email is valid
                 var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                FollowedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+                FollowedAuthors = await _authorRepository.GetFollowing(loggedInAuthor.AuthorId);
             }
 
             return Page();
@@ -124,7 +124,7 @@ public class UserTimelineModel : PageModel
 
                 // Proceed with the method call if the email is valid
                 var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                FollowedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+                FollowedAuthors = await _authorRepository.GetFollowing(loggedInAuthor.AuthorId);
             }
             return Page();
         }
@@ -172,7 +172,7 @@ public class UserTimelineModel : PageModel
         await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        FollowedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await _authorRepository.GetFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
@@ -193,7 +193,7 @@ public class UserTimelineModel : PageModel
         await _authorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        FollowedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await _authorRepository.GetFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
