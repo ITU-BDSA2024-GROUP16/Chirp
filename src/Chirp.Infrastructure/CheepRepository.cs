@@ -122,12 +122,18 @@ namespace Chirp.Infrastructure
         {
             if (author.LikedCheeps != null)
             {
-                var cheepToRemove = author.LikedCheeps.FirstOrDefault(c => c.Text == cheep.Text);
-                Console.WriteLine("Liked cheeps length 1: " + author.LikedCheeps.Count);
-                author.LikedCheeps.Remove(cheep);
-                Console.WriteLine("Liked cheeps length 2: " + author.LikedCheeps.Count);
+                var cheepsToRemove = author.LikedCheeps
+                    .Where(c => c.Text == cheep.Text)
+                    .ToList(); 
+                
+                foreach (var cheepToRemove in cheepsToRemove)
+                {
+                    author.LikedCheeps.Remove(cheepToRemove);
+                }
             }
+            
             await _dbContext.SaveChangesAsync();
         }
+
     }
 }

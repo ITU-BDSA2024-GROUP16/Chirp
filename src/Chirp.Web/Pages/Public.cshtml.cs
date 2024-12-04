@@ -154,8 +154,7 @@ public class PublicModel : PageModel
 
         cheepDto.Likes = cheepDto.Likes + 1;
         cheep.Likes = cheep.Likes + 1;
-
-        Console.WriteLine("global count " + likedCheeps.Count);
+        
         return RedirectToPage();
     }
 
@@ -183,7 +182,6 @@ public class PublicModel : PageModel
         await _cheepRepository.UnLikeCheep(cheep, author);
         
         likedCheeps = await _authorRepository.getLikedCheeps(author.AuthorId);
-        Console.WriteLine("global count 2 " + likedCheeps.Count);
 
         cheepDto.Likes = cheepDto.Likes + 1;
         cheep.Likes = cheep.Likes + 1;
