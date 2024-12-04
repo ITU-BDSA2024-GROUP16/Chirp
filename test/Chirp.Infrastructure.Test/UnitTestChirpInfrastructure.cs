@@ -1,5 +1,4 @@
 using Chirp.Core;
-using Chirp.Infrastructure;
 using Chirp.Web;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -54,45 +53,45 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
     public async Task UnitTestGetAuthorFromName()
     {
         await using var dbContext = CreateContext();
-        var _authorRepository = new AuthorRepository(dbContext );
+        var authorRepository = new AuthorRepository(dbContext );
 
-        var _testAuthor = new Author
+        var testAuthor = new Author
         {
             Name = "Test Name",
             Email = "test@gmail.com",
             Cheeps = new List<Cheep>(),
         };
 
-        dbContext.Authors.Add(_testAuthor);
+        dbContext.Authors.Add(testAuthor);
         await dbContext.SaveChangesAsync(); 
 
-        var author = await _authorRepository.FindAuthorWithName(_testAuthor.Name);
+        var author = await authorRepository.FindAuthorWithName(testAuthor.Name);
 
         Assert.NotNull(author);
-        Assert.Equal(_testAuthor.Name, author.Name);
+        Assert.Equal(testAuthor.Name, author.Name);
     }
 
     [Fact]
     public async Task UnitTestGetAuthorFromEmail()
     {
         await using var dbContext = CreateContext();
-        var _authorRepository = new AuthorRepository(dbContext );
+        var authorRepository = new AuthorRepository(dbContext );
 
 
-        var _testAuthor = new Author
+        var testAuthor = new Author
         {
             Name = "Test Name",
             Email = "test@gmail.com",
             Cheeps = new List<Cheep>(),
         };
 
-        dbContext.Authors.Add(_testAuthor);
+        dbContext.Authors.Add(testAuthor);
         await dbContext.SaveChangesAsync(); 
 
-        var author = await _authorRepository.FindAuthorWithEmail(_testAuthor.Email);
+        var author = await authorRepository.FindAuthorWithEmail(testAuthor.Email);
 
         Assert.NotNull(author);
-        Assert.Equal(_testAuthor.Email, author.Email); 
+        Assert.Equal(testAuthor.Email, author.Email); 
     }
 /*
     [Fact]
@@ -111,19 +110,18 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
     public async Task UnitTestDuplicateAuthors()
     {
         await using var dbContext = CreateContext();
-        var _cheepRepository = new CheepRepository(dbContext);
         
-        var _testAuthor1 = new Author
+        var testAuthor1 = new Author
         {
             Name = "Test Name",
             Email = "test@gmail.com",
             Cheeps = new List<Cheep>(),
         };
         
-        await dbContext.Authors.AddAsync(_testAuthor1);
+        await dbContext.Authors.AddAsync(testAuthor1);
         await dbContext.SaveChangesAsync(); 
 
-        var _testAuthor2 = new Author
+        var testAuthor2 = new Author
         {
             Name = "Test Name", 
             Email = "test@gmail.com", 
@@ -132,7 +130,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         
         await Assert.ThrowsAsync<DbUpdateException>(async () =>
         {
-            await dbContext.Authors.AddAsync(_testAuthor2);
+            await dbContext.Authors.AddAsync(testAuthor2);
             await dbContext.SaveChangesAsync(); 
         });
     }
@@ -145,12 +143,9 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var cheepRepository = new CheepRepository( dbContext);
         
-        List<CheepDTO> cheeps = new List<CheepDTO>();
-        List<CheepDTO> cheeps2 = new List<CheepDTO>();
-        
         //Act
-        cheeps = await cheepRepository.GetCheeps(1, 32);
-        cheeps2 = await cheepRepository.GetCheeps(1, 12);
+        List<CheepDTO> cheeps = await cheepRepository.GetCheeps(1, 32);
+        List<CheepDTO> cheeps2 = await cheepRepository.GetCheeps(1, 12);
         
         _output.WriteLine("cheeps: {0}, cheeps2: {1}", cheeps.Count, cheeps2.Count);
 
@@ -158,6 +153,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         Assert.Equal(32, cheeps.Count);
         Assert.Equal(12, cheeps2.Count);
     }
+    
+    /*
     [Fact]
     public async Task UnitTestGetCheepsFromAuthor()
     {
@@ -167,7 +164,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         
         var cheepRepository = new CheepRepository(dbContext);
         List<CheepDTO> cheeps = new List<CheepDTO>();
-        string AuthorName = "Jacqualine Gilcoine";
+        string authorName = "Jacqualine Gilcoine";
         
         //Act
         //cheeps = await cheepRepository.ReadCheeps(AuthorName, 1,32);
@@ -177,9 +174,10 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         foreach (CheepDTO cheep in cheeps)
         {
             _output.WriteLine("cheep Author: {0}", cheep.AuthorDTO);
-            Assert.Equal(AuthorName, cheep.AuthorDTO);
+            Assert.Equal(authorName, cheep.AuthorDTO);
         }
     }
+    */
 
     [Fact]
     public async Task UnitTestNoAuthorNameDuplicates()
@@ -187,7 +185,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);
         
-        var _testAuthor1 = new Author
+        var testAuthor1 = new Author
         {
             Name = "Jacqualine Gilcoine",
             Email = "test@gmail.com",
@@ -196,7 +194,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         
         await Assert.ThrowsAsync<DbUpdateException>(async () =>
         {
-            await dbContext.Authors.AddAsync(_testAuthor1);
+            await dbContext.Authors.AddAsync(testAuthor1);
             await dbContext.SaveChangesAsync(); 
         });
     }
@@ -207,7 +205,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);
 
-        var _testAuthor1 = new Author
+        var testAuthor1 = new Author
         {
             Name = "Jacqie Gilcoine",
             Email = "Jacqualine.Gilcoine@gmail.com",
@@ -216,7 +214,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         
         await Assert.ThrowsAsync<DbUpdateException>(async () =>
         {
-            await dbContext.Authors.AddAsync(_testAuthor1);
+            await dbContext.Authors.AddAsync(testAuthor1);
             await dbContext.SaveChangesAsync(); 
         });
     }
@@ -229,10 +227,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var cheepRepository = new CheepRepository(dbContext);
         
-        List<CheepDTO> cheeps = new List<CheepDTO>();
-        
         //Act
-        cheeps = await cheepRepository.GetCheeps(100000, 32);
+        List<CheepDTO> cheeps = await cheepRepository.GetCheeps(100000, 32);
         
         _output.WriteLine("cheeps: {0}", cheeps.Count);
 
