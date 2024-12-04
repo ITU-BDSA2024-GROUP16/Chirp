@@ -239,4 +239,35 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         //Assert
         Assert.Empty(cheeps);
     }
+
+    [Fact]
+    public async Task WhenSearchingAuthorsCorrectAuthorsAreInList()
+    {
+        
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        List<Author> authors = new List<Author>();
+
+        authors = await authorRepository.SearchAuthorsAsync("jacq");
+        
+        Assert.Contains(authors, author => author.Name == "Jacqualine Gilcoine");
+
+    }
+
+    [Fact]
+    public async Task WhenSearchingAuthorsIsEmptyCollection()
+    {
+        await using var dbContext = CreateContext();
+
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        List<Author> authors = new List<Author>();
+
+        authors = await authorRepository.SearchAuthorsAsync("12345567");
+        
+        Assert.Empty(authors);
+    }
 }
