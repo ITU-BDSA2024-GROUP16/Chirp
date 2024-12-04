@@ -124,7 +124,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     
     
     [Fact]
-
     public async Task UnitTestAddedToFollowersAndFollowedAuthorsWhenFollowing()
     {
         await using var dbContext = CreateContext();
@@ -159,10 +158,54 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
         
         //assert
+        Assert.NotNull(testAuthor1);
+        Assert.NotNull(testAuthor2);
+        Assert.NotNull(testAuthor1.FollowedAuthors);
+        Assert.NotNull(testAuthor2.Followers);
+        Assert.True(await authorRepository.IsFollowingAsync(testAuthor1.AuthorId, testAuthor2.AuthorId));
         Assert.Contains(testAuthor1, testAuthor2.Followers);
         Assert.Contains(testAuthor2, testAuthor1.FollowedAuthors);
 
     }
+    
+    [Fact]
+    public async Task UnitTestCannotFollowIfAlreadyFollowing()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        //arrange
+        var testAuthor1 = new Author
+        {
+            AuthorId = 1,
+            Name = "Delilah",
+            Email = "angelfromabove4@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+
+        };
+        
+        var testAuthor2 = new Author
+        {
+            AuthorId = 2,
+            Name = "Clint",
+            Email = "satanthedevil13@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+        
+        dbContext.Authors.Add(testAuthor1);
+        dbContext.Authors.Add(testAuthor2);
+        await dbContext.SaveChangesAsync();
+        //Act - testAuthor1 follows testAuthor2
+        await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
+        
+        await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
+        Assert.True(await authorRepository.IsFollowingAsync(testAuthor1.AuthorId, testAuthor2.AuthorId));
+    }
+    
 
     [Fact]
     public async Task UnitTestFollowUserAsync_ThrowsExceptionIfFollowerIsNull()
@@ -185,6 +228,31 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
             await authorRepository.FollowUserAsync(9999999, testAuthor.AuthorId);
+        });
+
+        Assert.Equal("Follower or follower's name is null.", exception.Message);
+        
+    }
+    [Fact]
+    public async Task UnitTestFollowUserAsync_ThrowsExceptionIfFollowerNameIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var testAuthor = new Author
+        {
+            AuthorId = 1,
+            Email = "seedsfor4life@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+        dbContext.Authors.Add(testAuthor);
+        await dbContext.SaveChangesAsync();
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FollowUserAsync(testAuthor.AuthorId, 99999);
         });
 
         Assert.Equal("Follower or follower's name is null.", exception.Message);
@@ -213,6 +281,43 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
             await authorRepository.FollowUserAsync(testAuthor.AuthorId, 888888);
+        });
+
+        Assert.Equal("Followed author or followed author's name is null.", exception.Message);
+        
+    }
+    
+    [Fact]
+    public async Task UnitTestFollowUserAsync_ThrowsExceptionIfFollowedNameIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var testAuthor = new Author
+        {
+            AuthorId = 1,
+            Name = "Grus",
+            Email = "creationfromabove@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+        
+        var testAuthor2 = new Author
+        {
+            AuthorId = 2,
+            Email = "amongthewilds@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+        
+        dbContext.Authors.Add(testAuthor);
+        await dbContext.SaveChangesAsync();
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FollowUserAsync(testAuthor.AuthorId, testAuthor2.AuthorId);
         });
 
         Assert.Equal("Followed author or followed author's name is null.", exception.Message);

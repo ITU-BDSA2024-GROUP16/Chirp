@@ -230,7 +230,7 @@ var assemblies = [
   {
     "name": "Chirp.Infrastructure",
     "classes": [
-      { "name": "Chirp.Infrastructure.AuthorRepository", "rp": "Chirp.Infrastructure_AuthorRepository.html", "cl": 82, "ucl": 20, "cal": 102, "tl": 175, "cb": 26, "tb": 42, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Chirp.Infrastructure.AuthorRepository", "rp": "Chirp.Infrastructure_AuthorRepository.html", "cl": 86, "ucl": 16, "cal": 102, "tl": 175, "cb": 28, "tb": 38, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Chirp.Infrastructure.CheepDBContext", "rp": "Chirp.Infrastructure_CheepDBContext.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 45, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Chirp.Infrastructure.CheepRepository", "rp": "Chirp.Infrastructure_CheepRepository.html", "cl": 19, "ucl": 14, "cal": 33, "tl": 64, "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Chirp.Infrastructure.Migrations.CheepDBContextModelSnapshot", "rp": "Chirp.Infrastructure_CheepDBContextModelSnapshot.html", "cl": 0, "ucl": 311, "cal": 311, "tl": 347, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
@@ -389,12 +389,6 @@ var riskHotspots = [
     "assembly": "Chirp.Web", "class": "Chirp.Web.Pages.PublicModel", "reportPath": "Chirp.Web_PublicModel.html", "methodName": "OnGet()", "methodShortName": "OnGet()", "fileIndex": 0, "line": 33,
     "metrics": [
       { "value": 71, "exceeded": true },
-      { "value": 18, "exceeded": true },
-    ]},
-  {
-    "assembly": "Chirp.Infrastructure", "class": "Chirp.Infrastructure.AuthorRepository", "reportPath": "Chirp.Infrastructure_AuthorRepository.html", "methodName": "FollowUserAsync()", "methodShortName": "FollowUserAsync()", "fileIndex": 0, "line": 82,
-    "metrics": [
-      { "value": 23, "exceeded": false },
       { "value": 18, "exceeded": true },
     ]},
 ];

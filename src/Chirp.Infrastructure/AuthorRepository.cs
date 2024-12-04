@@ -95,7 +95,7 @@ namespace Chirp.Infrastructure
                 throw new InvalidOperationException("Followed author or followed author's name is null.");
             }
             
-            if (!await IsFollowingAsync(followerId, followedId) && followed != null && follower != null)
+            if (!await IsFollowingAsync(followerId, followedId))
             {
                 follower.FollowedAuthors?.Add(followed);
                 followed.Followers?.Add(follower);
