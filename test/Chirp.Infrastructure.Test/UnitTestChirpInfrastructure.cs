@@ -326,8 +326,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
-        
-        List<Author> authors = new List<Author>();
+
+        List<Author> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("jacq");
         
@@ -342,11 +342,81 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
 
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
-        
-        List<Author> authors = new List<Author>();
+
+        List<Author> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("12345567");
         
         Assert.Empty(authors);
     }
+
+    
+    
+    [Fact]
+    public async Task IfAuthorExistsReturnTrue()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        Author author = new Author()
+        {
+            Name = "Jacqie",
+            Email = "jacque@itu.dk",
+            AuthorId = 1000,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        
+        await dbContext.Authors.AddAsync(author);
+        await dbContext.SaveChangesAsync();
+
+        bool isAuthorFound = await authorRepository.FindIfAuthorExistsWithEmail(author.Email);
+        
+        Assert.True(isAuthorFound);
+
+        
+    }
+    
+    [Fact]
+    public async Task IfAuthorDoesNotExistReturnFalse()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        bool isAuthorFound = await authorRepository.FindIfAuthorExistsWithEmail("CountCommint@itu.dk");
+        
+        Assert.False(isAuthorFound);
+
+        
+    }
+
+    [Fact]
+    public async Task TestFindAuthorWithID()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        
+        Author author = new Author()
+        {
+            Name = "Jacqie",
+            Email = "jacque@itu.dk",
+            AuthorId = 1000,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        
+        await dbContext.Authors.AddAsync(author);
+        await dbContext.SaveChangesAsync();
+
+        Author foundAuthor =  await authorRepository.FindAuthorWithId(1000);
+        Assert.Equal(author, foundAuthor);
+
+    }
+    
+    
+    
 }
