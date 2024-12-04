@@ -304,6 +304,19 @@ public class UnitTestAuthorRepository : IAsyncLifetime
 
     }
     
+    [Fact]
+    public async Task UnitTestFindAuthorWithId_ThrowsExceptionIfAuthorIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FindAuthorWithId(999999999);
+        });
+
+        Assert.Equal("Author with ID 999999999 was not found.", exception.Message);
+    }
     
     
 }
