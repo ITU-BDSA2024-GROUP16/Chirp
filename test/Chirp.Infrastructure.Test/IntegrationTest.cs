@@ -18,7 +18,8 @@ namespace Chirp.Infrastructure.Test
         private readonly ITestOutputHelper _output;
         private readonly CustomWebApplicationFactory _factory;
 
-        public IntegrationTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
+
+        public IntegrationTests(CustomWebApplicationFactory  factory, ITestOutputHelper output)
         {
             _output = output;
             _factory = factory;
@@ -47,6 +48,7 @@ namespace Chirp.Infrastructure.Test
             // Assert
             response.EnsureSuccessStatusCode();
         }
+
 
         [Fact]
         public async Task FindTimelineByAuthor()

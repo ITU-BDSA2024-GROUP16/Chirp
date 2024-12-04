@@ -237,6 +237,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
     }
 
     [Fact]
+
     public async Task UnitTestAddedToFollowersAndFollowedAuthorsWhenFollowing()
     {
         await using var dbContext = CreateContext();
@@ -317,5 +318,35 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         Assert.DoesNotContain(testAuthor1, testAuthor2.Followers);
         Assert.DoesNotContain(testAuthor2, testAuthor1.FollowedAuthors);
         
+
+    public async Task WhenSearchingAuthorsCorrectAuthorsAreInList()
+    {
+        
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        List<Author> authors = new List<Author>();
+
+        authors = await authorRepository.SearchAuthorsAsync("jacq");
+        
+        Assert.Contains(authors, author => author.Name == "Jacqualine Gilcoine");
+
+    }
+
+    [Fact]
+    public async Task WhenSearchingAuthorsIsEmptyCollection()
+    {
+        await using var dbContext = CreateContext();
+
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        List<Author> authors = new List<Author>();
+
+        authors = await authorRepository.SearchAuthorsAsync("12345567");
+        
+        Assert.Empty(authors);
+
     }
 }

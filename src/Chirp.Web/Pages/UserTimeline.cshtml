@@ -14,14 +14,14 @@
 <div>
     @if (AuthorName == userName?.ToString())
     {
-    <div class="cheepbox">
+    <div class="cheepbox" style="position: relative; display: inline-block; width: 98.2%; vertical-align: top;">
         <h3>What's on your mind @userName?</h3>
         <form method="post">
-            <input style="float: left" type="text" asp-for="Text" maxlength="160" oninput="updateCharCount()">
-            <span id="charCount" style="position: absolute; bottom: 10px; right: 10px; font-size: 0.85rem; color: gray;">0/160</span>
-            <input style="float: left; vertical-align: top; height: fit-content; padding: 10px; font-size: 1rem;" type="submit" value="Share">
+            <input style="float: left; width: 100%; resize: none; padding: 5px; box-sizing: border-box; overflow: hidden;" type="text" asp-for="Text" maxlength="160" oninput="updateCharCount(this)">
+            <span id="charCount" style="position: absolute; bottom: 8px; right: 85px; font-size: 0.85rem; color: gray;">0/160</span>
+            <input style="float: right; vertical-align: top; padding: 2px; border-radius: 3px;" type="submit" value="Share">
         </form>
-    </div> 
+    </div>
     }
 
     <h2> @userName's Timeline </h2>
@@ -80,3 +80,20 @@
         <em>There are no cheeps so far.</em>
     }
 </div>
+
+@section Scripts{
+    <script>
+        function updateCharCount(element) {
+            const charCounter = element.value.length;
+
+            // Update the character count display
+            document.getElementById('charCount').textContent = charCounter + "/160";
+
+            // Auto-resize only if it's a textarea
+            if (element.tagName.toLowerCase() === 'textarea') {
+                element.style.height = 'auto';
+                element.style.height = element.scrollHeight + 'px';
+            }
+        }
+    </script>
+}
