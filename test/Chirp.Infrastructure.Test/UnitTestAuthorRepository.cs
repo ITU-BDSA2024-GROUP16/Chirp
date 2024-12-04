@@ -72,6 +72,20 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     }
 
     [Fact]
+    public async Task UnitTestFindAuthorWithName_ThrowsExceptionIfAuthorIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FindAuthorWithName("NullAuthorName");
+        });
+
+        Assert.Equal("Author with name NullAuthorName not found.", exception.Message);
+    }
+    
+    [Fact]
     public async Task UnitTestGetAuthorFromEmail()
     {
         await using var dbContext = CreateContext();
@@ -92,6 +106,20 @@ public class UnitTestAuthorRepository : IAsyncLifetime
 
         Assert.NotNull(author);
         Assert.Equal(testAuthor.Email, author.Email); 
+    }
+    
+    [Fact]
+    public async Task UnitTestFindAuthorWithEmail_ThrowsExceptionIfAuthorIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FindAuthorWithEmail("nullemail@gmail.com");
+        });
+
+        Assert.Equal($"Author with email nullemail@gmail.com not found.", exception.Message);
     }
     
     
@@ -275,5 +303,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         Assert.Equal(author, foundAuthor);
 
     }
+    
+    
     
 }
