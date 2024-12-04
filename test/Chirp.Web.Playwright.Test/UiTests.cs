@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Identity.Client;
 using Microsoft.Playwright;
 using Xunit;
+using System.IO;
 
 namespace Chirp.Web.Playwright.Test;
 
@@ -262,6 +263,26 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(_serverAddress);
         await Expect(followButton).ToHaveTextAsync("Follow");
+    }
+    
+    [Test]
+    public async Task UserCanDeleteTheirAccount()
+    {
+        //go to about me page
+        await _page.GetByRole(AriaRole.Link, new() { Name = "About Me" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage/PersonalData"));
+        
+        //click forget me
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Forget me" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage/DeletePersonalData"));
+        
+        //confirm delete data and close account
+        var passwordInput = _page.GetByPlaceholder("Please enter your password");
+        await passwordInput.ClickAsync();
+        await passwordInput.FillAsync("Cecilie1234!");
+        await Expect(passwordInput).ToHaveValueAsync("Cecilie1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
     }
     
     private async Task SetUpRegisterAndLogin()
