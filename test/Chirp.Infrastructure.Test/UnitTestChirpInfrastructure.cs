@@ -270,4 +270,153 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         
         Assert.Empty(authors);
     }
+
+    [Fact]
+    public async Task TestFollowingAUser()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+
+        
+
+        Author author = new Author()
+        {
+            Name = "Jacqie",
+            AuthorId = 1000,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        
+        Author author2 = new Author()
+        {
+            Name = "Frank",
+            AuthorId = 1001,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        await dbContext.Authors.AddAsync(author);
+        await dbContext.Authors.AddAsync(author2);
+
+        await dbContext.SaveChangesAsync();
+
+        await authorRepository.FollowUserAsync(author.AuthorId, author2.AuthorId);
+
+        foreach (Author auth in author.FollowedAuthors)
+        {
+            Assert.Equal(auth.Name, author2.Name);
+        } 
+        
+        foreach (Author auth in author2.Followers)
+        {
+            Assert.Equal(auth.Name, author.Name);
+        } 
+        
+    }
+    
+    [Fact]
+    public async Task TestUnFollowingAUser()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+
+        
+
+        Author author = new Author()
+        {
+            Name = "Jacqie",
+            AuthorId = 1000,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        
+        Author author2 = new Author()
+        {
+            Name = "Frank",
+            AuthorId = 1001,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        await dbContext.Authors.AddAsync(author);
+        await dbContext.Authors.AddAsync(author2);
+
+        await dbContext.SaveChangesAsync();
+
+        await authorRepository.FollowUserAsync(author.AuthorId, author2.AuthorId);
+
+        await authorRepository.UnFollowUserAsync(author.AuthorId, author2.AuthorId);
+        
+        
+        Assert.Empty(author.FollowedAuthors);
+        Assert.Empty(author2.Followers);
+    }
+    
+    [Fact]
+    public async Task IfAuthorExistsReturnTrue()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        Author author = new Author()
+        {
+            Name = "Jacqie",
+            Email = "jacque@itu.dk",
+            AuthorId = 1000,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        
+        await dbContext.Authors.AddAsync(author);
+        await dbContext.SaveChangesAsync();
+
+        bool isAuthorFound = await authorRepository.FindIfAuthorExistsWithEmail(author.Email);
+        
+        Assert.True(isAuthorFound);
+
+        
+    }
+    
+    [Fact]
+    public async Task IfAuthorDoesNotExistReturnFalse()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        bool isAuthorFound = await authorRepository.FindIfAuthorExistsWithEmail("CountCommint@itu.dk");
+        
+        Assert.False(isAuthorFound);
+
+        
+    }
+
+    [Fact]
+    public async Task TestFindAuthorWithID()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        
+        Author author = new Author()
+        {
+            Name = "Jacqie",
+            Email = "jacque@itu.dk",
+            AuthorId = 1000,
+            Followers = new List<Author>(),
+            FollowedAuthors = new List<Author>()
+        };
+        
+        await dbContext.Authors.AddAsync(author);
+        await dbContext.SaveChangesAsync();
+
+        Author foundAuthor =  await authorRepository.FindAuthorWithId(1000);
+        Assert.Equal(author, foundAuthor);
+
+    }
+    
+    
+    
 }
