@@ -94,15 +94,13 @@ namespace Chirp.Infrastructure
 
         public async Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
         {
-            if (author.LikedCheeps == null || author.LikedCheeps.Count == 0)
+            if (author.LikedCheeps == null)
             {
-                Console.WriteLine("fuck");
                 return false;
             }
-            Console.WriteLine("Cheep = " + cheep.Text);
+            
             foreach (var likedCheep in author.LikedCheeps)
             {
-                Console.WriteLine("liked cheep = " + likedCheep.Text);
                 if (cheep.Text == likedCheep.Text)
                 {
                     return true;
@@ -113,7 +111,7 @@ namespace Chirp.Infrastructure
         
         public async Task LikeCheep(Cheep cheep, Author author)
         {
-            if (author.LikedCheeps != null && await DoesUserLikeCheep(cheep, author) == false)
+            if (author.LikedCheeps != null)
             {
                 author.LikedCheeps.Add(cheep);
             }
@@ -122,14 +120,14 @@ namespace Chirp.Infrastructure
         
         public async Task UnLikeCheep(Cheep cheep, Author author)
         {
-            if (author.LikedCheeps != null && await DoesUserLikeCheep(cheep, author) == true)
+            if (author.LikedCheeps != null)
             {
+                var cheepToRemove = author.LikedCheeps.FirstOrDefault(c => c.Text == cheep.Text);
+                Console.WriteLine("Liked cheeps length 1: " + author.LikedCheeps.Count);
                 author.LikedCheeps.Remove(cheep);
+                Console.WriteLine("Liked cheeps length 2: " + author.LikedCheeps.Count);
             }
             await _dbContext.SaveChangesAsync();
         }
-        
-        
-        
     }
 }

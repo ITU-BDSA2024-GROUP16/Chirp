@@ -13,6 +13,7 @@ namespace Chirp.Infrastructure
         Task FollowUserAsync(int followerId, int followedId);
         Task UnFollowUserAsync(int followerId, int followedId);
         Task<List<Cheep>> getLikedCheeps(int userId);
+        Task<Author> FindAuthorWithLikes(string userName);
     }
 
     public class AuthorRepository : IAuthorRepository
@@ -29,14 +30,28 @@ namespace Chirp.Infrastructure
         public async Task<Author> FindAuthorWithName(string userName)
         {
             var author = await _dbContext.Authors
-                .Include(a => a.FollowedAuthors)
-                .ThenInclude(fa => ((Author)fa).Cheeps) 
-                .Include(a => a.LikedCheeps)
+                .Include(a => a.FollowedAuthors!)
+                .ThenInclude(fa => fa.Cheeps)
                 .Include(a => a.Cheeps)
                 .Include(a => a.Followers)
+                .Include(a => a.LikedCheeps)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(author => author.Name == userName);
+            
+            if (author == null)
+            {
+                throw new InvalidOperationException($"Author with name {userName} not found.");
+            }
 
+            return author;
+        }
+
+        public async Task<Author> FindAuthorWithLikes(string userName)
+        {
+            var author = await _dbContext.Authors
+                .Include(a => a.LikedCheeps)
+                .FirstOrDefaultAsync(a => a.Name == userName);
+            
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with name {userName} not found.");

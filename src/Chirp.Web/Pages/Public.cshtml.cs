@@ -138,13 +138,13 @@ public class PublicModel : PageModel
         };
 
         // Find the author that's logged in
-        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
         {
             throw new ArgumentException("Author name cannot be null or empty.");
         }
 
-        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+        var author = await _authorRepository.FindAuthorWithName(authorName);
         var cheep = await _cheepRepository.CreateCheepFromCheepDto(cheepDto, author);
         
         // Adds the cheep to the author's list of liked cheeps
@@ -162,7 +162,6 @@ public class PublicModel : PageModel
     
     public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp, int? likes)
     {
-        // Reconstruct CheepDTO from the form data
         var cheepDto = new CheepDTO
         {
             AuthorDTO = authorDto,
@@ -170,23 +169,24 @@ public class PublicModel : PageModel
             TimeStamp = timeStamp,
             Likes = likes
         };
-        
-        //Finds the author thats logged in
-        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+
+        // Find the author that's logged in
+        var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
         {
             throw new ArgumentException("Author name cannot be null or empty.");
         }
-        
-        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+
+        var author = await _authorRepository.FindAuthorWithName(authorName);
         var cheep = await _cheepRepository.CreateCheepFromCheepDto(cheepDto, author);
         
-        //removes the cheep from the user's unlikes from their list of liked cheeps
-        await _cheepRepository.LikeCheep(cheep, author);
-
-        cheepDto.Likes = cheepDto.Likes - 1;
+        await _cheepRepository.UnLikeCheep(cheep, author);
         
         likedCheeps = await _authorRepository.getLikedCheeps(author.AuthorId);
+        Console.WriteLine("global count 2 " + likedCheeps.Count);
+
+        cheepDto.Likes = cheepDto.Likes + 1;
+        cheep.Likes = cheep.Likes + 1;
         
         return RedirectToPage();
     }
@@ -209,10 +209,8 @@ public class PublicModel : PageModel
             throw new ArgumentException("Author name cannot be null or empty.");
         }
         
-        var author = await _authorRepository.FindAuthorWithName(authorName);
+        var author = await _authorRepository.FindAuthorWithLikes(authorName);
         var cheep = await _cheepRepository.CreateCheepFromCheepDto(cheepDto, author);
-        
-        //Console.WriteLine("bool = " + await _cheepRepository.DoesUserLikeCheep(cheep, author));
         
         return await  _cheepRepository.DoesUserLikeCheep(cheep, author);
     }

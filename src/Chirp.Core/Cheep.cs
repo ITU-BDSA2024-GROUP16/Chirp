@@ -14,4 +14,5 @@ public class Cheep
     [JsonIgnore]
     public Author? Author { get; set; }
     public int? Likes { get; set; }
+    public List<Author>? LikedByAuthors { get; set; } = new List<Author>();
 }
