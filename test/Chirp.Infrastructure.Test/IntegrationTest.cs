@@ -10,13 +10,13 @@ using Assert = Xunit.Assert;
 
 namespace Chirp.Infrastructure.Test
 {
-    public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class IntegrationTests : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _output;
-        private readonly WebApplicationFactory<Program> _factory;
+        private readonly CustomWebApplicationFactory _factory;
 
-        public IntegrationTests(WebApplicationFactory<Program> factory, ITestOutputHelper output)
+        public IntegrationTests(CustomWebApplicationFactory  factory, ITestOutputHelper output)
         {
             _output = output;
             _factory = factory;
@@ -45,7 +45,7 @@ namespace Chirp.Infrastructure.Test
             response.EnsureSuccessStatusCode();
         }
 
-        /*
+        
         [Fact]
         public async Task FindTimelineByAuthor()
         {
@@ -100,6 +100,5 @@ namespace Chirp.Infrastructure.Test
             Assert.Contains("Chirp!", content);
             Assert.Contains("Lars", content);
         }
-        */
     }
 }
