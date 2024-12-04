@@ -276,7 +276,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         Assert.Contains(testAuthor2, testAuthor1.FollowedAuthors);
 
     }
-    
+
     [Fact]
     public async Task UnitTestRemovedFromFollowersAndFollowedAuthorsWhenUnFollowing()
     {
@@ -313,12 +313,13 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
         //testAuthor1 unfollows testAuthor2
         await authorRepository.UnFollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
-        
+
         //assert
         Assert.DoesNotContain(testAuthor1, testAuthor2.Followers);
         Assert.DoesNotContain(testAuthor2, testAuthor1.FollowedAuthors);
-        
+    }
 
+    [Fact]
     public async Task WhenSearchingAuthorsCorrectAuthorsAreInList()
     {
         
