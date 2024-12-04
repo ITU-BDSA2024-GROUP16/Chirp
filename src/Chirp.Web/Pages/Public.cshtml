@@ -12,11 +12,11 @@
 
 <div>
     <div style="padding-top: 8px">
-    <h2 style="float: left"> Public Timeline </h2>
-    <form method="get" action="/SearchResults" style="float: right">
-        <input type="text" name="searchWord" placeholder="Search authors..." style="padding: 5px;"/>
-        <button type="submit" style="padding: 6px; padding-left: 12px; padding-right: 12px; border-radius: 3px;">Search</button>
-    </form>
+        <h2 style="float: left"> Public Timeline </h2>
+        <form method="get" action="/SearchResults" style="float: right">
+            <input type="text" name="searchWord" placeholder="Search authors..." style="padding: 5px;"/>
+            <button type="submit" style="padding: 6px; padding-left: 12px; padding-right: 12px; border-radius: 3px;">Search</button>
+        </form>
     </div>
 
     @if (SignInManager.IsSignedIn(User))
@@ -30,6 +30,11 @@
             </form>
         </div>
     }
+    else
+    {
+        <div style="padding-top: 40px"></div>
+    }
+    
 
     @if (Model.Cheeps.Any())
     {

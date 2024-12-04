@@ -13,7 +13,8 @@
 
 <div>
     @if (AuthorName == userName?.ToString())
-    {
+    { 
+        <h2 style="padding-top: 8px"> @userName's Timeline </h2>
     <div class="cheepbox" style="position: relative; display: inline-block; width: 98.2%; vertical-align: top;">
         <h3>What's on your mind @userName?</h3>
         <form method="post">
@@ -23,8 +24,7 @@
         </form>
     </div>
     }
-
-    <h2> @userName's Timeline </h2>
+    
 
     @if (Model.Cheeps.Any())
     {
