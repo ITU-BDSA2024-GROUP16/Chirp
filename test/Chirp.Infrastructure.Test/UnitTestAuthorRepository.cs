@@ -165,6 +165,61 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     }
 
     [Fact]
+    public async Task UnitTestFollowUserAsync_ThrowsExceptionIfFollowerIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var testAuthor = new Author
+        {
+            AuthorId = 1,
+            Name = "Poppy",
+            Email = "seedsfor4life@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+        dbContext.Authors.Add(testAuthor);
+        await dbContext.SaveChangesAsync();
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FollowUserAsync(9999999, testAuthor.AuthorId);
+        });
+
+        Assert.Equal("Follower or follower's name is null.", exception.Message);
+        
+    }
+    
+    [Fact]
+    public async Task UnitTestFollowUserAsync_ThrowsExceptionIfFollowedIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext );
+        
+        var testAuthor = new Author
+        {
+            AuthorId = 1,
+            Name = "Tassles",
+            Email = "creationfromabove@gmail.dk",
+            Cheeps = new List<Cheep>(),
+            FollowedAuthors = new List<Author>(),
+            Followers = new List<Author>()
+        };
+        
+        dbContext.Authors.Add(testAuthor);
+        await dbContext.SaveChangesAsync();
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.FollowUserAsync(testAuthor.AuthorId, 888888);
+        });
+
+        Assert.Equal("Followed author or followed author's name is null.", exception.Message);
+        
+    }
+
+    [Fact]
     public async Task UnitTestRemovedFromFollowersAndFollowedAuthorsWhenUnFollowing()
     {
         await using var dbContext = CreateContext();
