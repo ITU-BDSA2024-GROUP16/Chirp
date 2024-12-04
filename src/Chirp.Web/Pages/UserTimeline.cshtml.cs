@@ -8,7 +8,7 @@ namespace Chirp.Web.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    public readonly IAuthorRepository _authorRepository;
+    public readonly IAuthorRepository AuthorRepository;
     public readonly ICheepRepository CheepRepository;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
     public int PageSize = 32;
@@ -23,7 +23,7 @@ public class UserTimelineModel : PageModel
     public UserTimelineModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository)
     {
         CheepRepository = cheepRepository;
-        _authorRepository = authorRepository;
+        AuthorRepository = authorRepository;
     }
 
     public async Task<ActionResult> OnGet()
@@ -49,7 +49,7 @@ public class UserTimelineModel : PageModel
 
             
             //Loads the author with their cheeps and followers using the authors name
-            Author author = await _authorRepository.FindAuthorWithName(authorName);
+            Author author = await AuthorRepository.FindAuthorWithName(authorName);
 
             //Creates a list to gather the author and all its followers
             var allAuthors = new List<Author> { author };
@@ -88,8 +88,8 @@ public class UserTimelineModel : PageModel
                 }
 
                 // Proceed with the method call if the email is valid
-                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                FollowedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+                var loggedInAuthor = await AuthorRepository.FindAuthorWithEmail(authorEmail);
+                FollowedAuthors = await AuthorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
 
             return Page();
@@ -97,7 +97,7 @@ public class UserTimelineModel : PageModel
         else
         {
             //Only loads the cheep that the author has written
-            Author author = await _authorRepository.FindAuthorWithName(pageUser);
+            Author author = await AuthorRepository.FindAuthorWithName(pageUser);
 
             List<CheepDTO> cheeps = author.Cheeps?
                 .OrderByDescending(cheep => cheep.TimeStamp)
@@ -123,8 +123,8 @@ public class UserTimelineModel : PageModel
                 }
 
                 // Proceed with the method call if the email is valid
-                var loggedInAuthor = await _authorRepository.FindAuthorWithEmail(authorEmail);
-                FollowedAuthors = await _authorRepository.getFollowing(loggedInAuthor.AuthorId);
+                var loggedInAuthor = await AuthorRepository.FindAuthorWithEmail(authorEmail);
+                FollowedAuthors = await AuthorRepository.getFollowing(loggedInAuthor.AuthorId);
             }
             return Page();
         }
@@ -139,7 +139,7 @@ public class UserTimelineModel : PageModel
             throw new ArgumentException("Author name cannot be null or empty.");
         }
 
-        Author author = await _authorRepository.FindAuthorWithName(authorName);
+        Author author = await AuthorRepository.FindAuthorWithName(authorName);
 
         
         var cheep = new Cheep
@@ -164,15 +164,15 @@ public class UserTimelineModel : PageModel
             throw new ArgumentException("Author name cannot be null or empty.");
         }
         
-        var author = await _authorRepository.FindAuthorWithEmail(authorName);
+        var author = await AuthorRepository.FindAuthorWithEmail(authorName);
         
         //Finds the author that the logged in author wants to follow
-        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
+        var followAuthor = await AuthorRepository.FindAuthorWithName(followAuthorName);
         
-        await _authorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        await AuthorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        FollowedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
@@ -185,15 +185,15 @@ public class UserTimelineModel : PageModel
         {
             throw new ArgumentException("Author name cannot be null or empty.");
         }
-        var author = await _authorRepository.FindAuthorWithName(authorName);
+        var author = await AuthorRepository.FindAuthorWithName(authorName);
         
         //Finds the author that the logged in author wants to follow
-        var followAuthor = await _authorRepository.FindAuthorWithName(followAuthorName);
+        var followAuthor = await AuthorRepository.FindAuthorWithName(followAuthorName);
         
-        await _authorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
+        await AuthorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        FollowedAuthors = await _authorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
