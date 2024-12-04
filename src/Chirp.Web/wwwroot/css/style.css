@@ -296,9 +296,9 @@ ul.nav li a:hover {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    padding: 10px; /* Increased padding for spacing */
+    padding: 0; /* Remove padding to ensure no extra space */
     background-color: transparent;
-    border: 2px solid black; /* Black outline */
+    border: none; /* No border */
     cursor: pointer;
     font-size: 24px;
     display: flex;
@@ -306,10 +306,7 @@ ul.nav li a:hover {
     justify-content: center;
     outline: none;
     text-align: center;
-    line-height: 1; /* Ensure proper alignment */
-    border-radius: 50%; /* Circular shape for the button */
-    width: 48px; /* Fixed width for button size consistency */
-    height: 48px; /* Fixed height for button size consistency */
+    line-height: 0;
 }
 
 /* Button styles for "liked" state */
@@ -318,9 +315,9 @@ ul.nav li a:hover {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    padding: 10px; /* Increased padding for spacing */
-    background-color: red; /* Red background */
-    border: 2px solid red; /* Red outline */
+    padding: 0; /* Remove padding */
+    background-color: transparent;
+    border: none; /* No border */
     cursor: pointer;
     font-size: 24px;
     display: flex;
@@ -328,33 +325,56 @@ ul.nav li a:hover {
     justify-content: center;
     outline: none;
     text-align: center;
-    line-height: 1; /* Ensure proper alignment */
-    border-radius: 50%; /* Circular shape for the button */
-    width: 48px; /* Fixed width for button size consistency */
-    height: 48px; /* Fixed height for button size consistency */
+    line-height: 0;
 }
 
-/* Heart icon styles */
-.heart {
+/* Heart icon styles for "not liked" state */
+.like-button-not-liked .heart {
     font-family: 'Arial', sans-serif;
-    display: inline-block;
-    position: relative;
-    color: transparent; /* Transparent fill for "not liked" state */
-    -webkit-text-stroke: 2px black; /* Black outline for the heart */
-    font-size: 18px; /* Adjust font size to fit inside the button */
+    color: transparent;
+    -webkit-text-stroke: 2px black; /* Black outline */
+    transition: color 0.3s, -webkit-text-stroke 0.3s; /* Smooth transition */
 }
 
-/* Heart icon when the cheep is "liked" */
+/* Heart icon styles for "liked" state */
 .like-button-liked .heart {
-    color: red; /* Red fill for "liked" state */
-    -webkit-text-stroke: 2px red; /* Red outline for the heart */
+    font-family: 'Arial', sans-serif;
+    color: red;
+    -webkit-text-stroke: 2px red; /* Red outline */
+    transition: color 0.3s, -webkit-text-stroke 0.3s; /* Smooth transition */
 }
 
-/* Hover effects */
-.like-button-not-liked:hover {
-    background-color: rgba(0, 0, 0, 0.1); /* Slightly gray background on hover for "not liked" */
+/* Hover effects for "not liked" state */
+.like-button-not-liked:hover .heart {
+    color: red; /* Red fill on hover */
+    -webkit-text-stroke: 2px red; /* Red outline on hover */
 }
 
-.like-button-liked:hover {
-    background-color: darkred; /* Darker red background on hover for "liked" */
+/* Hover effects for "liked" state */
+.like-button-liked:hover .heart {
+    color: transparent; /* Transparent fill on hover */
+    -webkit-text-stroke: 2px black; /* Black outline on hover */
 }
+
+/* Prevent focus outline, background, or shadow */
+.like-button-not-liked,
+.like-button-liked {
+    outline: none; /* Remove focus outline */
+    background: none; /* Ensure no background */
+    box-shadow: none; /* Prevent any shadows */
+}
+
+/* Remove any pseudo-element effects */
+.like-button-not-liked::before,
+.like-button-not-liked::after,
+.like-button-liked::before,
+.like-button-liked::after {
+    content: none;
+}
+
+/* Optional: Ensure button has no inherent box model spacing */
+.like-button-not-liked, .like-button-liked {
+    width: auto; /* No fixed size unless needed */
+    height: auto;
+}
+

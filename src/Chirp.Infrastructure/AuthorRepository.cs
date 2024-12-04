@@ -29,12 +29,14 @@ namespace Chirp.Infrastructure
         public async Task<Author> FindAuthorWithName(string userName)
         {
             var author = await _dbContext.Authors
-                .Include(a => a.FollowedAuthors!)
-                .ThenInclude(fa => fa.Cheeps)
+                .Include(a => a.FollowedAuthors)
+                .ThenInclude(fa => ((Author)fa).Cheeps) 
+                .Include(a => a.LikedCheeps)
                 .Include(a => a.Cheeps)
                 .Include(a => a.Followers)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(author => author.Name == userName);
+
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with name {userName} not found.");

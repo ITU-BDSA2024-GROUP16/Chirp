@@ -8,8 +8,10 @@ namespace Chirp.Infrastructure
         Task<List<CheepDTO>> GetCheeps(int pageNumber, int pageSize);
         Task SaveCheep(Cheep cheep, Author author);
         Task<List<Cheep>> GetCheepsByAuthor(int authorId);
-        Task<Cheep> GetCheepFromCheepDto(CheepDTO cheepDto);
         Task<bool> DoesUserLikeCheep(Cheep cheep, Author author);
+        Task<Cheep> CreateCheepFromCheepDto(CheepDTO cheepDto, Author author);
+        Task LikeCheep(Cheep cheep, Author author);
+        Task UnLikeCheep(Cheep cheep, Author author);
     }
 
     public class CheepRepository : ICheepRepository
@@ -62,31 +64,71 @@ namespace Chirp.Infrastructure
             await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
         
-        public async Task<Cheep> GetCheepFromCheepDto(CheepDTO cheepDto)
+        public async Task<Cheep> CreateCheepFromCheepDto(CheepDTO cheepDto, Author author)
         {
-            var cheeps = await _dbContext.Cheeps.ToListAsync();
-            
-            foreach(Cheep cheep in cheeps)
+            if (cheepDto == null)
             {
-                if (cheep.Text == cheepDto.Text)
-                {
-                    return cheep;
-                }
+                throw new ArgumentNullException(nameof(cheepDto), "CheepDTO cannot be null.");
             }
-            return null;
+
+            if (string.IsNullOrEmpty(cheepDto.TimeStamp))
+            {
+                throw new ArgumentException("Timestamp is required.", nameof(cheepDto.TimeStamp));
+            }
+
+            if (!DateTime.TryParse(cheepDto.TimeStamp, out var parsedTimeStamp))
+            {
+                throw new FormatException("Invalid timestamp format.");
+            }
+
+            return new Cheep
+            {
+                Author = author,
+                AuthorId = author.AuthorId,
+                Text = cheepDto.Text,
+                TimeStamp = parsedTimeStamp,
+                Likes = cheepDto.Likes ?? 0 // Default to 0 if Likes is null
+            };
         }
+
 
         public async Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
         {
-            if (author.LikedCheeps != null)
+            if (author.LikedCheeps == null || author.LikedCheeps.Count == 0)
             {
-                return author.LikedCheeps.Contains(cheep);
-            }
-            else
-            {
+                Console.WriteLine("fuck");
                 return false;
             }
+            Console.WriteLine("Cheep = " + cheep.Text);
+            foreach (var likedCheep in author.LikedCheeps)
+            {
+                Console.WriteLine("liked cheep = " + likedCheep.Text);
+                if (cheep.Text == likedCheep.Text)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
+        
+        public async Task LikeCheep(Cheep cheep, Author author)
+        {
+            if (author.LikedCheeps != null && await DoesUserLikeCheep(cheep, author) == false)
+            {
+                author.LikedCheeps.Add(cheep);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+        
+        public async Task UnLikeCheep(Cheep cheep, Author author)
+        {
+            if (author.LikedCheeps != null && await DoesUserLikeCheep(cheep, author) == true)
+            {
+                author.LikedCheeps.Remove(cheep);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+        
         
         
     }
