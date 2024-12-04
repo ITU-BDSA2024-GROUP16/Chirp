@@ -19,7 +19,7 @@
         <h3>What's on your mind @userName?</h3>
         <form method="post">
             <input style="float: left; width: 100%; resize: none; padding: 5px; box-sizing: border-box; overflow: hidden;" type="text" asp-for="Text" maxlength="160" oninput="updateCharCount(this)">
-            <span id="charCount" style="position: absolute; bottom: 8px; right: 85px; font-size: 0.85rem; color: gray;">0/160</span>
+            <span id="charCount" style="position: absolute; bottom: 8px; right: 85px; font-size: 0.85rem; color: gray; font-family: 'Trebuchet MS', sans-serif">0/160</span>
             <input style="float: right; vertical-align: top; padding: 2px; border-radius: 3px;" type="submit" value="Share">
         </form>
     </div>
@@ -42,13 +42,13 @@
                                 @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
                                 {
                                     <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                        <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px;">Unfollow</button>
+                                        <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Unfollow</button>
                                     </form>
                                 }
                                 else
                                 {
                                     <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                        <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px;">Follow</button>
+                                        <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Follow</button>
                                     </form>
                                 }
                             }
@@ -64,14 +64,14 @@
         <div class="pagination">
             @if (Model.PageNumber > 1)
             {
-                <a href="?page=@(Model.PageNumber - 1)" class="previous">Previous</a>
+                <a style="font-family: 'Trebuchet MS', sans-serif" href="?page=@(Model.PageNumber - 1)" class="previous">Previous</a>
             }
 
             <span>Page @Model.PageNumber</span>
             
             @if (Model.Cheeps.Count == Model.PageSize)
             {
-                <a href="?page=@(Model.PageNumber + 1)" class="next">Next</a>
+                <a style="font-family: 'Trebuchet MS', sans-serif" href="?page=@(Model.PageNumber + 1)" class="next">Next</a>
             }
         </div>
     }
