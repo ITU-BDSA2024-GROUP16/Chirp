@@ -290,45 +290,38 @@ ul.nav li a:hover {
     background-color: #8b4949;
 }
 
-/* Button styles for "not liked" state */
-.like-button-not-liked {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
+/* Container for the button and the like counter */
+.like-button-container {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
     justify-content: center;
-    outline: none;
-    text-align: center;
-    line-height: 0;
-    box-sizing: border-box; /* Ensure proper box model calculation */
-    z-index: 10; /* Ensure it's on top */
+    position: absolute; /* Position it inside the parent (li) */
+    right: 10px; /* Distance from the right side of the parent container (li) */
+    top: 50%; /* Vertically center the button */
+    transform: translateY(-50%); /* Adjust for exact centering */
 }
 
-/* Button styles for "liked" state */
-.like-button-liked {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+.like-button-container .heart {
+    margin-bottom: 5px; /* Add space between the button and the number */
+}
+
+/* Button styles for both "liked" and "not liked" states */
+.like-button-liked, .like-button-not-liked {
     padding: 0;
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 18px; /* Consistent size for both states */
     display: flex;
     align-items: center;
     justify-content: center;
     outline: none;
     text-align: center;
     line-height: 0;
-    box-sizing: border-box; /* Ensure proper box model calculation */
+    width: 24px; /* Set fixed size */
+    height: 24px; /* Set fixed size */
+    box-sizing: border-box;
     z-index: 10; /* Ensure it's on top */
 }
 
@@ -337,11 +330,11 @@ ul.nav li a:hover {
     font-family: 'Arial', sans-serif;
     color: transparent;
     -webkit-text-stroke: 2px black; /* Black outline */
-    font-size: 30px; /* Adjust size */
+    font-size: 18px; /* Consistent size */
     line-height: 0;
-    vertical-align: middle; /* Align icon better */
-    position: relative; /* Ensure it doesn’t overflow */
-    z-index: 20; /* Ensure it appears above other elements */
+    vertical-align: middle;
+    position: relative;
+    z-index: 20;
 }
 
 /* Heart icon styles for "liked" state */
@@ -349,11 +342,11 @@ ul.nav li a:hover {
     font-family: 'Arial', sans-serif;
     color: red;
     -webkit-text-stroke: 2px red; /* Red outline */
-    font-size: 30px; /* Adjust size */
+    font-size: 18px; /* Consistent size */
     line-height: 0;
-    vertical-align: middle; /* Align icon better */
-    position: relative; /* Ensure it doesn’t overflow */
-    z-index: 20; /* Ensure it appears above other elements */
+    vertical-align: middle;
+    position: relative;
+    z-index: 20;
 }
 
 /* Hover effects for "not liked" state */
@@ -363,12 +356,10 @@ ul.nav li a:hover {
 }
 
 /* Hover effects for "liked" state */
-/* Hover effects for "liked" state */
 .like-button-liked:hover .heart {
     color: rgba(255, 0, 0, 0.5); /* 50% transparent red fill on hover */
     -webkit-text-stroke: 2px rgba(255, 0, 0, 0.5); /* Black outline on hover */
 }
-
 
 /* Prevent focus outline, background, or shadow */
 .like-button-not-liked:focus,
@@ -392,6 +383,17 @@ ul.nav li a:hover {
 .like-button-not-liked, .like-button-liked {
     width: auto;
     height: auto;
-    box-sizing: border-box; /* Ensure proper box model calculation */
+    box-sizing: border-box;
 }
 
+/* Style for the number under the button */
+.like-button-container span {
+    display: block;
+    font-size: 12px; /* Smaller size for the counter */
+    margin-top: 2px; /* Adjust spacing */
+    color: black;
+    position: relative;
+    top: -2px; /* Fine-tune vertical position */
+    text-align: center; /* Center the number */
+    margin-left: 1px; /* Small adjustment to center the number with the button */
+}

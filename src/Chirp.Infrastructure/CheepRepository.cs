@@ -12,6 +12,7 @@ namespace Chirp.Infrastructure
         Task<Cheep> CreateCheepFromCheepDto(CheepDTO cheepDto, Author author);
         Task LikeCheep(Cheep cheep, Author author);
         Task UnLikeCheep(Cheep cheep, Author author);
+        Task<int> GetLikesFromCheepAsync(Cheep cheep);
     }
 
     public class CheepRepository : ICheepRepository
@@ -114,6 +115,7 @@ namespace Chirp.Infrastructure
             if (author.LikedCheeps != null)
             {
                 author.LikedCheeps.Add(cheep);
+                cheep.Likes += 1;
             }
             await _dbContext.SaveChangesAsync();
         }
@@ -129,11 +131,29 @@ namespace Chirp.Infrastructure
                 foreach (var cheepToRemove in cheepsToRemove)
                 {
                     author.LikedCheeps.Remove(cheepToRemove);
+                    cheepToRemove.Likes -= 1;
                 }
             }
             
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<int> GetLikesFromCheepAsync(Cheep cheep)
+        {
+            var cheepWithLikes = await _dbContext.Cheeps
+                .FirstOrDefaultAsync(c => c.Text == cheep.Text && c.TimeStamp == cheep.TimeStamp);
+
+            if (cheepWithLikes == null)
+            {
+                throw new ArgumentException("Cheep not found.");
+            }
+            
+            _dbContext.Cheeps.Update(cheepWithLikes); // Ensure the entity is marked as updated
+            await _dbContext.SaveChangesAsync();
+
+            return cheepWithLikes.Likes ?? 0;
+        }
+
 
     }
 }

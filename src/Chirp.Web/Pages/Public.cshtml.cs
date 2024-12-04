@@ -21,6 +21,7 @@ public class PublicModel : PageModel
     public string? Text { get; set; }
     public List<Author> Authors { get; set; } = new List<Author>();
     public List<Author> followedAuthors { get; set; } = new List<Author>();
+    public int Likes { get; set; } = 0;
     public List<Cheep> likedCheeps { get; set; } = new List<Cheep>();
 
     public PublicModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository, SignInManager<Author> signInManager)
@@ -151,9 +152,9 @@ public class PublicModel : PageModel
         await _cheepRepository.LikeCheep(cheep, author);
         
         likedCheeps = await _authorRepository.getLikedCheeps(author.AuthorId);
-
-        cheepDto.Likes = cheepDto.Likes + 1;
-        cheep.Likes = cheep.Likes + 1;
+        
+        Likes = await _cheepRepository.GetLikesFromCheepAsync(cheep);
+        Console.WriteLine(Likes);
         
         return RedirectToPage();
     }
@@ -183,8 +184,8 @@ public class PublicModel : PageModel
         
         likedCheeps = await _authorRepository.getLikedCheeps(author.AuthorId);
 
-        cheepDto.Likes = cheepDto.Likes + 1;
-        cheep.Likes = cheep.Likes + 1;
+        Likes = await _cheepRepository.GetLikesFromCheepAsync(cheep);
+        Console.WriteLine(cheep.Likes);
         
         return RedirectToPage();
     }
