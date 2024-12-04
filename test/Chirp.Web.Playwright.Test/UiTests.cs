@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Identity.Client;
 using Microsoft.Playwright;
 using Xunit;
-using System.IO;
 
 namespace Chirp.Web.Playwright.Test;
 
@@ -14,19 +11,13 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     private CustomTestWebApplicationFactory _factory;
     private string _serverAddress;
     private IPlaywright _playwright;
-    private HttpClient _client;
-    private IPage _page;
+    private IPage _page = null!;
 
     [SetUp]
     public async Task SetUp()
     {
         _factory = new CustomTestWebApplicationFactory();
         _serverAddress = _factory.ServerAddress;
-        _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = true,
-            HandleCookies = true,
-        });
         
         await InitializeBrowserAndCreateBrowserContextAsync();
             
@@ -40,7 +31,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     }
     
     [TearDown] 
-    public async Task TearDown()
+    public void TearDown()
     {
         Dispose();
     }
@@ -48,7 +39,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test, Category("SkipSetUp")] 
     public async Task UsersCanRegister()
     {
-        var _page = await _context!.NewPageAsync();
+        _page = await _context!.NewPageAsync();
         await _page.GotoAsync(_serverAddress);
         
         await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
@@ -90,7 +81,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     public async Task UserCanRegisterAndLogin()
     {
         //go to base server address
-        var _page = await _context!.NewPageAsync();
+        _page = await _context!.NewPageAsync();
         await _page.GotoAsync(_serverAddress);
         
         //first register user, because a new in memory database is created for each test. 
