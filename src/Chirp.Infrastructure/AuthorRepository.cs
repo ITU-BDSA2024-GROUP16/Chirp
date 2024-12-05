@@ -14,6 +14,7 @@ namespace Chirp.Infrastructure
         Task UnFollowUserAsync(int followerId, int followedId);
         Task<List<Cheep>> getLikedCheeps(int userId);
         Task<Author> FindAuthorWithLikes(string userName);
+        Task<List<AuthorDTO>> SearchAuthorsAsync(string searchWord);
     }
 
     public class AuthorRepository : IAuthorRepository
@@ -37,21 +38,6 @@ namespace Chirp.Infrastructure
                 .Include(a => a.LikedCheeps)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(author => author.Name == userName);
-            
-            if (author == null)
-            {
-                throw new InvalidOperationException($"Author with name {userName} not found.");
-            }
-
-            return author;
-        }
-
-        public async Task<Author> FindAuthorWithLikes(string userName)
-        {
-            var author = await _dbContext.Authors
-                .Include(a => a.LikedCheeps)
-                .FirstOrDefaultAsync(a => a.Name == userName);
-            
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with name {userName} not found.");
@@ -177,5 +163,35 @@ namespace Chirp.Infrastructure
             return user.LikedCheeps;
         }
         
+
+        public async Task<List<AuthorDTO>> SearchAuthorsAsync(string searchWord)
+        {
+            if (string.IsNullOrWhiteSpace(searchWord))
+            {
+                return new List<AuthorDTO>(); // Return empty list if no search word is provided
+            }
+
+            if (searchWord.Length > 2)
+            {
+                // Perform a case-insensitive search for authors whose name contains the search word
+                return await _dbContext.Authors
+                    .Where(a => EF.Functions.Like(a.Name, $"%{searchWord}%"))
+                    .Select(a => new AuthorDTO
+                    {
+                        Name = a.Name // Map Author entity to AuthorDTO
+                    })
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _dbContext.Authors
+                    .Where(a => EF.Functions.Like(a.Name, $"{searchWord}%"))
+                    .Select(a => new AuthorDTO
+                    {
+                        Name = a.Name // Map Author entity to AuthorDTO
+                    })
+                    .ToListAsync();
+            }
+        }
     }
 }

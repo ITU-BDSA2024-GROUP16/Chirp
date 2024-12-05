@@ -27,7 +27,7 @@
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
-                <li style="position: relative;"> 
+                <li>
                     <p class="cheep">
                         <div>
                             <strong>
@@ -35,16 +35,16 @@
                             </strong>
                             @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO)
                             {
-                                @if (Model.followedAuthors.Any(a => a.Name == cheep.AuthorDTO))
+                                @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
                                 {
                                     <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                        <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Unfollow</button>
+                                        <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Unfollow</button>
                                     </form>
                                 }
                                 else
                                 {
                                     <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
-                                        <button type="submit"style="padding: 2px 5px; height: 18px; width: auto;">Follow</button>
+                                        <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Follow</button>
                                     </form>
                                 }
                             }
@@ -88,13 +88,39 @@
                 </li>
             }
         </ul>
+        <div class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <a style="font-family: 'Trebuchet MS', sans-serif" href="?page=@(Model.PageNumber - 1)" class="previous">Previous</a>
+            }
+
+            <span>Page @Model.PageNumber</span>
+
+            @if (Model.Cheeps.Count == Model.PageSize)
+            {
+                <a style="font-family: 'Trebuchet MS', sans-serif" href="?page=@(Model.PageNumber + 1)" class="next">Next</a>
+            }
+        </div>
     }
     else
     {
         <em>There are no cheeps so far.</em>
     }
-
 </div>
+
+@section Scripts{
+    <script>
+        function updateCharCount(element) {
+            const charCounter = element.value.length;
+
+            // Update the character count display
+            document.getElementById('charCount').textContent = charCounter + "/160";
+
+            // Auto-resize only if it's a textarea
+            if (element.tagName.toLowerCase() === 'textarea') {
+                element.style.height = 'auto';
+                element.style.height = element.scrollHeight + 'px';
+            }
+        }
+    </script>
 }
-
-

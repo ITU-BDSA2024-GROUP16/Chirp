@@ -11,13 +11,13 @@ public class UserTimelineModel : PageModel
     public readonly IAuthorRepository AuthorRepository;
     public readonly ICheepRepository CheepRepository;
     public List<CheepDTO> Cheeps { get; set; } = new List<CheepDTO>();
-    private const int PageSize = 32;
+    public int PageSize = 32;
     public int PageNumber { get; set; } = 1;
     [BindProperty]
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
     public string? Text { get; set; }
     public List<Author> FollowedAuthors { get; set; } = new List<Author>();
-    public List<Cheep> likedCheeps { get; set; } = new List<Cheep>();
+    public List<Cheep> LikedCheeps { get; set; } = new List<Cheep>();
 
 
 
@@ -111,8 +111,7 @@ public class UserTimelineModel : PageModel
                 })
                 .ToList() ?? new List<CheepDTO>(); // If Cheeps is null, use an empty list
 
-
-
+            
             Cheeps = cheeps;
             if (User.Identity?.IsAuthenticated == true)
             {
@@ -183,12 +182,12 @@ public class UserTimelineModel : PageModel
     public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
     {
         //Finds the author thats logged in
-        var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
+        var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
         {
             throw new ArgumentException("Author name cannot be null or empty.");
         }
-        var author = await AuthorRepository.FindAuthorWithEmail(authorName);
+        var author = await AuthorRepository.FindAuthorWithName(authorName);
         
         //Finds the author that the logged in author wants to follow
         var followAuthor = await AuthorRepository.FindAuthorWithName(followAuthorName);
@@ -216,7 +215,7 @@ public class UserTimelineModel : PageModel
         // Adds the cheep to the author's list of liked cheeps
         await CheepRepository.LikeCheep(cheep, author);
         
-        likedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
+        LikedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
         
         return RedirectToPage();
     }
@@ -236,7 +235,7 @@ public class UserTimelineModel : PageModel
         
         await CheepRepository.UnLikeCheep(cheep, author);
         
-        likedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
+        LikedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
         
         return RedirectToPage();
     }
