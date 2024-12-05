@@ -55,6 +55,10 @@
       <!-- <PackageReference Include="PasswordHasher.SHA256.ASP.NET.CORE.Identity" Version="1.0.1" /> -->
       
     </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Chat.db" />
+    </ItemGroup>
     
 
 </Project>

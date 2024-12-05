@@ -17,6 +17,21 @@ namespace Chirp.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
+            modelBuilder.Entity("AuthorCheep", b =>
+                {
+                    b.Property<int>("LikedByAuthorsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LikedCheepsCheepId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("LikedByAuthorsId", "LikedCheepsCheepId");
+
+                    b.HasIndex("LikedCheepsCheepId");
+
+                    b.ToTable("AuthorLikedCheeps", (string)null);
+                });
+
             modelBuilder.Entity("AuthorFollows", b =>
                 {
                     b.Property<int>("FollowedId")
@@ -116,6 +131,9 @@ namespace Chirp.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("AuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Likes")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Text")
@@ -260,6 +278,21 @@ namespace Chirp.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("AuthorCheep", b =>
+                {
+                    b.HasOne("Chirp.Core.Author", null)
+                        .WithMany()
+                        .HasForeignKey("LikedByAuthorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chirp.Core.Cheep", null)
+                        .WithMany()
+                        .HasForeignKey("LikedCheepsCheepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AuthorFollows", b =>

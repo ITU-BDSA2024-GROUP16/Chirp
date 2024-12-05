@@ -8,6 +8,10 @@ namespace Chirp.Infrastructure
         Task<List<CheepDTO>> GetCheeps(int pageNumber, int pageSize);
         Task SaveCheep(Cheep cheep, Author author);
         Task<List<Cheep>> GetCheepsByAuthor(int authorId);
+        Task<bool> DoesUserLikeCheep(Cheep cheep, Author author);
+        Task LikeCheep(Cheep cheep, Author author);
+        Task UnLikeCheep(Cheep cheep, Author author);
+        Task<Cheep?> FindCheep(string text, string timestamp, string authorName);
     }
 
     public class CheepRepository : ICheepRepository
@@ -40,7 +44,8 @@ namespace Chirp.Infrastructure
                 {
                     AuthorName = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
-                    TimeStamp = cheep.TimeStamp.ToString("g")
+                    TimeStamp = cheep.TimeStamp.ToString(),
+                    Likes = cheep.Likes,
                 })
                 .ToListAsync();
             return cheepsQuery;
@@ -58,6 +63,63 @@ namespace Chirp.Infrastructure
             await _dbContext.SaveChangesAsync();
             await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
+        
+        public Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
+        {
+            if (author.LikedCheeps == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            foreach (var likedCheep in author.LikedCheeps)
+            {
+                if (cheep.Text == likedCheep.Text)
+                {
+                    return Task.FromResult(true);
+                }
+            }
+
+            return Task.FromResult(false);
+        }
+
+        
+        public async Task LikeCheep(Cheep cheep, Author author)
+        {
+            if (author.LikedCheeps != null)
+            {
+                author.LikedCheeps.Add(cheep);
+                cheep.Likes += 1;
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+        
+        public async Task UnLikeCheep(Cheep cheep, Author author)
+        {
+            if (author.LikedCheeps != null)
+            {
+                author.LikedCheeps.Remove(cheep);
+                cheep.Likes -= 1;
+            }
+            
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<Cheep?> FindCheep(string text, string timestamp, string authorName)
+        {
+            if (!DateTime.TryParse(timestamp, out var parsedTimestamp))
+            {
+                throw new ArgumentException("Invalid timestamp format.");
+            }
+
+            // Safely check for null Author before accessing Name
+            return await _dbContext.Cheeps
+                .FirstOrDefaultAsync(c => c.Text == text &&
+                                          c.TimeStamp == parsedTimestamp &&
+                                          c.Author != null && 
+                                          c.Author.Name == authorName); // Explicit null check on Author
+        }
+
+
 
     }
 }
