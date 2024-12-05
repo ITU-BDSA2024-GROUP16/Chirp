@@ -1,5 +1,6 @@
 using Chirp.Core;
 using Chirp.Web;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -224,5 +225,115 @@ public class UnitTestCheepRepository : IAsyncLifetime
 
         Assert.Equal("Author's Cheeps collection is null.", exception.Message);
         Assert.Null(author.Cheeps);
+    }
+
+    [Fact]
+    public async Task UnitTestDoesUserLikeCheep()
+    {
+        // Arrange
+        await using var dbContext = CreateContext();
+        //DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+
+        // Seed test data
+        var author1 = new Author { Name = "TestAuthor1" };
+        var cheep1 = new Cheep { Author = author1, Text = "Hello World!", TimeStamp = DateTime.UtcNow };
+        var cheep2 = new Cheep { Author = author1, Text = "You will never catch me!", TimeStamp = DateTime.UtcNow };
+        
+        var author2 = new Author { Name = "TestAuthor2" };
+        
+        dbContext.Authors.Add(author1);
+        dbContext.Authors.Add(author2);
+        dbContext.Cheeps.Add(cheep1);
+        dbContext.Cheeps.Add(cheep2);
+        
+        await dbContext.SaveChangesAsync();
+
+        //Act & Assert
+        await cheepRepository.LikeCheep(cheep1, author2);
+        
+        Assert.True(await cheepRepository.DoesUserLikeCheep(cheep1, author2));
+        Assert.False(await cheepRepository.DoesUserLikeCheep(cheep2, author2));
+    }
+    
+    [Fact]
+    public async Task UnitTestDoesUserLikeCheepReturnFalseIfLikedCheepsIsNull()
+    {
+        // Arrange
+        await using var dbContext = CreateContext();
+        //DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+
+        // Seed test data
+        var author1 = new Author { Name = "TestAuthor1" };
+        var cheep = new Cheep { Author = author1, Text = "Hello World!", TimeStamp = DateTime.UtcNow };
+        
+        var author2 = new Author { Name = "TestAuthor2" };
+        
+        dbContext.Authors.Add(author1);
+        dbContext.Authors.Add(author2);
+        dbContext.Cheeps.Add(cheep);
+        
+        await dbContext.SaveChangesAsync();
+
+        //Act & Assert
+        author2.LikedCheeps = null;
+        
+        Assert.False(await cheepRepository.DoesUserLikeCheep(cheep, author2));
+    }
+
+    [Fact]
+    public async Task UnitTestFindCheepShouldReturnCheep()
+    {
+        // Arrange
+        await using var dbContext = CreateContext();
+        
+        //DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+
+        // Seed test data
+        string text = "Hello World!";
+        var dateTimeTimeStamp = DateTime.UtcNow;
+        string timeStamp = DateTime.TryParse(dateTimeTimeStamp.ToString(), out dateTimeTimeStamp) ? dateTimeTimeStamp.ToString() : dateTimeTimeStamp.ToString();
+        string name = "TestAuthor";
+        
+        var author = new Author { Name = name , Cheeps = new List<Cheep>(), AuthorId = 1, Id = 1};
+        var cheep = new Cheep { Author = author, Text = text, TimeStamp = dateTimeTimeStamp };
+        
+        dbContext.Authors.Add(author);
+        dbContext.Cheeps.Add(cheep);
+        
+        await dbContext.SaveChangesAsync();
+        
+        //Act & Assert
+        Assert.Same(cheep, await cheepRepository.FindCheep(text,timeStamp,name));
+    }
+    
+    [Fact]
+    public async Task UnitTestFindCheepShouldReturnNull()
+    {
+        // Arrange
+        await using var dbContext = CreateContext();
+        
+        //DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+
+        // Seed test data
+        string text1 = "Hello World!";
+        string text2 = "Goodbye World!";
+        var dateTimeTimeStamp = DateTime.UtcNow;
+        string timeStamp = DateTime.TryParse(dateTimeTimeStamp.ToString(), out dateTimeTimeStamp) ? dateTimeTimeStamp.ToString() : dateTimeTimeStamp.ToString();
+        string name = "TestAuthor";
+        
+        var author = new Author { Name = name , Cheeps = new List<Cheep>(), AuthorId = 1, Id = 1};
+        var cheep = new Cheep { Author = author, Text = text1, TimeStamp = dateTimeTimeStamp };
+        
+        dbContext.Authors.Add(author);
+        dbContext.Cheeps.Add(cheep);
+        
+        await dbContext.SaveChangesAsync();
+        
+        //Act & Assert
+        Assert.Null(await cheepRepository.FindCheep(text2,timeStamp,name));
     }
 }
