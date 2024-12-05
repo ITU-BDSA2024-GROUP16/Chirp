@@ -11,7 +11,7 @@ namespace Chirp.Infrastructure
         Task<bool> DoesUserLikeCheep(Cheep cheep, Author author);
         Task LikeCheep(Cheep cheep, Author author);
         Task UnLikeCheep(Cheep cheep, Author author);
-        Task<Cheep> FindCheep(string text, string timestamp, string authorName);
+        Task<Cheep?> FindCheep(string text, string timestamp, string authorName);
     }
 
     public class CheepRepository : ICheepRepository
@@ -65,22 +65,24 @@ namespace Chirp.Infrastructure
             await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
         
-        public async Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
+        public Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
         {
             if (author.LikedCheeps == null)
             {
-                return false;
+                return Task.FromResult(false);
             }
-            
+
             foreach (var likedCheep in author.LikedCheeps)
             {
                 if (cheep.Text == likedCheep.Text)
                 {
-                    return true;
+                    return Task.FromResult(true);
                 }
             }
-            return false;
+
+            return Task.FromResult(false);
         }
+
         
         public async Task LikeCheep(Cheep cheep, Author author)
         {
@@ -103,16 +105,22 @@ namespace Chirp.Infrastructure
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Cheep> FindCheep(string text, string timestamp, string authorName)
+        public async Task<Cheep?> FindCheep(string text, string timestamp, string authorName)
         {
             if (!DateTime.TryParse(timestamp, out var parsedTimestamp))
             {
                 throw new ArgumentException("Invalid timestamp format.");
             }
-            
-            return await _dbContext.Cheeps.FirstOrDefaultAsync(c => c.Text == text && 
-                                                                    c.TimeStamp == parsedTimestamp && 
-                                                                    c.Author.Name == authorName);
+
+            // Safely check for null Author before accessing Name
+            return await _dbContext.Cheeps
+                .FirstOrDefaultAsync(c => c.Text == text &&
+                                          c.TimeStamp == parsedTimestamp &&
+                                          c.Author != null && 
+                                          c.Author.Name == authorName); // Explicit null check on Author
         }
+
+
+
     }
 }
