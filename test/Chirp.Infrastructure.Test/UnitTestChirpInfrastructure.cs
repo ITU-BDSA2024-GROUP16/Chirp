@@ -327,7 +327,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
 
-        List<Author> authors;
+        List<AuthorDTO> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("jacq");
         
@@ -343,7 +343,7 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
 
-        List<Author> authors;
+        List<AuthorDTO> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("12345567");
         
