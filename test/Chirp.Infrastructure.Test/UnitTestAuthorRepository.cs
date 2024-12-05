@@ -331,14 +331,11 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     [Fact]
     public async Task WhenSearchingAuthorsCorrectAuthorsAreInList()
     {
-        
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
 
-        List<Author> authors;
-
-        authors = await authorRepository.SearchAuthorsAsync("jacq");
+        List<Author> authors = await authorRepository.SearchAuthorsAsync("jacq");
         
         Assert.Contains(authors, author => author.Name == "Jacqualine Gilcoine");
 
@@ -355,6 +352,21 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         List<Author> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("12345567");
+        
+        Assert.Empty(authors);
+    }
+    
+    [Fact]
+    public async Task UnitTestListIsEmptyIfSearchWordIsNull()
+    {
+        await using var dbContext = CreateContext();
+
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+
+        List<Author> authors;
+
+        authors = await authorRepository.SearchAuthorsAsync("");
         
         Assert.Empty(authors);
     }
