@@ -103,7 +103,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     }
     
     [Test]
-    public async Task UserCanShareCheep()
+    public async Task UserCanShareCheepFromPublicTimeline()
     {
         //send cheep   
         var cheepTextField = _page.Locator("input[id='Text']");
@@ -118,6 +118,27 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         
         await Expect(cheep).ToBeVisibleAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress));
+    }
+    
+    [Test]
+    public async Task UserCanShareCheepFromUserTimeline()
+    {
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "my timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
+        
+        //send cheep   
+        var cheepTextField = _page.Locator("input[id='Text']");
+        await cheepTextField.ClickAsync();
+        await Expect(cheepTextField).ToBeFocusedAsync();
+        await cheepTextField.FillAsync("Hello, my name is Cecilie");
+        await Expect(cheepTextField).ToHaveValueAsync("Hello, my name is Cecilie");
+        await _page.GetByRole(AriaRole.Button, new() { NameString = "Share" }).ClickAsync();
+        //check if there is a cheep with that text on the page after share button has been clicked. 
+        var cheep = _page.GetByText("Hello, my name is Cecilie");
+        await cheep.HighlightAsync();
+        
+        await Expect(cheep).ToBeVisibleAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
     }
     
     [Test]
@@ -223,6 +244,97 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     }
     
     [Test]
+    public async Task GoToAnotherUsersTimelineAndFollowAndUnfollow()
+    {
+        // go to another user's timeline 
+        var userTimelinePage = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 01.08."
+        }).GetByRole(AriaRole.Link);
+        await userTimelinePage.ClickAsync();
+        await Expect (_page).ToHaveURLAsync(new Regex(_serverAddress + $"Jacqualine"));
+        
+        //find the follow-button for a specific cheep
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "Coffee House now is what we hear the worst." 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+
+        //unfollow author
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Follow");
+    }
+    
+    [Test]
+    public async Task GoToAnotherUsersTimelineAndSeeFirst32CheepsWrittenByThatAuthor()
+    {
+        // go to another user's timeline 
+        var userTimelinePage = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 01.08."
+        }).GetByRole(AriaRole.Link);
+        await userTimelinePage.ClickAsync();
+        await Expect (_page).ToHaveURLAsync(new Regex(_serverAddress + $"Jacqualine"));
+        
+        var cheeps = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine"
+        }).GetByRole(AriaRole.Link);
+        
+        // Assert that there are exactly 32 elements
+        await Expect(cheeps).ToHaveCountAsync(32);
+    }
+    
+    [Test]
+    public async Task CheckCharCountOnWritingCheeps()
+    {
+        //go to my timeline
+        await _page.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
+        
+        //click on text field to write cheep and write a cheep. 
+        var cheepTextField = _page.Locator("input[id='Text']");
+        await cheepTextField.ClickAsync();
+        await Expect(cheepTextField).ToBeFocusedAsync();
+        await cheepTextField.FillAsync("Hello, my name is Cecilie");
+        await Expect(cheepTextField).ToHaveValueAsync("Hello, my name is Cecilie");
+        
+        //see charcount label increase to 25
+        var charCountSpan = _page.Locator("span[id='charCount']");
+        await Expect(charCountSpan).ToHaveTextAsync("25/160");
+    }
+    
+    [Test]
+    public async Task SearchForUserAndFollow()
+    {
+        //search for author
+        var searchField = _page.GetByPlaceholder("Search authors...");
+        searchField.ClickAsync();
+        searchField.FillAsync("Mellie");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Search" }).ClickAsync();
+        
+        //show search results and click on user
+        await Expect (_page).ToHaveURLAsync(new Regex(_serverAddress + $"SearchResults"));
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Mellie Yost" }).ClickAsync();
+        await Expect (_page).ToHaveURLAsync(new Regex(_serverAddress + $"Mellie"));
+
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "But what was behind the barricade" 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+    }
+    
+    [Test]
     public async Task UnfollowOnUserTimeline()
     {
         //find the follow-button for a specific cheep
@@ -256,6 +368,18 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     }
     
     [Test]
+    public async Task GoToNextPageWithButton()
+    {
+        var nextButton = _page.GetByRole(AriaRole.Link, new() { Name = "Next" });
+        nextButton.ClickAsync();
+        
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
+        
+        var previousButton = _page.GetByRole(AriaRole.Link, new() { Name = "Previous" });
+        await Expect(previousButton).ToBeVisibleAsync();
+    }
+    
+    [Test]
     public async Task UserCanDeleteTheirAccount()
     {
         //go to about me page
@@ -274,6 +398,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(_serverAddress);
     }
+    
     
     private async Task SetUpRegisterAndLogin()
     { 

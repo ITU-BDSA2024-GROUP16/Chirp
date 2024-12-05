@@ -101,6 +101,8 @@ public class UserTimelineModel : PageModel
 
             List<CheepDTO> cheeps = author.Cheeps?
                 .OrderByDescending(cheep => cheep.TimeStamp)
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
                 .Select(cheep => new CheepDTO
                 {
                     AuthorName = cheep.Author != null ? cheep.Author.Name : "Unknown",
