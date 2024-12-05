@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Chirp.Core
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.CodeAnalysis.Scripting
 @model Chirp.Web.Pages.PublicModel
 @{
     ViewData["Title"] = "Chirp!";
@@ -33,6 +34,7 @@
     {
         <div style="padding-top: 40px"></div>
     }
+    
 
     @if (Model.Cheeps.Any())
     {
@@ -42,20 +44,20 @@
                 <li>
                     <p class="cheep">
                         <div>
-                            <strong>
-                                <a href="/@cheep.AuthorDTO">@cheep.AuthorDTO</a>
+                            <strong style="padding-right: 10px">
+                                <a href="/@cheep.AuthorName">@cheep.AuthorName</a>
                             </strong>
-                            @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO)
+                            @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorName)
                             {
-                                @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
+                                @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorName))
                                 {
-                                    <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                    <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorName" style="display:inline;">
                                         <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Unfollow</button>
                                     </form>
                                 }
                                 else
                                 {
-                                    <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                    <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorName" style="display:inline;">
                                         <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Follow</button>
                                     </form>
                                 }
@@ -64,15 +66,15 @@
                         @cheep.Text
                         <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
-                        @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO) //Like button
+                        @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorName) //Like button
                         {
-                            if (cheep.AuthorDTO != null && cheep.Text != null && cheep.TimeStamp != null)
+                            if (cheep.AuthorName != null && cheep.Text != null && cheep.TimeStamp != null)
                             {
                                 <div class="like-button-container">
-                                    @if (await Model.DoesUserLikeCheep(@cheep.AuthorDTO, @cheep.Text, @cheep.TimeStamp))
+                                    @if (await Model.DoesUserLikeCheep(@cheep.AuthorName, @cheep.Text, @cheep.TimeStamp))
                                     {
                                         <form method="Post" asp-page-handler="UnLike">
-                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
+                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorName" />
                                             <input type="hidden" name="Text" value="@cheep.Text" />
                                             <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
                                             <button class="like-button-liked">
@@ -83,7 +85,7 @@
                                     else
                                     {
                                         <form method="Post" asp-page-handler="Like">
-                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
+                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorName" />
                                             <input type="hidden" name="Text" value="@cheep.Text" />
                                             <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
                                             <button class="like-button-not-liked">

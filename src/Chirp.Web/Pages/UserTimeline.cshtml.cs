@@ -69,7 +69,7 @@ public class UserTimelineModel : PageModel
                 .Take(PageSize)
                 .Select(cheep => new CheepDTO
                 {
-                    AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    AuthorName = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString(),
                     Likes = cheep.Likes,
@@ -105,7 +105,7 @@ public class UserTimelineModel : PageModel
                 .OrderByDescending(cheep => cheep.TimeStamp)
                 .Select(cheep => new CheepDTO
                 {
-                    AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    AuthorName = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString(),
                     Likes = cheep.Likes,
