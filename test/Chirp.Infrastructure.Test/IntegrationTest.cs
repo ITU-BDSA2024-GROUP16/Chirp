@@ -195,8 +195,25 @@ namespace Chirp.Infrastructure.Test
             Assert.DoesNotContain("Next", content);
             
         }
-        
-        
+
+        [Fact]
+        public async Task WhenLoggedOutCannotFollowUsers()
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/");
+            HttpResponseMessage response2 = await _client.GetAsync($"/Jacqualine Gilcoine");
+
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+            string content2 = await response2.Content.ReadAsStringAsync();
+
+
+            _output.WriteLine("content: {0}", content);
+            
+            Assert.DoesNotContain("Follow", content);
+            Assert.DoesNotContain("Unfollow", content);
+            Assert.DoesNotContain("Follow", content2);
+            Assert.DoesNotContain("Unfollow", content2);
+
+        }
     }
-    
 }
