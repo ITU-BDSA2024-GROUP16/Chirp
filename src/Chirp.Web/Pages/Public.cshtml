@@ -57,13 +57,12 @@
                             if (cheep.AuthorDTO != null && cheep.Text != null && cheep.TimeStamp != null)
                             {
                                 <div class="like-button-container">
-                                    @if (await Model.DoesUserLikeCheep(@cheep.AuthorDTO, @cheep.Text, @cheep.TimeStamp, @cheep.Likes))
+                                    @if (await Model.DoesUserLikeCheep(@cheep.AuthorDTO, @cheep.Text, @cheep.TimeStamp))
                                     {
                                         <form method="Post" asp-page-handler="UnLike">
                                             <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
                                             <input type="hidden" name="Text" value="@cheep.Text" />
                                             <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
-                                            <input type="hidden" name="Likes" value="@cheep.Likes" />
                                             <button class="like-button-liked">
                                                 <span class="heart">&#x2764;</span>
                                             </button>
@@ -81,7 +80,7 @@
                                             </button>
                                         </form>
                                     }
-                                    <span>@Model.Likes</span>
+                                    <span>@cheep.Likes</span>
                                 </div>
                             }
                         }

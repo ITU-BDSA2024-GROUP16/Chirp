@@ -17,6 +17,7 @@ public class UserTimelineModel : PageModel
     [StringLength(160, ErrorMessage = "Cheep cannot be more than 160 characters.")]
     public string? Text { get; set; }
     public List<Author> FollowedAuthors { get; set; } = new List<Author>();
+    public List<Cheep> likedCheeps { get; set; } = new List<Cheep>();
 
 
 
@@ -70,7 +71,8 @@ public class UserTimelineModel : PageModel
                 {
                     AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
-                    TimeStamp = cheep.TimeStamp.ToString("g")
+                    TimeStamp = cheep.TimeStamp.ToString(),
+                    Likes = cheep.Likes,
                 })
                 .ToList();
 
@@ -197,6 +199,60 @@ public class UserTimelineModel : PageModel
         FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
         
         return RedirectToPage();
+    }
+    
+    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp, int? likes)
+    {
+        // Find the author that's logged in
+        var authorName = User.FindFirst("Name")?.Value;
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+
+        var author = await AuthorRepository.FindAuthorWithName(authorName);
+        var cheep = await CheepRepository.FindCheep(text,timeStamp, authorDto);
+        
+        // Adds the cheep to the author's list of liked cheeps
+        await CheepRepository.LikeCheep(cheep, author);
+        
+        likedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
+        
+        return RedirectToPage();
+    }
+
+    
+    public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp, int? likes)
+    {
+        // Find the author that's logged in
+        var authorName = User.FindFirst("Name")?.Value;
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+
+        var author = await AuthorRepository.FindAuthorWithName(authorName);
+        var cheep = await CheepRepository.FindCheep(text,timeStamp,authorDto);
+        
+        await CheepRepository.UnLikeCheep(cheep, author);
+        
+        likedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
+        
+        return RedirectToPage();
+    }
+
+    public async Task<bool> DoesUserLikeCheep(string authorDto, string text, string timeStamp)
+    {
+        var authorName = User.FindFirst("Name")?.Value;
+        if (string.IsNullOrEmpty(authorName))
+        {
+            throw new ArgumentException("Author name cannot be null or empty.");
+        }
+        
+        var author = await AuthorRepository.FindAuthorWithLikes(authorName);
+        var cheep = await CheepRepository.FindCheep(text,timeStamp,authorDto);
+        
+        return await  CheepRepository.DoesUserLikeCheep(cheep, author);
     }
     
 }

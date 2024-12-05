@@ -55,6 +55,38 @@
                         @cheep.Text
                         <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
+                    @if (SignInManager.IsSignedIn(User) && AuthorName.ToString() != @cheep.AuthorDTO) //Like button
+                    {
+                    if (cheep.AuthorDTO != null && cheep.Text != null && cheep.TimeStamp != null)
+                    {
+                    <div class="like-button-container">
+                        @if (await Model.DoesUserLikeCheep(@cheep.AuthorDTO, @cheep.Text, @cheep.TimeStamp))
+                        {
+                        <form method="Post" asp-page-handler="UnLike">
+                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
+                            <input type="hidden" name="Text" value="@cheep.Text" />
+                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
+                            <button class="like-button-liked">
+                                <span class="heart">&#x2764;</span>
+                            </button>
+                        </form>
+                        }
+                        else
+                        {
+                        <form method="Post" asp-page-handler="Like">
+                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
+                            <input type="hidden" name="Text" value="@cheep.Text" />
+                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
+                            <input type="hidden" name="Likes" value="@cheep.Likes" />
+                            <button class="like-button-not-liked">
+                                <span class="heart">&#x2764;</span>
+                            </button>
+                        </form>
+                        }
+                        <span>@cheep.Likes</span>
+                    </div>
+                    }
+                    }
                     </p>
                 </li>
             }

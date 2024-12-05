@@ -13,6 +13,7 @@ public class Cheep
     public int AuthorId { get; set; }
     [JsonIgnore]
     public Author? Author { get; set; }
-    public int? Likes { get; set; }
+
+    public int Likes { get; set; } = 0;
     public List<Author>? LikedByAuthors { get; set; } = new List<Author>();
 }

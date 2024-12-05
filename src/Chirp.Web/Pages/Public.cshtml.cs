@@ -21,7 +21,6 @@ public class PublicModel : PageModel
     public string? Text { get; set; }
     public List<Author> Authors { get; set; } = new List<Author>();
     public List<Author> followedAuthors { get; set; } = new List<Author>();
-    public int Likes { get; set; } = 0;
     public List<Cheep> likedCheeps { get; set; } = new List<Cheep>();
 
     public PublicModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository, SignInManager<Author> signInManager)
@@ -127,17 +126,8 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp, int? likes)
+    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp, int likes)
     {
-        // Reconstruct CheepDTO from the form data
-        var cheepDto = new CheepDTO
-        {
-            AuthorDTO = authorDto,
-            Text = text,
-            TimeStamp = timeStamp,
-            Likes = likes
-        };
-
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
@@ -146,15 +136,12 @@ public class PublicModel : PageModel
         }
 
         var author = await _authorRepository.FindAuthorWithName(authorName);
-        var cheep = await _cheepRepository.CreateCheepFromCheepDto(cheepDto, author);
+        var cheep = await _cheepRepository.FindCheep(text,timeStamp, authorDto);
         
         // Adds the cheep to the author's list of liked cheeps
         await _cheepRepository.LikeCheep(cheep, author);
         
         likedCheeps = await _authorRepository.getLikedCheeps(author.AuthorId);
-        
-        Likes = await _cheepRepository.GetLikesFromCheepAsync(cheep);
-        Console.WriteLine(Likes);
         
         return RedirectToPage();
     }
@@ -162,14 +149,6 @@ public class PublicModel : PageModel
     
     public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp, int? likes)
     {
-        var cheepDto = new CheepDTO
-        {
-            AuthorDTO = authorDto,
-            Text = text,
-            TimeStamp = timeStamp,
-            Likes = likes
-        };
-
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
@@ -178,30 +157,17 @@ public class PublicModel : PageModel
         }
 
         var author = await _authorRepository.FindAuthorWithName(authorName);
-        var cheep = await _cheepRepository.CreateCheepFromCheepDto(cheepDto, author);
+        var cheep = await _cheepRepository.FindCheep(text,timeStamp,authorDto);
         
         await _cheepRepository.UnLikeCheep(cheep, author);
         
         likedCheeps = await _authorRepository.getLikedCheeps(author.AuthorId);
-
-        Likes = await _cheepRepository.GetLikesFromCheepAsync(cheep);
-        Console.WriteLine(cheep.Likes);
         
         return RedirectToPage();
     }
 
-    public async Task<bool> DoesUserLikeCheep(string authorDto, string text, string timeStamp, int? likes)
+    public async Task<bool> DoesUserLikeCheep(string authorDto, string text, string timeStamp)
     {
-        // Reconstruct CheepDTO from the form data
-        var cheepDto = new CheepDTO
-        {
-            AuthorDTO = authorDto,
-            Text = text,
-            TimeStamp = timeStamp,
-            Likes = likes
-        };
-        
-        //Finds the author thats logged in
         var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
         {
@@ -209,7 +175,7 @@ public class PublicModel : PageModel
         }
         
         var author = await _authorRepository.FindAuthorWithLikes(authorName);
-        var cheep = await _cheepRepository.CreateCheepFromCheepDto(cheepDto, author);
+        var cheep = await _cheepRepository.FindCheep(text,timeStamp,authorDto);
         
         return await  _cheepRepository.DoesUserLikeCheep(cheep, author);
     }

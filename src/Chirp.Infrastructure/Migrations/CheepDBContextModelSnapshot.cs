@@ -133,7 +133,7 @@ namespace Chirp.Infrastructure.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Likes")
+                    b.Property<int>("Likes")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Text")

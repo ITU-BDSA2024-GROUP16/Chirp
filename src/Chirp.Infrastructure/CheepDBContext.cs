@@ -30,7 +30,7 @@ namespace Chirp.Infrastructure
             modelBuilder.Entity<Cheep>()
                 .HasOne(c => c.Author)  // Cheep has one Author
                 .WithMany(a => a.Cheeps)  // Author has many Cheeps
-                .HasForeignKey(c => c.AuthorId)  // Foreign key in Cheep pointing to Author
+                .HasForeignKey(c => c.AuthorId) // Foreign key in Cheep pointing to Author
                 .OnDelete(DeleteBehavior.Cascade);  // Set delete behavior
 
             // Many-to-many relationship for LikedCheeps (Cheep can have many Authors who liked it)

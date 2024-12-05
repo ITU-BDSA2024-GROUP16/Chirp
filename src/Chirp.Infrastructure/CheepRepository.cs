@@ -9,10 +9,9 @@ namespace Chirp.Infrastructure
         Task SaveCheep(Cheep cheep, Author author);
         Task<List<Cheep>> GetCheepsByAuthor(int authorId);
         Task<bool> DoesUserLikeCheep(Cheep cheep, Author author);
-        Task<Cheep> CreateCheepFromCheepDto(CheepDTO cheepDto, Author author);
         Task LikeCheep(Cheep cheep, Author author);
         Task UnLikeCheep(Cheep cheep, Author author);
-        Task<int> GetLikesFromCheepAsync(Cheep cheep);
+        Task<Cheep> FindCheep(string text, string timestamp, string authorName);
     }
 
     public class CheepRepository : ICheepRepository
@@ -45,7 +44,8 @@ namespace Chirp.Infrastructure
                 {
                     AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
-                    TimeStamp = cheep.TimeStamp.ToString("g")
+                    TimeStamp = cheep.TimeStamp.ToString(),
+                    Likes = cheep.Likes,
                 })
                 .ToListAsync();
             return cheepsQuery;
@@ -65,34 +65,6 @@ namespace Chirp.Infrastructure
             await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
         
-        public async Task<Cheep> CreateCheepFromCheepDto(CheepDTO cheepDto, Author author)
-        {
-            if (cheepDto == null)
-            {
-                throw new ArgumentNullException(nameof(cheepDto), "CheepDTO cannot be null.");
-            }
-
-            if (string.IsNullOrEmpty(cheepDto.TimeStamp))
-            {
-                throw new ArgumentException("Timestamp is required.", nameof(cheepDto.TimeStamp));
-            }
-
-            if (!DateTime.TryParse(cheepDto.TimeStamp, out var parsedTimeStamp))
-            {
-                throw new FormatException("Invalid timestamp format.");
-            }
-
-            return new Cheep
-            {
-                Author = author,
-                AuthorId = author.AuthorId,
-                Text = cheepDto.Text,
-                TimeStamp = parsedTimeStamp,
-                Likes = cheepDto.Likes ?? 0 // Default to 0 if Likes is null
-            };
-        }
-
-
         public async Task<bool> DoesUserLikeCheep(Cheep cheep, Author author)
         {
             if (author.LikedCheeps == null)
@@ -124,36 +96,23 @@ namespace Chirp.Infrastructure
         {
             if (author.LikedCheeps != null)
             {
-                var cheepsToRemove = author.LikedCheeps
-                    .Where(c => c.Text == cheep.Text)
-                    .ToList(); 
-                
-                foreach (var cheepToRemove in cheepsToRemove)
-                {
-                    author.LikedCheeps.Remove(cheepToRemove);
-                    cheepToRemove.Likes -= 1;
-                }
+                author.LikedCheeps.Remove(cheep);
+                cheep.Likes -= 1;
             }
             
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> GetLikesFromCheepAsync(Cheep cheep)
+        public async Task<Cheep> FindCheep(string text, string timestamp, string authorName)
         {
-            var cheepWithLikes = await _dbContext.Cheeps
-                .FirstOrDefaultAsync(c => c.Text == cheep.Text && c.TimeStamp == cheep.TimeStamp);
-
-            if (cheepWithLikes == null)
+            if (!DateTime.TryParse(timestamp, out var parsedTimestamp))
             {
-                throw new ArgumentException("Cheep not found.");
+                throw new ArgumentException("Invalid timestamp format.");
             }
             
-            _dbContext.Cheeps.Update(cheepWithLikes); // Ensure the entity is marked as updated
-            await _dbContext.SaveChangesAsync();
-
-            return cheepWithLikes.Likes ?? 0;
+            return await _dbContext.Cheeps.FirstOrDefaultAsync(c => c.Text == text && 
+                                                                    c.TimeStamp == parsedTimestamp && 
+                                                                    c.Author.Name == authorName);
         }
-
-
     }
 }
