@@ -523,5 +523,53 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         Assert.Equal("Follower or followed authors is null.", exception.Message);
 
     }
+
+    [Fact]
+    public async Task UnitTestGetLikedCheeps()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+
+        string authorName1 = "Malcolm Janski";
+        Author author1 = await authorRepository.FindAuthorWithName(authorName1);
+        int authorId1 = author1.AuthorId;
+        
+        string authorName2 = "Jacqualine Gilcoine";
+        Author author2 = await authorRepository.FindAuthorWithName(authorName2);
+        int authorId2 = author2.AuthorId;
+        
+        var testCheep = new Cheep
+        {
+            Text = "What do you think about cults?",
+            AuthorId = authorId2
+        };
+        
+        // Act
+        await cheepRepository.SaveCheep(testCheep, author2);
+        await dbContext.SaveChangesAsync();
+
+        await cheepRepository.LikeCheep(testCheep, author1);
+        await dbContext.SaveChangesAsync();
+        List<Cheep> likedCheeps = await authorRepository.GetLikedCheeps(author1.AuthorId);
+
+        Assert.Contains(testCheep, likedCheeps);
+    }
     
+    [Fact]
+    public async Task UnitTestGetLikedCheepsRaisesExceptionBecauseUserId()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+        
+        //Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            //No user has 100 as an id
+            await authorRepository.GetLikedCheeps(100);
+        });
+    }
 }
