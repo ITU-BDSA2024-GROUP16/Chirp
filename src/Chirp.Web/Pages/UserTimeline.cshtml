@@ -11,6 +11,13 @@
     @inject SignInManager<Author> SignInManager
 }
 
+<style>
+    /* This CSS hides the body until the scroll position is restored */
+    body.hidden {
+        visibility: hidden;
+    }
+</style>
+
 <div>
     <div style="padding-top: 8px">
         <form method="get" action="/SearchResults" style="float: right; font-family: 'Trebuchet MS', sans-serif">
@@ -128,6 +135,34 @@
             document.getElementById('charCount').textContent = charCounter + "/160";
 
             // Auto-resize only if it's a textarea
+            if (element.tagName.toLowerCase() === 'textarea') {
+                element.style.height = 'auto';
+                element.style.height = element.scrollHeight + 'px';
+            }
+        }
+    </script>
+
+    <script>
+        document.body.classList.add('hidden');
+
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('scrollPosition', window.scrollY);
+        });
+
+        window.addEventListener('load', () => {
+            const scrollPosition = localStorage.getItem('scrollPosition');
+            if (scrollPosition) {
+                window.scrollTo(0, parseInt(scrollPosition, 10));
+                localStorage.removeItem('scrollPosition'); 
+            }
+            document.body.classList.remove('hidden');
+        });
+
+        function updateCharCount(element) {
+            const charCounter = element.value.length;
+
+            document.getElementById('charCount').textContent = charCounter + "/160";
+
             if (element.tagName.toLowerCase() === 'textarea') {
                 element.style.height = 'auto';
                 element.style.height = element.scrollHeight + 'px';
