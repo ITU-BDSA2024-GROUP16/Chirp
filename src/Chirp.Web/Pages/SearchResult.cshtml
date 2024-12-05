@@ -11,14 +11,14 @@ var AuthorName = User.FindFirst("Name")?.Value ?? "User";
 
 <h2>Search Results</h2>
 
-@if (Model.Authors.Any())
+@if (Model.AuthorDTOs.Any())
 {
 <ul>
-    @foreach (var author in Model.Authors)
+    @foreach (var authorDto in Model.AuthorDTOs)
     {
     <li>
         <strong>
-            <a href="/@author.Name">@author.Name</a>
+            <a href="/@authorDto.Name">@authorDto.Name</a>
         </strong>
     </li>
     }

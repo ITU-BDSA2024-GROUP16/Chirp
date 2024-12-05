@@ -12,7 +12,7 @@ namespace Chirp.Infrastructure
         Task<bool> FindIfAuthorExistsWithEmail(string email);
         Task FollowUserAsync(int followerId, int followedId);
         Task UnFollowUserAsync(int followerId, int followedId);
-        Task<List<Author>> SearchAuthorsAsync(string searchWord);
+        Task<List<AuthorDTO>> SearchAuthorsAsync(string searchWord);
     }
 
     public class AuthorRepository : IAuthorRepository
@@ -149,25 +149,32 @@ namespace Chirp.Infrastructure
         }
         
 
-        public async Task<List<Author>> SearchAuthorsAsync(string searchWord)
+        public async Task<List<AuthorDTO>> SearchAuthorsAsync(string searchWord)
         {
             if (string.IsNullOrWhiteSpace(searchWord))
             {
-                return new List<Author>(); // Return empty list if no search word is provided
+                return new List<AuthorDTO>(); // Return empty list if no search word is provided
             }
 
             if (searchWord.Length > 2)
             {
                 // Perform a case-insensitive search for authors whose name contains the search word
-
                 return await _dbContext.Authors
                     .Where(a => EF.Functions.Like(a.Name, $"%{searchWord}%"))
+                    .Select(a => new AuthorDTO
+                    {
+                        Name = a.Name // Map Author entity to AuthorDTO
+                    })
                     .ToListAsync();
             }
             else
             {
                 return await _dbContext.Authors
                     .Where(a => EF.Functions.Like(a.Name, $"{searchWord}%"))
+                    .Select(a => new AuthorDTO
+                    {
+                        Name = a.Name // Map Author entity to AuthorDTO
+                    })
                     .ToListAsync();
             }
         }
