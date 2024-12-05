@@ -102,5 +102,118 @@ namespace Chirp.Infrastructure.Test
             Assert.Contains("Lars", content);
         }
         
+        
+        [Fact]
+        public async Task UserCanSearchForAuthors()
+        {
+            string SearchWord = "jacq";
+            
+            HttpResponseMessage response = await _client.GetAsync($"/SearchResults?searchWord=" + SearchWord);
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine("content: {0}", content);
+
+            Assert.Contains("Jacq", content);
+        }
+        
+        
+        [Fact]
+        public async Task IfNoAuthorsAreFoundShowNoAuthors()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dbContext = services.GetRequiredService<CheepDBContext>();
+            
+            string searchWord = "12345æøå";
+            
+            HttpResponseMessage response = await _client.GetAsync($"/SearchResults?searchWord=" + searchWord);
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine("content: {0}", content);
+
+            List<Author> authors = dbContext.Authors.ToList();
+            
+            //THis iterates over all the authors in the database, making sure that they are not in the content
+            foreach (Author author in authors)
+            {
+                Assert.DoesNotContain(author.Name, content);
+            }
+        }
+        
+        
+        [Fact]
+        public async Task IfOnFirstPageCantGoToPreviousPage()
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/");
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine("content: {0}", content);
+            
+            Assert.DoesNotContain("Previous", content);
+        }
+
+        [Fact]
+        public async Task IfOnFirstPageCanGoToNextPage()
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/");
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine("content: {0}", content);
+            
+            Assert.Contains("Next", content);
+        }
+        
+        [Fact]
+        public async Task IfOnSecondPageCanGoToNextAndPreviousPage()
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/?page=2");
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine("content: {0}", content);
+            
+            Assert.Contains("Next", content);
+            Assert.Contains("Previous", content);
+
+            
+        }
+        
+        [Fact]
+        public async Task IfOnLastPageCantGoToNextPage()
+        {
+            
+            HttpResponseMessage response = await _client.GetAsync($"/?page=21");
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine("content: {0}", content);
+            
+            Assert.DoesNotContain("Next", content);
+            
+        }
+
+        [Fact]
+        public async Task WhenLoggedOutCannotFollowUsers()
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/");
+            HttpResponseMessage response2 = await _client.GetAsync($"/Jacqualine Gilcoine");
+
+            response.EnsureSuccessStatusCode();
+            string content = await response.Content.ReadAsStringAsync();
+            string content2 = await response2.Content.ReadAsStringAsync();
+
+
+            _output.WriteLine("content: {0}", content);
+            
+            Assert.DoesNotContain("Follow", content);
+            Assert.DoesNotContain("Unfollow", content);
+            Assert.DoesNotContain("Follow", content2);
+            Assert.DoesNotContain("Unfollow", content2);
+
+        }
     }
 }
