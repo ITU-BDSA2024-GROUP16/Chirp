@@ -230,7 +230,7 @@ var assemblies = [
   {
     "name": "Chirp.Infrastructure",
     "classes": [
-      { "name": "Chirp.Infrastructure.AuthorRepository", "rp": "Chirp.Infrastructure_AuthorRepository.html", "cl": 86, "ucl": 16, "cal": 102, "tl": 175, "cb": 28, "tb": 38, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
+      { "name": "Chirp.Infrastructure.AuthorRepository", "rp": "Chirp.Infrastructure_AuthorRepository.html", "cl": 94, "ucl": 8, "cal": 102, "tl": 175, "cb": 30, "tb": 38, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Chirp.Infrastructure.CheepDBContext", "rp": "Chirp.Infrastructure_CheepDBContext.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 45, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Chirp.Infrastructure.CheepRepository", "rp": "Chirp.Infrastructure_CheepRepository.html", "cl": 19, "ucl": 14, "cal": 33, "tl": 64, "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },
       { "name": "Chirp.Infrastructure.Migrations.CheepDBContextModelSnapshot", "rp": "Chirp.Infrastructure_CheepDBContextModelSnapshot.html", "cl": 0, "ucl": 311, "cal": 311, "tl": 347, "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [], "metrics": { } },

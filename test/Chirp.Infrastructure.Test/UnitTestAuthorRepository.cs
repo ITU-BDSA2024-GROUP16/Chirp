@@ -57,11 +57,10 @@ public class UnitTestAuthorRepository : IAsyncLifetime
 
         var testAuthor = new Author
         {
-            Name = "Test Name",
-            Email = "test@gmail.com",
-            Cheeps = new List<Cheep>(),
+            Name = "Arthur",
+            Email = "arthursadventures@Email.com"
         };
-
+            
         dbContext.Authors.Add(testAuthor);
         await dbContext.SaveChangesAsync(); 
 
@@ -91,12 +90,10 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         await using var dbContext = CreateContext();
         var authorRepository = new AuthorRepository(dbContext );
 
-
         var testAuthor = new Author
         {
-            Name = "Test Name",
-            Email = "test@gmail.com",
-            Cheeps = new List<Cheep>(),
+            Name = "Arthur",
+            Email = "arthursadventures@Email.com"
         };
 
         dbContext.Authors.Add(testAuthor);
@@ -135,10 +132,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 1,
             Name = "Delilah",
             Email = "angelfromabove4@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
-
         };
         
         var testAuthor2 = new Author
@@ -146,9 +139,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 2,
             Name = "Clint",
             Email = "satanthedevil13@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         
         dbContext.Authors.Add(testAuthor1);
@@ -180,10 +170,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 1,
             Name = "Delilah",
             Email = "angelfromabove4@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
-
         };
         
         var testAuthor2 = new Author
@@ -191,9 +177,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 2,
             Name = "Clint",
             Email = "satanthedevil13@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         
         dbContext.Authors.Add(testAuthor1);
@@ -215,12 +198,8 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         
         var testAuthor = new Author
         {
-            AuthorId = 1,
             Name = "Poppy",
             Email = "seedsfor4life@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         dbContext.Authors.Add(testAuthor);
         await dbContext.SaveChangesAsync();
@@ -241,11 +220,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         
         var testAuthor = new Author
         {
-            AuthorId = 1,
             Email = "seedsfor4life@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         dbContext.Authors.Add(testAuthor);
         await dbContext.SaveChangesAsync();
@@ -267,12 +242,8 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         
         var testAuthor = new Author
         {
-            AuthorId = 1,
             Name = "Tassles",
             Email = "creationfromabove@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         
         dbContext.Authors.Add(testAuthor);
@@ -298,18 +269,11 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 1,
             Name = "Grus",
             Email = "creationfromabove@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         
         var testAuthor2 = new Author
         {
-            AuthorId = 2,
             Email = "amongthewilds@gmail.dk",
-            Cheeps = new List<Cheep>(),
-            FollowedAuthors = new List<Author>(),
-            Followers = new List<Author>()
         };
         
         dbContext.Authors.Add(testAuthor);
@@ -336,7 +300,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 1,
             Name = "Delilah",
             Email = "angelfromabove4@gmail.dk",
-            Cheeps = new List<Cheep>(),
             FollowedAuthors = new List<Author>(),
             Followers = new List<Author>()
 
@@ -347,7 +310,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             AuthorId = 2,
             Name = "Clint",
             Email = "satanthedevil13@gmail.dk",
-            Cheeps = new List<Cheep>(),
             FollowedAuthors = new List<Author>(),
             Followers = new List<Author>()
         };
@@ -411,8 +373,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             Name = "Jacqie",
             Email = "jacque@itu.dk",
             AuthorId = 1000,
-            Followers = new List<Author>(),
-            FollowedAuthors = new List<Author>()
         };
         
         await dbContext.Authors.AddAsync(author);
@@ -440,7 +400,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     }
 
     [Fact]
-    public async Task TestFindAuthorWithID()
+    public async Task UnitTestFindAuthorWithId()
     {
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);
@@ -452,8 +412,6 @@ public class UnitTestAuthorRepository : IAsyncLifetime
             Name = "Jacqie",
             Email = "jacque@itu.dk",
             AuthorId = 1000,
-            Followers = new List<Author>(),
-            FollowedAuthors = new List<Author>()
         };
         
         await dbContext.Authors.AddAsync(author);
@@ -476,6 +434,37 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         });
 
         Assert.Equal("Author with ID 999999999 was not found.", exception.Message);
+    }
+
+    [Fact]
+    public async Task UnitTestGetFollowing()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        var testAuthor1 = new Author
+        {
+            AuthorId = 1,
+            Name = "Delilah",
+            Email = "angelfromabove4@gmail.dk",
+        };
+
+        var testAuthor2 = new Author
+        {
+            AuthorId = 2,
+            Name = "Clint",
+            Email = "satanthedevil13@gmail.dk",
+        };
+
+        dbContext.Authors.Add(testAuthor1);
+        dbContext.Authors.Add(testAuthor2);
+        await dbContext.SaveChangesAsync();
+
+        await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
+        List<Author> author1Following = await authorRepository.getFollowing(testAuthor1.AuthorId);
+        
+        Assert.Contains(testAuthor2, author1Following);
+
     }
     
     
