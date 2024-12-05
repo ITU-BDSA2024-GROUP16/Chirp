@@ -38,7 +38,7 @@ namespace Chirp.Infrastructure
                 .Take(pageSize)
                 .Select(cheep => new CheepDTO
                 {
-                    AuthorDTO = cheep.Author != null ? cheep.Author.Name : "Unknown",
+                    AuthorName = cheep.Author != null ? cheep.Author.Name : "Unknown",
                     Text = cheep.Text,
                     TimeStamp = cheep.TimeStamp.ToString("g")
                 })
@@ -49,14 +49,13 @@ namespace Chirp.Infrastructure
 
         public async Task SaveCheep(Cheep cheep, Author author)
         {
-            await _dbContext.Cheeps.AddAsync(cheep);
-            await _dbContext.SaveChangesAsync();
-            
             if (author.Cheeps == null)
             {
                 throw new InvalidOperationException("Author's Cheeps collection is null.");
             }
-
+            
+            await _dbContext.Cheeps.AddAsync(cheep);
+            await _dbContext.SaveChangesAsync();
             await _dbContext.Entry(author).Collection(a => a.Cheeps!).LoadAsync();
         }
 
