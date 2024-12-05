@@ -201,7 +201,7 @@ public class UserTimelineModel : PageModel
         return RedirectToPage();
     }
     
-    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp, int? likes)
+    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp, int likes)
     {
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
@@ -222,7 +222,7 @@ public class UserTimelineModel : PageModel
     }
 
     
-    public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp, int? likes)
+    public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp, int likes)
     {
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
