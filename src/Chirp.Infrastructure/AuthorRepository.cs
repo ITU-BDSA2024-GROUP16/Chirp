@@ -8,31 +8,33 @@ namespace Chirp.Infrastructure
         Task<Author> FindAuthorWithName(string userName);
         Task<Author> FindAuthorWithEmail(string email);
         Task<bool> IsFollowingAsync(int followerId, int followedId);
-        Task<List<Author>> getFollowing(int followerId);
+        Task<List<Author>> GetFollowing(int followerId);
         Task<bool> FindIfAuthorExistsWithEmail(string email);
         Task FollowUserAsync(int followerId, int followedId);
         Task UnFollowUserAsync(int followerId, int followedId);
-        Task<List<Author>> SearchAuthorsAsync(string searchWord);
+        Task<List<Cheep>> GetLikedCheeps(int userId);
+        Task<List<AuthorDTO>> SearchAuthorsAsync(string searchWord);
     }
 
     public class AuthorRepository : IAuthorRepository
     {
-        public readonly CheepDBContext _dbContext;
+        public readonly CheepDBContext DbContext;
 
         public AuthorRepository(CheepDBContext dbContext)
         {
-            _dbContext = dbContext;
+            DbContext = dbContext;
             SQLitePCL.Batteries.Init();
         }
         
 
         public async Task<Author> FindAuthorWithName(string userName)
         {
-            var author = await _dbContext.Authors
+            var author = await DbContext.Authors
                 .Include(a => a.FollowedAuthors!)
                 .ThenInclude(fa => fa.Cheeps)
                 .Include(a => a.Cheeps)
                 .Include(a => a.Followers)
+                .Include(a => a.LikedCheeps)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(author => author.Name == userName);
             if (author == null)
@@ -45,7 +47,7 @@ namespace Chirp.Infrastructure
 
         public async Task<Author> FindAuthorWithEmail(string email)
         {
-            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
+            var author = await DbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with email {email} not found.");
@@ -56,7 +58,7 @@ namespace Chirp.Infrastructure
         
         public async Task<bool> FindIfAuthorExistsWithEmail(string email)
         {
-            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
+            var author = await DbContext.Authors.FirstOrDefaultAsync(author => author.Email == email);
             if (author == null)
             {
                 return false;
@@ -67,7 +69,7 @@ namespace Chirp.Infrastructure
         
         public async Task<Author> FindAuthorWithId(int authorId)
         {
-            var author = await _dbContext.Authors.FirstOrDefaultAsync(author => author.AuthorId == authorId);
+            var author = await DbContext.Authors.FirstOrDefaultAsync(author => author.AuthorId == authorId);
             if (author == null)
             {
                 throw new InvalidOperationException($"Author with ID {authorId} was not found.");
@@ -81,9 +83,9 @@ namespace Chirp.Infrastructure
         public async Task FollowUserAsync(int followerId, int followedId)
         {
             //logged in user
-            var follower = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followerId);
+            var follower = await DbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followerId);
             //the user that the logged in user wants to follow
-            var followed = await _dbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
+            var followed = await DbContext.Authors.SingleOrDefaultAsync(a => a.AuthorId == followedId);
             
             if (follower == null || follower.Name == null)
             {
@@ -99,20 +101,20 @@ namespace Chirp.Infrastructure
             {
                 follower.FollowedAuthors?.Add(followed);
                 followed.Followers?.Add(follower);
-                await _dbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync();
             }
         }
 
         public async Task UnFollowUserAsync(int followerId, int followedId)
         {
             // The logged in Author
-            var follower = await _dbContext.Authors
+            var follower = await DbContext.Authors
                 .Include(a => a.FollowedAuthors) 
                 .AsSplitQuery()
                 .SingleOrDefaultAsync(a => a.AuthorId == followerId);
         
             // The author whom the logged in author is unfollowing
-            var followed = await _dbContext.Authors
+            var followed = await DbContext.Authors
                 .SingleOrDefaultAsync(a => a.AuthorId == followedId);
 
             if (follower != null && followed != null)
@@ -120,14 +122,14 @@ namespace Chirp.Infrastructure
                 if (follower.FollowedAuthors?.Contains(followed) == true)
                 {
                     follower.FollowedAuthors.Remove(followed);
-                    await _dbContext.SaveChangesAsync();
+                    await DbContext.SaveChangesAsync();
                 }
             }
         }
-
+        
         public async Task<bool> IsFollowingAsync(int followerId, int followedId)
         {
-            var loggedInUser = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+            var loggedInUser = await DbContext.Authors.Include(a => a.FollowedAuthors)
                 .Include(a => a.FollowedAuthors)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
@@ -135,9 +137,9 @@ namespace Chirp.Infrastructure
             return loggedInUser?.FollowedAuthors?.Any(f => f.AuthorId == followedId) ?? false;
         }
 
-        public async Task<List<Author>> getFollowing(int followerId)
+        public async Task<List<Author>> GetFollowing(int followerId)
         {
-            var follower = await _dbContext.Authors.Include(a => a.FollowedAuthors)
+            var follower = await DbContext.Authors.Include(a => a.FollowedAuthors)
                 .Include(a => a.FollowedAuthors)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AuthorId == followerId);
@@ -147,27 +149,46 @@ namespace Chirp.Infrastructure
             }
             return follower.FollowedAuthors;
         }
+
+        public async Task<List<Cheep>> GetLikedCheeps(int userId)
+        {
+            var user = await DbContext.Authors.Include(a => a.LikedCheeps)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(a => a.AuthorId == userId);
+            if (user == null || user.LikedCheeps == null)
+            {
+                throw new InvalidOperationException("User liked cheeps is null.");
+            }
+            return user.LikedCheeps;
+        }
         
 
-        public async Task<List<Author>> SearchAuthorsAsync(string searchWord)
+        public async Task<List<AuthorDTO>> SearchAuthorsAsync(string searchWord)
         {
             if (string.IsNullOrWhiteSpace(searchWord))
             {
-                return new List<Author>(); // Return empty list if no search word is provided
+                return new List<AuthorDTO>(); // Return empty list if no search word is provided
             }
 
             if (searchWord.Length > 2)
             {
                 // Perform a case-insensitive search for authors whose name contains the search word
-
-                return await _dbContext.Authors
+                return await DbContext.Authors
                     .Where(a => EF.Functions.Like(a.Name, $"%{searchWord}%"))
+                    .Select(a => new AuthorDTO
+                    {
+                        Name = a.Name // Map Author entity to AuthorDTO
+                    })
                     .ToListAsync();
             }
             else
             {
-                return await _dbContext.Authors
+                return await DbContext.Authors
                     .Where(a => EF.Functions.Like(a.Name, $"{searchWord}%"))
+                    .Select(a => new AuthorDTO
+                    {
+                        Name = a.Name // Map Author entity to AuthorDTO
+                    })
                     .ToListAsync();
             }
         }

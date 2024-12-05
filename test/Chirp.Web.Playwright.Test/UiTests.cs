@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Playwright;
 using Xunit;
 
@@ -12,19 +11,13 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     private CustomTestWebApplicationFactory _factory;
     private string _serverAddress;
     private IPlaywright _playwright;
-    private HttpClient _client;
-    private IPage _page;
+    private IPage _page = null!;
 
     [SetUp]
     public async Task SetUp()
     {
         _factory = new CustomTestWebApplicationFactory();
         _serverAddress = _factory.ServerAddress;
-        _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = true,
-            HandleCookies = true,
-        });
         
         await InitializeBrowserAndCreateBrowserContextAsync();
             
@@ -38,7 +31,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     }
     
     [TearDown] 
-    public async Task TearDown()
+    public void TearDown()
     {
         Dispose();
     }
@@ -46,7 +39,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test, Category("SkipSetUp")] 
     public async Task UsersCanRegister()
     {
-        var _page = await _context!.NewPageAsync();
+        _page = await _context!.NewPageAsync();
         await _page.GotoAsync(_serverAddress);
         
         await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
@@ -88,7 +81,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     public async Task UserCanRegisterAndLogin()
     {
         //go to base server address
-        var _page = await _context!.NewPageAsync();
+        _page = await _context!.NewPageAsync();
         await _page.GotoAsync(_serverAddress);
         
         //first register user, because a new in memory database is created for each test. 
@@ -116,7 +109,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         var cheepTextField = _page.Locator("input[id='Text']");
         await cheepTextField.ClickAsync();
         await Expect(cheepTextField).ToBeFocusedAsync();
-        
         await cheepTextField.FillAsync("Hello, my group is the best group");
         await Expect(cheepTextField).ToHaveValueAsync("Hello, my group is the best group");
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Share" }).ClickAsync();
@@ -210,15 +202,85 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Logout" }).ClickAsync();
         await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Logout"));
     }
+
+    [Test]
+    public async Task FollowAndUnfollowOnPublicTimeline()
+    {
+        //find the follow-button for a specific cheep
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "Coffee House now is what we hear the worst." 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+
+        //unfollow author
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Follow");
+    }
+    
+    [Test]
+    public async Task UnfollowOnUserTimeline()
+    {
+        //find the follow-button for a specific cheep
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "Coffee House now is what we hear the worst." 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+        
+        //go to my timeline
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "my timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
+        
+        //locate cheep from the author we just followed
+        await Expect(_page.Locator("li:has-text('Coffee House now is what we hear the worst.')")).ToBeVisibleAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+        
+        //unfollow author
+        await followButton.ClickAsync();
+        await Expect(followButton).ToBeHiddenAsync();
+        await Expect(_page.Locator("text=There are no cheeps so far.")).ToBeVisibleAsync();
+        
+        //go back to public timeline to check the unfollow-button has changed back to follow
+        await _page.GetByRole(AriaRole.Link, new() { NameString = "public timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
+        await Expect(followButton).ToHaveTextAsync("Follow");
+    }
+    
+    [Test]
+    public async Task UserCanDeleteTheirAccount()
+    {
+        //go to about me page
+        await _page.GetByRole(AriaRole.Link, new() { Name = "About Me" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage/PersonalData"));
+        
+        //click forget me
+        await _page.GetByRole(AriaRole.Link, new() { Name = "Forget me" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Identity/Account/Manage/DeletePersonalData"));
+        
+        //confirm delete data and close account
+        var passwordInput = _page.GetByPlaceholder("Please enter your password");
+        await passwordInput.ClickAsync();
+        await passwordInput.FillAsync("Cecilie1234!");
+        await Expect(passwordInput).ToHaveValueAsync("Cecilie1234!");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Delete data and close my" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(_serverAddress);
+    }
     
     private async Task SetUpRegisterAndLogin()
     { 
         _page = await _context!.NewPageAsync(); 
         await _page.GotoAsync(_serverAddress);
-        await Task.Delay(4000);
         //first register user, because a new in memory database is created for each test.
         await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
-        await Task.Delay(2000);
         await _page.WaitForURLAsync(new Regex("/Identity/Account/Register$"));
         await _page.GetByLabel("Username").ClickAsync(); 
         await _page.GetByLabel("Username").FillAsync("Cecilie"); 
@@ -228,7 +290,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!");
-        await Task.Delay(2000);
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
         await _page.WaitForURLAsync(_serverAddress);
     }

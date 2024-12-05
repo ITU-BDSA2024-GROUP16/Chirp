@@ -52,12 +52,6 @@ namespace Chirp.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,6 +161,30 @@ namespace Chirp.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuthorFollows",
+                columns: table => new
+                {
+                    FollowedId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FollowerId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorFollows", x => new { x.FollowedId, x.FollowerId });
+                    table.ForeignKey(
+                        name: "FK_AuthorFollows_AspNetUsers_FollowedId",
+                        column: x => x.FollowedId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AuthorFollows_AspNetUsers_FollowerId",
+                        column: x => x.FollowerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cheeps",
                 columns: table => new
                 {
@@ -174,7 +192,8 @@ namespace Chirp.Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Text = table.Column<string>(type: "TEXT", maxLength: 160, nullable: true),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    AuthorId = table.Column<int>(type: "INTEGER", nullable: false)
+                    AuthorId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Likes = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -184,7 +203,31 @@ namespace Chirp.Infrastructure.Migrations
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AuthorLikedCheeps",
+                columns: table => new
+                {
+                    LikedByAuthorsId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LikedCheepsCheepId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuthorLikedCheeps", x => new { x.LikedByAuthorsId, x.LikedCheepsCheepId });
+                    table.ForeignKey(
+                        name: "FK_AuthorLikedCheeps_AspNetUsers_LikedByAuthorsId",
+                        column: x => x.LikedByAuthorsId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorLikedCheeps_Cheeps_LikedCheepsCheepId",
+                        column: x => x.LikedCheepsCheepId,
+                        principalTable: "Cheeps",
+                        principalColumn: "CheepId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -219,11 +262,6 @@ namespace Chirp.Infrastructure.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_AuthorId",
-                table: "AspNetUsers",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_Email",
                 table: "AspNetUsers",
                 column: "Email",
@@ -240,6 +278,16 @@ namespace Chirp.Infrastructure.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorFollows_FollowerId",
+                table: "AuthorFollows",
+                column: "FollowerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuthorLikedCheeps_LikedCheepsCheepId",
+                table: "AuthorLikedCheeps",
+                column: "LikedCheepsCheepId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cheeps_AuthorId",
@@ -266,10 +314,16 @@ namespace Chirp.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Cheeps");
+                name: "AuthorFollows");
+
+            migrationBuilder.DropTable(
+                name: "AuthorLikedCheeps");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Cheeps");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

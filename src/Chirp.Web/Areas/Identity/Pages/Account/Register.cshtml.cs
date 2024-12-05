@@ -132,6 +132,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 user.Id = user.AuthorId;
                 user.Cheeps = new List<Cheep>();
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                user.EmailConfirmed = true; 
+
                 
                 if (result.Succeeded)
                 {

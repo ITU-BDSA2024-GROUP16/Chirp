@@ -18,7 +18,7 @@ Referenced from: https://learn.microsoft.com/en-us/aspnet/core/test/integration-
 public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
 {
     private IHost? _host;
-    private static readonly Queue<int> PortQueue = new Queue<int>(Enumerable.Range(5000, 10));  // Range af porte, f.eks. 5000-5999
+    private static readonly Queue<int> PortQueue = new Queue<int>(Enumerable.Range(5000, 20));  // Range af porte, f.eks. 5000-5999
 
     // Hent den næste ledige port
     private static int GetNextAvailablePort()
@@ -74,13 +74,13 @@ public class CustomTestWebApplicationFactory : WebApplicationFactory<Program>
             var dbConnectionDescriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
                      typeof(DbConnection));
-            if (dbContextDescriptor != null)
+            if (dbConnectionDescriptor != null)
             {
                 services.Remove(dbConnectionDescriptor);
             }
 
             // Create open SqliteConnection so EF won't automatically close it.
-            services.AddSingleton<DbConnection>(container =>
+            services.AddSingleton<DbConnection>(_ =>
             {
                 var connection = new SqliteConnection("DataSource=:memory:");
                 connection.Open(); //keeps the connection open for the test
