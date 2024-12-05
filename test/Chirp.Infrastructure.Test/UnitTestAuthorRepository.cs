@@ -464,8 +464,21 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         List<Author> author1Following = await authorRepository.getFollowing(testAuthor1.AuthorId);
         
         Assert.Contains(testAuthor2, author1Following);
-
     }
     
+    [Fact]
+    public async Task UnitTestGetFollowing_ThrowsExceptionIfFollowerIsNull()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext);
+        
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await authorRepository.getFollowing(999999);
+        });
+
+        Assert.Equal("Follower or followed authors is null.", exception.Message);
+
+    }
     
 }
