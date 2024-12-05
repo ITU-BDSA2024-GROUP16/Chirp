@@ -324,6 +324,8 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         await authorRepository.UnFollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
 
         //assert
+        Assert.NotNull(testAuthor1);
+        Assert.NotNull(testAuthor2);
         Assert.DoesNotContain(testAuthor1, testAuthor2.Followers);
         Assert.DoesNotContain(testAuthor2, testAuthor1.FollowedAuthors);
     }
@@ -357,7 +359,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     }
     
     [Fact]
-    public async Task UnitTestListIsEmptyIfSearchWordIsNull()
+    public async Task UnitTestListIsEmptyIfSearchWordIsEmpty()
     {
         await using var dbContext = CreateContext();
 
@@ -370,6 +372,35 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         
         Assert.Empty(authors);
     }
+    
+    [Fact]
+    public async Task SearchAuthorsAsync_ReturnsAuthorsWithNamesStartingWithShortSearchWord()
+    {
+        await using var dbContext = CreateContext();
+        var authorRepository = new AuthorRepository(dbContext);
+
+        var authors = new List<Author>
+        {
+            new Author { Name = "Benjamin", Email = "benjaminen@example.com" },
+            new Author { Name = "Babette", Email = "babette@example.com" },
+            new Author { Name = "Betjent", Email = "hrbetjent@example.com" },
+            new Author { Name = "Arnebe", Email = "arnebe@example.com" }
+        };
+    
+        await dbContext.Authors.AddRangeAsync(authors);
+        await dbContext.SaveChangesAsync();
+
+        var searchWord = "be";
+        var result = await authorRepository.SearchAuthorsAsync(searchWord);
+
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Contains(result, author => author.Name == "Benjamin");
+        Assert.Contains(result, author => author.Name == "Betjent");
+        Assert.DoesNotContain(result, author => author.Name == "Babette");
+        Assert.DoesNotContain(result, author => author.Name == "Arnebe");
+    }
+
 
     
     
