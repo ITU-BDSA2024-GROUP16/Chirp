@@ -67,6 +67,23 @@ public class UnitTestCheepRepository : IAsyncLifetime
         Assert.Equal(12, cheeps2.Count);
     }
     
+    [Fact]
+    public async Task UnitTestTestNoCheepsOnEmptyPage()
+    {
+        //Arrange
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+        
+        //Act
+        List<CheepDTO> cheeps = await cheepRepository.GetCheeps(100000, 32);
+        
+        _output.WriteLine("cheeps: {0}", cheeps.Count);
+
+        //Assert
+        Assert.Empty(cheeps);
+    }
+    
     
     [Fact]
     public async Task UnitTestGetCheepsFromAuthor()

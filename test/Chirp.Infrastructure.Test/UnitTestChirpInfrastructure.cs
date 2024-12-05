@@ -136,50 +136,6 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
     }
 
     [Fact]
-    public async Task UnitTestTestPageSize()
-    {
-        //Arrange
-        await using var dbContext = CreateContext();
-        DbInitializer.SeedDatabase(dbContext);
-        var cheepRepository = new CheepRepository( dbContext);
-        
-        //Act
-        List<CheepDTO> cheeps = await cheepRepository.GetCheeps(1, 32);
-        List<CheepDTO> cheeps2 = await cheepRepository.GetCheeps(1, 12);
-        
-        _output.WriteLine("cheeps: {0}, cheeps2: {1}", cheeps.Count, cheeps2.Count);
-
-        //Assert
-        Assert.Equal(32, cheeps.Count);
-        Assert.Equal(12, cheeps2.Count);
-    }
-    
-    /*
-    [Fact]
-    public async Task UnitTestGetCheepsFromAuthor()
-    {
-        //Arrange
-        await using var dbContext = CreateContext();
-        DbInitializer.SeedDatabase(dbContext);
-        
-        var cheepRepository = new CheepRepository(dbContext);
-        List<CheepDTO> cheeps = new List<CheepDTO>();
-        string authorName = "Jacqualine Gilcoine";
-        
-        //Act
-        //cheeps = await cheepRepository.ReadCheeps(AuthorName, 1,32);
-
-        
-        //Assert
-        foreach (CheepDTO cheep in cheeps)
-        {
-            _output.WriteLine("cheep Author: {0}", cheep.AuthorDTO);
-            Assert.Equal(authorName, cheep.AuthorDTO);
-        }
-    }
-    */
-
-    [Fact]
     public async Task UnitTestNoAuthorNameDuplicates()
     {
         await using var dbContext = CreateContext();
@@ -219,25 +175,8 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         });
     }
     
-    [Fact]
-    public async Task UnitTestTestNoCheepsOnEmptyPage()
-    {
-        //Arrange
-        await using var dbContext = CreateContext();
-        DbInitializer.SeedDatabase(dbContext);
-        var cheepRepository = new CheepRepository(dbContext);
-        
-        //Act
-        List<CheepDTO> cheeps = await cheepRepository.GetCheeps(100000, 32);
-        
-        _output.WriteLine("cheeps: {0}", cheeps.Count);
-
-        //Assert
-        Assert.Empty(cheeps);
-    }
 
     [Fact]
-
     public async Task UnitTestAddedToFollowersAndFollowedAuthorsWhenFollowing()
     {
         await using var dbContext = CreateContext();
