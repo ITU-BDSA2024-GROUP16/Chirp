@@ -152,9 +152,12 @@ namespace Chirp.Infrastructure
 
         public async Task<List<Cheep>> GetLikedCheeps(int userId)
         {
-            var user = await DbContext.Authors.Include(a => a.LikedCheeps)
+            var user = await DbContext.Authors
+                .Include(a => a.LikedCheeps)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(a => a.AuthorId == userId);
+            // user.LikedCheeps cannot be null here because the query ensures it's at least an empty list
+            // we added the check so the compiler doesn't give us a warning in the return statement
             if (user == null || user.LikedCheeps == null)
             {
                 throw new InvalidOperationException("User liked cheeps is null.");

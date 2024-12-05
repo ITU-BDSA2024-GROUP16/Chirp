@@ -557,4 +557,19 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         Assert.Contains(testCheep, likedCheeps);
     }
     
+    [Fact]
+    public async Task UnitTestGetLikedCheepsRaisesExceptionBecauseUserId()
+    {
+        await using var dbContext = CreateContext();
+        DbInitializer.SeedDatabase(dbContext);
+        var authorRepository = new AuthorRepository(dbContext);
+        var cheepRepository = new CheepRepository(dbContext);
+        
+        //Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            //No user has 100 as an id
+            await authorRepository.GetLikedCheeps(100);
+        });
+    }
 }
