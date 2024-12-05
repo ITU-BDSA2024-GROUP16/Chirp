@@ -337,7 +337,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
 
-        List<Author> authors = await authorRepository.SearchAuthorsAsync("jacq");
+        List<AuthorDTO> authors = await authorRepository.SearchAuthorsAsync("jacq");
         
         Assert.Contains(authors, author => author.Name == "Jacqualine Gilcoine");
 
@@ -351,7 +351,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
 
-        List<Author> authors;
+        List<AuthorDTO> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("12345567");
         
@@ -366,7 +366,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         DbInitializer.SeedDatabase(dbContext);
         var authorRepository = new AuthorRepository(dbContext);
 
-        List<Author> authors;
+        List<AuthorDTO> authors;
 
         authors = await authorRepository.SearchAuthorsAsync("");
         
@@ -504,7 +504,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         await dbContext.SaveChangesAsync();
 
         await authorRepository.FollowUserAsync(testAuthor1.AuthorId, testAuthor2.AuthorId);
-        List<Author> author1Following = await authorRepository.getFollowing(testAuthor1.AuthorId);
+        List<Author> author1Following = await authorRepository.GetFollowing(testAuthor1.AuthorId);
         
         Assert.Contains(testAuthor2, author1Following);
     }
@@ -517,7 +517,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
         
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await authorRepository.getFollowing(999999);
+            await authorRepository.GetFollowing(999999);
         });
 
         Assert.Equal("Follower or followed authors is null.", exception.Message);
