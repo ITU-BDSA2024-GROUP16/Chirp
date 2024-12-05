@@ -116,7 +116,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         var cheepTextField = _page.Locator("input[id='Text']");
         await cheepTextField.ClickAsync();
         await Expect(cheepTextField).ToBeFocusedAsync();
-        
         await cheepTextField.FillAsync("Hello, my group is the best group");
         await Expect(cheepTextField).ToHaveValueAsync("Hello, my group is the best group");
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Share" }).ClickAsync();
@@ -215,10 +214,8 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     { 
         _page = await _context!.NewPageAsync(); 
         await _page.GotoAsync(_serverAddress);
-        await Task.Delay(4000);
         //first register user, because a new in memory database is created for each test.
         await _page.GetByRole(AriaRole.Link, new () { NameString = "Register" }).ClickAsync();
-        await Task.Delay(2000);
         await _page.WaitForURLAsync(new Regex("/Identity/Account/Register$"));
         await _page.GetByLabel("Username").ClickAsync(); 
         await _page.GetByLabel("Username").FillAsync("Cecilie"); 
@@ -228,7 +225,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_Password']").FillAsync("Cecilie1234!"); 
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!");
-        await Task.Delay(2000);
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
         await _page.WaitForURLAsync(_serverAddress);
     }

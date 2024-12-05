@@ -35,11 +35,18 @@ namespace Chirp.Infrastructure
                     j => j.HasOne<Author>().WithMany().HasForeignKey("FollowerId").OnDelete(DeleteBehavior.Cascade));
             
             // Configure maximum length for Cheep text
-            modelBuilder.Entity<Cheep>().Property(c => c.Text).HasMaxLength(160);
+            modelBuilder.Entity<Cheep>()
+                .Property(c => c.Text)
+                .HasMaxLength(160);
+            
+            // Configure Cheep foreign key relationship with Author
+            modelBuilder.Entity<Cheep>()
+                .HasOne(c => c.Author)               // Each Cheep has one Author
+                .WithMany(a => a.Cheeps)             // Each Author can have many Cheeps
+                .HasForeignKey(c => c.AuthorId)     // Cheep.AuthorId is the foreign key
+                .OnDelete(DeleteBehavior.Cascade);  // Delete cheeps if their author is deleted
 
             base.OnModelCreating(modelBuilder);
-         
-                
         }
     }
 }

@@ -45,19 +45,19 @@
                     <p class="cheep">
                         <div>
                             <strong style="padding-right: 10px">
-                                <a href="/@cheep.AuthorDTO">@cheep.AuthorDTO</a>
+                                <a href="/@cheep.AuthorName">@cheep.AuthorName</a>
                             </strong>
-                            @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorDTO)
+                            @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorName)
                             {
-                                @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
+                                @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorName))
                                 {
-                                    <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                    <form method="Post" asp-page-handler="Unfollow" asp-route-followAuthorName="@cheep.AuthorName" style="display:inline;">
                                         <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Unfollow</button>
                                     </form>
                                 }
                                 else
                                 {
-                                    <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorDTO" style="display:inline;">
+                                    <form method="Post" asp-page-handler="Follow" asp-route-followAuthorName="@cheep.AuthorName" style="display:inline;">
                                         <button type="submit" style="padding: 2px; padding-left: 10px; padding-right: 10px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif">Follow</button>
                                     </form>
                                 }

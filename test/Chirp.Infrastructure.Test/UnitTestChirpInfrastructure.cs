@@ -388,8 +388,6 @@ public class UnitTestChirpInfrastructure : IAsyncLifetime
         bool isAuthorFound = await authorRepository.FindIfAuthorExistsWithEmail("CountCommint@itu.dk");
         
         Assert.False(isAuthorFound);
-
-        
     }
 
     [Fact]
