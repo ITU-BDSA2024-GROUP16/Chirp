@@ -54,7 +54,7 @@ public class PublicModel : PageModel
             if (!string.IsNullOrEmpty(authorEmail))
             {
                 var loggedInAuthor = await AuthorRepository.FindAuthorWithEmail(authorEmail);
-                FollowedAuthors = await AuthorRepository.getFollowing(loggedInAuthor.AuthorId);
+                FollowedAuthors = await AuthorRepository.GetFollowing(loggedInAuthor.AuthorId);
             }
         }
         return Page();
@@ -99,7 +99,7 @@ public class PublicModel : PageModel
         await AuthorRepository.FollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await AuthorRepository.GetFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
@@ -121,12 +121,12 @@ public class PublicModel : PageModel
         await AuthorRepository.UnFollowUserAsync(author.AuthorId, followAuthor.AuthorId);
         
         //updates the current author's list of followed authors
-        FollowedAuthors = await AuthorRepository.getFollowing(author.AuthorId);
+        FollowedAuthors = await AuthorRepository.GetFollowing(author.AuthorId);
         
         return RedirectToPage();
     }
 
-    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp, int likes)
+    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp)
     {
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
@@ -138,16 +138,21 @@ public class PublicModel : PageModel
         var author = await AuthorRepository.FindAuthorWithName(authorName);
         var cheep = await CheepRepository.FindCheep(text,timeStamp, authorDto);
         
+        if (cheep == null)
+        {
+            throw new ArgumentException("Cheep could not be found.");
+        }
+        
         // Adds the cheep to the author's list of liked cheeps
         await CheepRepository.LikeCheep(cheep, author);
         
-        LikedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
+        LikedCheeps = await AuthorRepository.GetLikedCheeps(author.AuthorId);
         
         return RedirectToPage();
     }
 
     
-    public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp, int likes)
+    public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp)
     {
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
@@ -159,9 +164,14 @@ public class PublicModel : PageModel
         var author = await AuthorRepository.FindAuthorWithName(authorName);
         var cheep = await CheepRepository.FindCheep(text,timeStamp,authorDto);
         
+        if (cheep == null)
+        {
+            throw new ArgumentException("Cheep could not be found.");
+        }
+        
         await CheepRepository.UnLikeCheep(cheep, author);
         
-        LikedCheeps = await AuthorRepository.getLikedCheeps(author.AuthorId);
+        LikedCheeps = await AuthorRepository.GetLikedCheeps(author.AuthorId);
         
         return RedirectToPage();
     }
@@ -173,9 +183,14 @@ public class PublicModel : PageModel
         {
             throw new ArgumentException("Author name cannot be null or empty.");
         }
-        
-        var author = await AuthorRepository.FindAuthorWithLikes(authorName);
+
+        var author = await AuthorRepository.FindAuthorWithName(authorName);
         var cheep = await CheepRepository.FindCheep(text,timeStamp,authorDto);
+        
+        if (cheep == null)
+        {
+            throw new ArgumentException("Cheep could not be found.");
+        }
         
         return await CheepRepository.DoesUserLikeCheep(cheep, author);
     }

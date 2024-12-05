@@ -6,25 +6,33 @@
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_Layout";
-    var AuthorName = User.FindFirst("Name")?.Value ?? "User";
+    var authorName = User.FindFirst("Name")?.Value ?? "User";
     var userName = HttpContext.GetRouteValue("author");
     @inject SignInManager<Author> SignInManager
 }
 
+
 <div>
-    @if (AuthorName == userName?.ToString())
-    { 
-        <h2 style="padding-top: 8px"> @userName's Timeline </h2>
-    <div class="cheepbox" style="position: relative; display: inline-block; width: 98.2%; vertical-align: top;">
-        <h3>What's on your mind @userName?</h3>
-        <form method="post">
-            <input style="float: left; width: 100%; resize: none; padding: 5px; box-sizing: border-box; overflow: hidden;" type="text" asp-for="Text" maxlength="160" oninput="updateCharCount(this)">
-            <span id="charCount" style="position: absolute; bottom: 8px; right: 85px; font-size: 0.85rem; color: gray; font-family: 'Trebuchet MS', sans-serif">0/160</span>
-            <input style="float: right; vertical-align: top; padding: 2px; border-radius: 3px;" type="submit" value="Share">
+    <div style="padding-top: 8px">
+        <form method="get" action="/SearchResults" style="float: right; font-family: 'Trebuchet MS', sans-serif">
+            <input type="text" name="searchWord" placeholder="Search authors..." style="padding: 5px; font-family: 'Trebuchet MS', sans-serif"/>
+            <button type="submit" style="padding: 6px; padding-left: 17px; padding-right: 17px; border-radius: 3px; font-family: 'Trebuchet MS'; sans-seriffont-size: 14px; font-weight: bold;">Search</button>
         </form>
     </div>
-    }
     
+    @if (authorName == userName?.ToString())
+    {
+        <div class="cheepbox" style="position: relative; display: inline-block; width: 98.2%; vertical-align: top;">
+            <h3>What's on your mind @userName?</h3>
+            <form method="post">
+                <input style="float: left; width: 100%; resize: none; padding: 5px; box-sizing: border-box; overflow: hidden;" type="text" asp-for="Text" maxlength="160" oninput="updateCharCount(this)">
+                <span id="charCount" style="position: absolute; bottom: 8px; right: 85px; font-size: 0.85rem; color: gray; font-family: 'Trebuchet MS', sans-serif">0/160</span>
+                <input style="float: right; vertical-align: top; padding: 2px; border-radius: 3px;" type="submit" value="Share">
+            </form>
+        </div>
+    }
+
+    <h2 style="padding-top: 8px"> @userName's Timeline </h2>
 
     @if (Model.Cheeps.Any())
     {
@@ -37,7 +45,7 @@
                             <strong style="padding-right: 10px">
                                 <a href="/@cheep.AuthorDTO">@cheep.AuthorDTO</a>
                             </strong>
-                            @if (SignInManager.IsSignedIn(User) && AuthorName != @cheep.AuthorDTO)
+                            @if (SignInManager.IsSignedIn(User) && authorName != @cheep.AuthorDTO)
                             {
                                 @if (Model.FollowedAuthors.Any(a => a.Name == cheep.AuthorDTO))
                                 {
@@ -56,43 +64,43 @@
                         @cheep.Text
                         <br/>
                         <small>&mdash; @cheep.TimeStamp</small>
-                    @if (SignInManager.IsSignedIn(User) && AuthorName.ToString() != @cheep.AuthorDTO) //Like button
-                    {
-                    if (cheep.AuthorDTO != null && cheep.Text != null && cheep.TimeStamp != null)
-                    {
-                    <div class="like-button-container">
-                        @if (await Model.DoesUserLikeCheep(@cheep.AuthorDTO, @cheep.Text, @cheep.TimeStamp))
+                        @if (SignInManager.IsSignedIn(User) && authorName != @cheep.AuthorDTO) 
                         {
-                        <form method="Post" asp-page-handler="UnLike">
-                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
-                            <input type="hidden" name="Text" value="@cheep.Text" />
-                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
-                            <button class="like-button-liked">
-                                <span class="heart">&#x2764;</span>
-                            </button>
-                        </form>
+                            if (cheep.AuthorDTO != null && cheep.Text != null && cheep.TimeStamp != null)
+                            {
+                                <div class="like-button-container">
+                                    @if (await Model.DoesUserLikeCheep(@cheep.AuthorDTO, @cheep.Text, @cheep.TimeStamp))
+                                    {
+                                        <form method="Post" asp-page-handler="UnLike">
+                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO"/>
+                                            <input type="hidden" name="Text" value="@cheep.Text"/>
+                                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp"/>
+                                            <button class="like-button-liked">
+                                                <span class="heart">&#x2764;</span>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form method="Post" asp-page-handler="Like">
+                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO"/>
+                                            <input type="hidden" name="Text" value="@cheep.Text"/>
+                                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp"/>
+                                            <input type="hidden" name="Likes" value="@cheep.Likes"/>
+                                            <button class="like-button-not-liked">
+                                                <span class="heart">&#x2764;</span>
+                                            </button>
+                                        </form>
+                                    }
+                                    <span>@cheep.Likes</span>
+                                </div>
+                            }
                         }
-                        else
-                        {
-                        <form method="Post" asp-page-handler="Like">
-                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorDTO" />
-                            <input type="hidden" name="Text" value="@cheep.Text" />
-                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
-                            <input type="hidden" name="Likes" value="@cheep.Likes" />
-                            <button class="like-button-not-liked">
-                                <span class="heart">&#x2764;</span>
-                            </button>
-                        </form>
-                        }
-                        <span>@cheep.Likes</span>
-                    </div>
-                    }
-                    }
                     </p>
                 </li>
             }
         </ul>
-        
+
         <div class="pagination">
             @if (Model.PageNumber > 1)
             {
@@ -100,7 +108,7 @@
             }
 
             <span>Page @Model.PageNumber</span>
-            
+
             @if (Model.Cheeps.Count == Model.PageSize)
             {
                 <a style="font-family: 'Trebuchet MS', sans-serif" href="?page=@(Model.PageNumber + 1)" class="next">Next</a>
