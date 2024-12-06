@@ -247,10 +247,8 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     public async Task GoToAnotherUsersTimelineAndFollowAndUnfollow()
     {
         // go to another user's timeline 
-        var userTimelinePage = _page.Locator("li").Filter(new()
-        {
-            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 01.08."
-        }).GetByRole(AriaRole.Link);
+        var userTimelinePage = _page.GetByRole(AriaRole.Link, new() { Name = "Jacqualine Gilcoine" }).First;
+        
         await userTimelinePage.ClickAsync();
         await Expect (_page).ToHaveURLAsync(new Regex(_serverAddress + $"Jacqualine"));
         
@@ -274,10 +272,8 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     public async Task GoToAnotherUsersTimelineAndSeeFirst32CheepsWrittenByThatAuthor()
     {
         // go to another user's timeline 
-        var userTimelinePage = _page.Locator("li").Filter(new()
-        {
-            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 01.08."
-        }).GetByRole(AriaRole.Link);
+        var userTimelinePage = _page.GetByRole(AriaRole.Link, new() { Name = "Jacqualine Gilcoine" }).First;
+
         await userTimelinePage.ClickAsync();
         await Expect (_page).ToHaveURLAsync(new Regex(_serverAddress + $"Jacqualine"));
         
@@ -399,6 +395,68 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await Expect(_page).ToHaveURLAsync(_serverAddress);
     }
     
+    [Test]
+    public async Task UserCanLikeAndUnlikeOtherCheepsOnPublicTimeline()
+    {
+        Task.Delay(5000);
+        var likeButton = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 2023-"
+        }).Locator("button.like-button-not-liked");
+        
+        var likeCount = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 2023-"
+        }).Locator(".like-button-container span").Nth(1);
+        
+        var unLikeButton = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 2023-"
+        }).Locator("button.like-button-liked");
+        
+        await Expect(likeCount).ToHaveTextAsync("0");
+        await likeButton.ClickAsync();
+        await Expect(likeCount).ToHaveTextAsync("1");
+        await unLikeButton.ClickAsync();
+        await Expect(likeCount).ToHaveTextAsync("0");
+    }
+    [Test]
+    public async Task UserCanFollowAndLikeOtherCheepsOnMyTimeline()
+    {
+        //find the follow-button for a specific cheep
+        var followButton = _page.Locator("li").Filter(new() 
+        { 
+            HasText = "Coffee House now is what we hear the worst." 
+        }).GetByRole(AriaRole.Button, new() { NameString = "Follow" });
+
+        //follow author
+        await Expect(followButton).ToHaveTextAsync("Follow");
+        await followButton.ClickAsync();
+        await Expect(followButton).ToHaveTextAsync("Unfollow");
+        
+        //go to my timeline
+        await _page.GetByRole(AriaRole.Link, new() { Name = "My timeline" }).ClickAsync();
+        await Expect(_page).ToHaveURLAsync(new Regex(_serverAddress + $"Cecilie"));
+        
+        var likeButton = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Unfollow Once, I remember, to be a rock, but it is this"
+        }).GetByRole(AriaRole.Button).Nth(1);
+
+        var likeCount0 = _page.GetByText("0", new() { Exact = true }).Nth(3);
+        var likeCount1 = _page.GetByText("1", new() { Exact = true });
+        
+        var unLikeButton = _page.Locator("li").Filter(new()
+        {
+            HasText = "Jacqualine Gilcoine Unfollow Once, I remember, to be a rock, but it is this"
+        }).GetByRole(AriaRole.Button).Nth(1);
+
+        await Expect(likeCount0).ToHaveTextAsync("0");
+        await likeButton.ClickAsync();
+        await Expect(likeCount1).ToHaveTextAsync("1");
+        await unLikeButton.ClickAsync();
+        await Expect(likeCount0).ToHaveTextAsync("0");
+    }
     
     private async Task SetUpRegisterAndLogin()
     { 
