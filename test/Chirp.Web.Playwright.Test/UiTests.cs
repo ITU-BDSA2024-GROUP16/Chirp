@@ -368,8 +368,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     {
         var nextButton = _page.GetByRole(AriaRole.Link, new() { Name = "Next" });
         await nextButton.ClickAsync();
-        
-        await Expect(_page).ToHaveURLAsync(_serverAddress);
+        await Expect(_page).ToHaveURLAsync(new Regex($"{_serverAddress}\\?page=2"));
         
         var previousButton = _page.GetByRole(AriaRole.Link, new() { Name = "Previous" });
         await Expect(previousButton).ToBeVisibleAsync();
