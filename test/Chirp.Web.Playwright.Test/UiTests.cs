@@ -310,8 +310,8 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     {
         //search for author
         var searchField = _page.GetByPlaceholder("Search authors...");
-        searchField.ClickAsync();
-        searchField.FillAsync("Mellie");
+        await searchField.ClickAsync();
+        await searchField.FillAsync("Mellie");
         await _page.GetByRole(AriaRole.Button, new() { Name = "Search" }).ClickAsync();
         
         //show search results and click on user
@@ -367,7 +367,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     public async Task GoToNextPageWithButton()
     {
         var nextButton = _page.GetByRole(AriaRole.Link, new() { Name = "Next" });
-        nextButton.ClickAsync();
+        await nextButton.ClickAsync();
         
         await Expect(_page).ToHaveURLAsync(_serverAddress);
         
@@ -398,7 +398,6 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
     [Test]
     public async Task UserCanLikeAndUnlikeOtherCheepsOnPublicTimeline()
     {
-        Task.Delay(5000);
         var likeButton = _page.Locator("li").Filter(new()
         {
             HasText = "Jacqualine Gilcoine Follow Coffee House now is what we hear the worst. — 2023-"
