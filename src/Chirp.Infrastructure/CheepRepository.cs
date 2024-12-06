@@ -1,5 +1,7 @@
 using Chirp.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Chirp.Infrastructure
 {
@@ -110,16 +112,24 @@ namespace Chirp.Infrastructure
             {
                 throw new ArgumentException("Invalid timestamp format.");
             }
+            
+            var cheeps = await _dbContext.Cheeps
+                .Include(c => c.Author)
+                .ToListAsync();
+            
+            foreach (var cheep in cheeps)
+            {
+                if (cheep == null || cheep.Author == null || string.IsNullOrWhiteSpace(cheep.Text) || string.IsNullOrWhiteSpace(cheep.Author.Name))
+                {
+                    throw new ArgumentException("Cheep was not found");
+                }
+                if (cheep.Text.ToLower() == text.ToLower() && cheep.TimeStamp.ToString().ToLower() == parsedTimestamp.ToString().ToLower() && cheep.Author != null && cheep.Author.Name.ToLower() == authorName.ToLower())
+                {
+                    return cheep;
+                }
+            }
 
-            // Safely check for null Author before accessing Name
-            return await _dbContext.Cheeps
-                .FirstOrDefaultAsync(c => c.Text == text &&
-                                          c.TimeStamp == parsedTimestamp &&
-                                          c.Author != null && 
-                                          c.Author.Name == authorName); // Explicit null check on Author
+            return null;
         }
-
-
-
     }
 }
