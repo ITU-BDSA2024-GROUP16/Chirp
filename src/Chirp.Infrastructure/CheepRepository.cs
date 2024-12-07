@@ -119,11 +119,7 @@ namespace Chirp.Infrastructure
             
             foreach (var cheep in cheeps)
             {
-                if (cheep == null || cheep.Author == null || string.IsNullOrWhiteSpace(cheep.Text) || string.IsNullOrWhiteSpace(cheep.Author.Name))
-                {
-                    throw new ArgumentException("Cheep was not found");
-                }
-                if (cheep.Text.ToLower() == text.ToLower() && cheep.TimeStamp.ToString().ToLower() == parsedTimestamp.ToString().ToLower() && cheep.Author != null && cheep.Author.Name.ToLower() == authorName.ToLower())
+                if (cheep.Text?.ToLower() == text.ToLower() && cheep.TimeStamp.ToString().ToLower() == parsedTimestamp.ToString().ToLower() && cheep.Author != null && cheep.Author.Name?.ToLower() == authorName.ToLower())
                 {
                     return cheep;
                 }
