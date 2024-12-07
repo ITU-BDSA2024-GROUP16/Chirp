@@ -126,7 +126,7 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<ActionResult> OnPostLike(string authorDto, string text, string timeStamp)
+    public async Task<ActionResult> OnPostLike(string cheepAuthorName, string text, string timeStamp)
     {
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
@@ -136,7 +136,7 @@ public class PublicModel : PageModel
         }
 
         var author = await AuthorRepository.FindAuthorWithName(authorName);
-        var cheep = await CheepRepository.FindCheep(text,timeStamp, authorDto);
+        var cheep = await CheepRepository.FindCheep(text,timeStamp, cheepAuthorName);
         
         if (cheep == null)
         {
@@ -152,7 +152,7 @@ public class PublicModel : PageModel
     }
 
     
-    public async Task<ActionResult> OnPostUnLike(string authorDto, string text, string timeStamp)
+    public async Task<ActionResult> OnPostUnLike(string cheepAuthorName, string text, string timeStamp)
     {
         // Find the author that's logged in
         var authorName = User.FindFirst("Name")?.Value;
@@ -162,7 +162,7 @@ public class PublicModel : PageModel
         }
 
         var author = await AuthorRepository.FindAuthorWithName(authorName);
-        var cheep = await CheepRepository.FindCheep(text,timeStamp,authorDto);
+        var cheep = await CheepRepository.FindCheep(text,timeStamp,cheepAuthorName);
         
         if (cheep == null)
         {
@@ -176,7 +176,7 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<bool> DoesUserLikeCheep(string authorDto, string text, string timeStamp)
+    public async Task<bool> DoesUserLikeCheep(string cheepAuthorName, string text, string timeStamp)
     {
         var authorName = User.FindFirst("Name")?.Value;
         if (string.IsNullOrEmpty(authorName))
@@ -185,7 +185,7 @@ public class PublicModel : PageModel
         }
 
         var author = await AuthorRepository.FindAuthorWithName(authorName);
-        var cheep = await CheepRepository.FindCheep(text,timeStamp,authorDto);
+        var cheep = await CheepRepository.FindCheep(text,timeStamp,cheepAuthorName);
         
         if (cheep == null)
         {

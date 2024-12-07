@@ -19,13 +19,15 @@
 </style>
 
 <div>
-    <div style="padding-top: 8px">
-        <form method="get" action="/SearchResults" style="float: right; font-family: 'Trebuchet MS', sans-serif">
-            <input type="text" name="searchWord" placeholder="Search authors..." style="padding: 5px; font-family: 'Trebuchet MS', sans-serif"/>
-            <button type="submit" style="padding: 6px; padding-left: 17px; padding-right: 17px; border-radius: 3px; font-family: 'Trebuchet MS'; sans-seriffont-size: 14px; font-weight: bold;">Search</button>
+    <div style="padding-top: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <h2>@userName's Timeline</h2>
+        <form method="get" action="/SearchResults" style="font-family: 'Trebuchet MS', sans-serif;">
+            <input type="text" name="searchWord" placeholder="Search authors..." style="padding: 5px; font-family: 'Trebuchet MS', sans-serif;" />
+            <button type="submit" style="padding: 6px; padding-left: 17px; padding-right: 17px; border-radius: 3px; font-family: 'Trebuchet MS', sans-serif; font-size: 14px; font-weight: bold;">Search</button>
         </form>
     </div>
-    
+
+
     @if (authorName == userName?.ToString())
     {
         <div class="cheepbox" style="position: relative; display: inline-block; width: 98.2%; vertical-align: top;">
@@ -38,7 +40,6 @@
         </div>
     }
     
-
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
@@ -68,7 +69,10 @@
                         </div>
                         @cheep.Text
                         <br/>
-                        <small>&mdash; @cheep.TimeStamp</small>
+                        @if (@cheep.TimeStamp != null)
+                        {
+                            <small>&mdash; @cheep.TimeStamp.Substring(0,19)</small>
+                        }
                         @if (SignInManager.IsSignedIn(User) && authorName != @cheep.AuthorName) 
                         {
                             if (cheep.AuthorName != null && cheep.Text != null && cheep.TimeStamp != null)
@@ -77,9 +81,9 @@
                                     @if (await Model.DoesUserLikeCheep(@cheep.AuthorName, @cheep.Text, @cheep.TimeStamp))
                                     {
                                         <form method="Post" asp-page-handler="UnLike">
-                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorName"/>
-                                            <input type="hidden" name="Text" value="@cheep.Text"/>
-                                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp"/>
+                                            <input type="hidden" name="cheepAuthorName" value="@cheep.AuthorName"/>
+                                            <input type="hidden" name="text" value="@cheep.Text"/>
+                                            <input type="hidden" name="timeStamp" value="@cheep.TimeStamp"/>
                                             <button class="like-button-liked">
                                                 <span class="heart">&#x2764;</span>
                                             </button>
@@ -88,10 +92,9 @@
                                     else
                                     {
                                         <form method="Post" asp-page-handler="Like">
-                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorName"/>
+                                            <input type="hidden" name="cheepAuthorName" value="@cheep.AuthorName"/>
                                             <input type="hidden" name="Text" value="@cheep.Text"/>
-                                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp"/>
-                                            <input type="hidden" name="Likes" value="@cheep.Likes"/>
+                                            <input type="hidden" name="timeStamp" value="@cheep.TimeStamp"/>
                                             <button class="like-button-not-liked">
                                                 <span class="heart">&#x2764;</span>
                                             </button>

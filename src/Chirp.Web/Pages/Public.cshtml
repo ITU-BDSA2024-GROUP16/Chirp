@@ -72,7 +72,10 @@
                         </div>
                         @cheep.Text
                         <br/>
-                        <small>&mdash; @cheep.TimeStamp</small>
+                        @if (@cheep.TimeStamp != null)
+                        {
+                        <small>&mdash; @cheep.TimeStamp.Substring(0,19)</small>
+                        }
                         @if (SignInManager.IsSignedIn(User) && authorName.ToString() != @cheep.AuthorName) //Like button
                         {
                             if (cheep.AuthorName != null && cheep.Text != null && cheep.TimeStamp != null)
@@ -81,9 +84,9 @@
                                     @if (await Model.DoesUserLikeCheep(@cheep.AuthorName, @cheep.Text, @cheep.TimeStamp))
                                     {
                                         <form method="Post" asp-page-handler="UnLike">
-                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorName" />
-                                            <input type="hidden" name="Text" value="@cheep.Text" />
-                                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
+                                            <input type="hidden" name="cheepAuthorName" value="@cheep.AuthorName" />
+                                            <input type="hidden" name="text" value="@cheep.Text" />
+                                            <input type="hidden" name="timeStamp" value="@cheep.TimeStamp" />
                                             <button class="like-button-liked">
                                                 <span class="heart">&#x2764;</span>
                                             </button>
@@ -92,9 +95,9 @@
                                     else
                                     {
                                         <form method="Post" asp-page-handler="Like">
-                                            <input type="hidden" name="AuthorDTO" value="@cheep.AuthorName" />
-                                            <input type="hidden" name="Text" value="@cheep.Text" />
-                                            <input type="hidden" name="TimeStamp" value="@cheep.TimeStamp" />
+                                            <input type="hidden" name="cheepAuthorName" value="@cheep.AuthorName" />
+                                            <input type="hidden" name="text" value="@cheep.Text" />
+                                            <input type="hidden" name="timeStamp" value="@cheep.TimeStamp" />
                                             <button class="like-button-not-liked">
                                                 <span class="heart">&#x2764;</span>
                                             </button>
