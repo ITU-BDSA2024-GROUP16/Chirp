@@ -3,6 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace Chirp.Core;
 
+/// <summary>
+/// Represents a "cheep" in the Chirp application.
+/// A cheep is a short message posted by an author, similar to a tweet.
+/// </summary>
 public class Cheep
 {
     public int CheepId { get; set; }

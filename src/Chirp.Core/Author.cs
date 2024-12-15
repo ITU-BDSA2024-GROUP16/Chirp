@@ -5,8 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Core
 {
+    
+    /// <summary>
+    /// Represents an author (user) in the Chirp application. This class extends <see cref="IdentityUser{TKey}"/> 
+    /// to include additional properties specific to the application, such as the author's name, cheeps, 
+    /// followed authors, followers, and liked cheeps.
+    /// </summary>
     public class Author : IdentityUser<int>
-    {
+    { 
     public int AuthorId { get; set; }
     public string? Name { get; set; } 
     [NotMapped] 
