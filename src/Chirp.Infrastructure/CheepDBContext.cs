@@ -5,64 +5,80 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Chirp.Infrastructure
 {
+    /// <summary>
+    /// Represents the database context for the Chirp application, managing database operations
+    /// for authors, cheeps, and their relationships.
+    /// </summary>
     public class CheepDBContext : IdentityDbContext<Author, IdentityRole<int>, int>
     {
+        /// <summary>
+        /// DbSet for Cheeps, representing user posts in the Chirp application.
+        /// </summary>
         public DbSet<Cheep> Cheeps { get; set; }
+        
+        /// <summary>
+        /// DbSet for Authors, representing users in the Chirp application.
+        /// </summary>
         public DbSet<Author> Authors { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CheepDBContext"/> class with specified options.
+        /// </summary>
+        /// <param name="dbContextOptions">The options to configure the context.</param>
         public CheepDBContext(DbContextOptions<CheepDBContext> dbContextOptions)
             : base(dbContextOptions)
         {
         }
 
+        /// <summary>
+        /// Configures relationships, indexes, and constraints for the Chirp database model.
+        /// Includes unique constraints, cascading behaviors, and many-to-many relationships.
+        /// </summary>
+        /// <param name="modelBuilder">The builder used to construct the model for the database.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure unique indexes for Author properties
+            // Enforce unique constraint on Author.Name and Author.Email to ensure no duplicates.
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Name)
                 .IsUnique();
-
             modelBuilder.Entity<Author>()
                 .HasIndex(a => a.Email)
                 .IsUnique();
 
-            // Configure the relationship between Cheep and Author (one-to-many)
+            // Define one-to-many relationship between Cheeps and Authors.
             modelBuilder.Entity<Cheep>()
-                .HasOne(c => c.Author)  // Cheep has one Author
-                .WithMany(a => a.Cheeps)  // Author has many Cheeps
-                .HasForeignKey(c => c.AuthorId) // Foreign key in Cheep pointing to Author
-                .OnDelete(DeleteBehavior.Cascade);  // Set delete behavior
+                .HasOne(c => c.Author)
+                .WithMany(a => a.Cheeps)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Many-to-many relationship for LikedCheeps (Cheep can have many Authors who liked it)
+            // Configure many-to-many relationship between Cheeps and Authors who like them.
             modelBuilder.Entity<Cheep>()
                 .HasMany(c => c.LikedByAuthors) // Cheep has many Authors who liked it
                 .WithMany(a => a.LikedCheeps)  // Author can like many Cheeps
                 .UsingEntity(j => j.ToTable("AuthorLikedCheeps"));  // Join table
 
-            // Many-to-many relationship for FollowedAuthors
+            // Configure many-to-many relationship for following authors.
             modelBuilder.Entity<Author>()
-                .HasMany(a => a.FollowedAuthors)
-                .WithMany(a => a.Followers)
+                .HasMany(a => a.FollowedAuthors) // Each Author can follow many other Authors
+                .WithMany(a => a.Followers) // Each Author can be followed by many Authors
                 .UsingEntity<Dictionary<string, object>>(
                     "AuthorFollows",
-                    j => j.HasOne<Author>().WithMany().HasForeignKey("FollowedId").OnDelete(DeleteBehavior.Restrict),
-                    j => j.HasOne<Author>().WithMany().HasForeignKey("FollowerId").OnDelete(DeleteBehavior.Cascade));
+                    j => j.HasOne<Author>()
+                        .WithMany()
+                        .HasForeignKey("FollowedId")
+                        .OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Author>()
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade));
 
-            // Configure maximum length for Cheep text
+            // Limit the maximum length of Cheep text to align with application design.
             modelBuilder.Entity<Cheep>()
                 .Property(c => c.Text)
                 .HasMaxLength(160);
-            
-            // Configure Cheep foreign key relationship with Author
-            modelBuilder.Entity<Cheep>()
-                .HasOne(c => c.Author)               // Each Cheep has one Author
-                .WithMany(a => a.Cheeps)             // Each Author can have many Cheeps
-                .HasForeignKey(c => c.AuthorId)     // Cheep.AuthorId is the foreign key
-                .OnDelete(DeleteBehavior.Cascade);  // Delete cheeps if their author is deleted
 
             base.OnModelCreating(modelBuilder);
         }
-
-
     }
 }
