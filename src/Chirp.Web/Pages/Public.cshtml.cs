@@ -30,6 +30,13 @@ public class PublicModel : PageModel
         SignInManager = signInManager;
     }
 
+    /// <summary>
+    /// Handles GET requests to display the public timeline and user-specific data if authenticated.
+    /// </summary>
+    /// <returns>An <see cref="ActionResult"/> indicating the result of the operation.</returns>
+    /// <remarks>
+    /// Authenticated users are validated against the database. If not found, they are signed out and redirected.
+    /// </remarks>
     public async Task<ActionResult> OnGet()
     {
         //check if logged-in user exists in database, otherwise log out and redirect to public timeline
@@ -60,6 +67,11 @@ public class PublicModel : PageModel
         return Page();
     }
     
+    /// <summary>
+    /// Handles POST requests to publish a new cheep by the logged-in user.
+    /// </summary>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after saving the cheep.</returns>
+    /// <exception cref="ArgumentException">Thrown if the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPost()
     {
         var authorName = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -82,6 +94,12 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
     
+    /// <summary>
+    /// Allows the logged-in user to follow another user.
+    /// </summary>
+    /// <param name="followAuthorName">The name of the author to follow.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostFollow(string followAuthorName)
     {
         //Finds the author thats logged in
@@ -103,7 +121,13 @@ public class PublicModel : PageModel
         
         return RedirectToPage();
     }
-
+    
+    /// <summary>
+    /// Allows the logged-in user to unfollow another user.
+    /// </summary>
+    /// <param name="followAuthorName">The name of the author to unfollow.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
     {
         //Finds the author thats logged in
@@ -126,6 +150,14 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
 
+    /// <summary>
+    /// Allows the logged-in user to like a specific cheep.
+    /// </summary>
+    /// <param name="cheepAuthorName">The author of the cheep to like.</param>
+    /// <param name="text">The text of the cheep to like.</param>
+    /// <param name="timeStamp">The timestamp of the cheep to like.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the cheep or the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostLike(string cheepAuthorName, string text, string timeStamp)
     {
         // Find the author that's logged in
@@ -151,7 +183,14 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
 
-    
+    /// <summary>
+    /// Allows the logged-in user to unlike a specific cheep.
+    /// </summary>
+    /// <param name="cheepAuthorName">The author of the cheep to unlike.</param>
+    /// <param name="text">The text of the cheep to unlike.</param>
+    /// <param name="timeStamp">The timestamp of the cheep to unlike.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the cheep or the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostUnLike(string cheepAuthorName, string text, string timeStamp)
     {
         // Find the author that's logged in
@@ -176,6 +215,15 @@ public class PublicModel : PageModel
         return RedirectToPage();
     }
 
+    
+    /// <summary>
+    /// Determines whether the logged-in user has liked a specific cheep.
+    /// </summary>
+    /// <param name="cheepAuthorName">The author of the cheep.</param>
+    /// <param name="text">The text of the cheep.</param>
+    /// <param name="timeStamp">The timestamp of the cheep.</param>
+    /// <returns>A <see cref="bool"/> indicating whether the cheep is liked by the user.</returns>
+    /// <exception cref="ArgumentException">Thrown if the cheep or the logged-in user's name is null or empty.</exception>
     public async Task<bool> DoesUserLikeCheep(string cheepAuthorName, string text, string timeStamp)
     {
         var authorName = User.FindFirst("Name")?.Value;
