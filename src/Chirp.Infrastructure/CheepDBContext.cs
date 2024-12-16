@@ -11,14 +11,8 @@ namespace Chirp.Infrastructure
     /// </summary>
     public class CheepDBContext : IdentityDbContext<Author, IdentityRole<int>, int>
     {
-        /// <summary>
-        /// DbSet for Cheeps, representing user posts in the Chirp application.
-        /// </summary>
         public DbSet<Cheep> Cheeps { get; set; }
-        
-        /// <summary>
-        /// DbSet for Authors, representing users in the Chirp application.
-        /// </summary>
+
         public DbSet<Author> Authors { get; set; }
 
         /// <summary>
