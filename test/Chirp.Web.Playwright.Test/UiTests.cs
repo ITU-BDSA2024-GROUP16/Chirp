@@ -472,7 +472,7 @@ public class UiTests : PageTest, IClassFixture<CustomTestWebApplicationFactory>,
         await _page.Locator("input[id='Input_Password']").PressAsync("Tab"); 
         await _page.Locator("input[id='Input_ConfirmPassword']").FillAsync("Cecilie1234!");
         await _page.GetByRole(AriaRole.Button, new() { NameString = "Register" }).ClickAsync();
-        await _page.WaitForURLAsync(_serverAddress);
+        await _page.GetByText("What's on your mind Cecilie?").WaitForAsync();
     }
 
     private async Task InitializeBrowserAndCreateBrowserContextAsync() 
