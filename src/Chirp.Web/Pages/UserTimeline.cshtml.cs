@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Chirp.Web.Pages;
 
+/// <summary>
+/// This class handles the users interactions with the user's timeline page.
+/// This includes posting and liking cheeps, as well as following/unfollowing author.
+/// </summary>
 public class UserTimelineModel : PageModel
 {
     public readonly IAuthorRepository AuthorRepository;
@@ -18,15 +22,19 @@ public class UserTimelineModel : PageModel
     public string? Text { get; set; }
     public List<Author> FollowedAuthors { get; set; } = new List<Author>();
     public List<Cheep> LikedCheeps { get; set; } = new List<Cheep>();
-
-
-
+    
     public UserTimelineModel(ICheepRepository cheepRepository, IAuthorRepository authorRepository)
     {
         CheepRepository = cheepRepository;
         AuthorRepository = authorRepository;
     }
-
+    
+    /// <summary>
+    /// Handles GET requests to display the user's timeline.
+    /// Content of the page differentiate whether it's the logged-in user's timeline, or another user's.
+    /// </summary>
+    /// <returns>An <see cref="ActionResult"/> for rendering the page.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if the logged-in user's email is missing or not authenticated</exception>
     public async Task<ActionResult> OnGet()
     {
         //Gets the authorName from the currently LOGGED IN user
@@ -47,7 +55,7 @@ public class UserTimelineModel : PageModel
             {
                 PageNumber = 1;
             }
-
+            
             
             //Loads the author with their cheeps and followers using the authors name
             Author author = await AuthorRepository.FindAuthorWithName(authorName);
@@ -135,6 +143,11 @@ public class UserTimelineModel : PageModel
         }
     }
     
+    /// <summary>
+    /// Handles POST requests to create a new cheep by the logged-in user.
+    /// </summary>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after saving the cheep.</returns>
+    /// <exception cref="ArgumentException">Thrown if the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPost()
     {
         var authorName = User.FindFirst("Name")?.Value;
@@ -160,6 +173,12 @@ public class UserTimelineModel : PageModel
         return RedirectToPage();
     }
     
+    /// <summary>
+    /// Allows the logged-in user to follow another author.
+    /// </summary>
+    /// <param name="followAuthorName">The name of the author to follow.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostFollow(string followAuthorName)
     {
         //Finds the author thats logged in
@@ -182,6 +201,12 @@ public class UserTimelineModel : PageModel
         return RedirectToPage();
     }
 
+    /// <summary>
+    /// Allows the logged-in user to unfollow an author they follow.
+    /// </summary>
+    /// <param name="followAuthorName">The name of the author to unfollow.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostUnfollow(string followAuthorName)
     {
         //Finds the author thats logged in
@@ -203,6 +228,14 @@ public class UserTimelineModel : PageModel
         return RedirectToPage();
     }
     
+    /// <summary>
+    /// Allows the logged-in user to like other authors cheeps.
+    /// </summary>
+    /// <param name="cheepAuthorName">The name of the author of the cheep.</param>
+    /// <param name="text">The text, excluding author and timestamp, of the cheep.</param>
+    /// <param name="timeStamp">The time of which the cheep was posted.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the cheep or the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostLike(string cheepAuthorName, string text, string timeStamp)
     {
         // Find the author that's logged in
@@ -228,7 +261,14 @@ public class UserTimelineModel : PageModel
         return RedirectToPage();
     }
 
-    
+    /// <summary>
+    /// Allows the logged-in user to remove like, from already liked cheeps.
+    /// </summary>
+    /// <param name="cheepAuthorName">The name of the author of the cheep.</param>
+    /// <param name="text">The text, excluding author and timestamp, of the cheep.</param>
+    /// <param name="timeStamp">The time of which the cheep was posted.</param>
+    /// <returns>An <see cref="ActionResult"/> redirecting to the current page after the operation.</returns>
+    /// <exception cref="ArgumentException">Thrown if the cheep or the logged-in user's name is null or empty.</exception>
     public async Task<ActionResult> OnPostUnLike(string cheepAuthorName, string text, string timeStamp)
     {
         // Find the author that's logged in
@@ -253,6 +293,14 @@ public class UserTimelineModel : PageModel
         return RedirectToPage();
     }
 
+    /// <summary>
+    /// Checks if the logged-in user has liked a specific cheep.
+    /// </summary>
+    /// <param name="cheepAuthorName">The name of the author of the cheep.</param>
+    /// <param name="text">The text, excluding author and timestamp, of the cheep.</param>
+    /// <param name="timeStamp">The time of which the cheep was posted.</param>
+    /// <returns>A <see cref="bool"/> returns true if the cheep has been liked by the logged-in user.</returns>
+    /// <exception cref="ArgumentException">Thrown if the cheep or the logged-in user's name is null or empty.</exception>
     public async Task<bool> DoesUserLikeCheep(string cheepAuthorName, string text, string timeStamp)
     {
         var authorName = User.FindFirst("Name")?.Value;
