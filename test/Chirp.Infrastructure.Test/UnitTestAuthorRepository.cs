@@ -558,7 +558,7 @@ public class UnitTestAuthorRepository : IAsyncLifetime
     }
     
     [Fact]
-    public async Task UnitTestGetLikedCheepsRaisesExceptionBecauseUserId()
+    public async Task UnitTestGetLikedCheepsRaisesExceptionBecauseUserIdDoesNotExist()
     {
         await using var dbContext = CreateContext();
         DbInitializer.SeedDatabase(dbContext);

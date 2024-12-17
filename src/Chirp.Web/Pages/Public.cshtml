@@ -150,28 +150,26 @@
     <script>
         document.body.classList.add('hidden');
 
+        const pageKey = window.location.pathname; // Use the page's path as the key
+
+        // Save scroll position along with the current page's key
         window.addEventListener('beforeunload', () => {
-            localStorage.setItem('scrollPosition', window.scrollY);
+            const scrollData = {
+                position: window.scrollY,
+                page: pageKey
+            };
+            localStorage.setItem('scrollData', JSON.stringify(scrollData));
         });
 
+        // On page load, retrieve and apply the scroll position if it's for the same page
         window.addEventListener('load', () => {
-            const scrollPosition = localStorage.getItem('scrollPosition');
-            if (scrollPosition) {
-                window.scrollTo(0, parseInt(scrollPosition, 10));
-                localStorage.removeItem('scrollPosition');
+            const scrollData = JSON.parse(localStorage.getItem('scrollData'));
+            if (scrollData && scrollData.page === pageKey) {
+                window.scrollTo(0, scrollData.position);
             }
+            localStorage.removeItem('scrollData'); // Clear scroll position after applying
             document.body.classList.remove('hidden');
         });
-
-        function updateCharCount(element) {
-            const charCounter = element.value.length;
-
-            document.getElementById('charCount').textContent = charCounter + "/160";
-
-            if (element.tagName.toLowerCase() === 'textarea') {
-                element.style.height = 'auto';
-                element.style.height = element.scrollHeight + 'px';
-            }
-        }
     </script>
+
 }
