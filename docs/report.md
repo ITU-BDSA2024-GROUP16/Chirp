@@ -1,6 +1,6 @@
 ---
 title: _Chirp!_ Project Report
-subtitle: ITU BDSA 2024 Group `<no>`
+subtitle: ITU BDSA 2024 Group `16`
 Course code: BSANDSA1KU
 author:
 - "Noa Bracha Andersen <noan@itu.dk>"
