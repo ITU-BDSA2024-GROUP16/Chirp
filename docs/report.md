@@ -5,7 +5,7 @@ Course code: BSANDSA1KU
 author:
 - "Noa Bracha Andersen <noan@itu.dk>"
 - "Johan Ingeholm <jing@itu.dk>"
-- "Freya Nørlund Wenzel <frnw@itu.dk>"
+- "Freya Nørlund Wentzel <frnw@itu.dk>"
 - "Cecilie Amalie Wall Elkjær <ceel@itu.dk>"
 - "Jacques Puvis de Chavannes  <japu@itu.dk>"
 numbersections: true
@@ -169,7 +169,9 @@ The integration-tests test the interaction between the infrastructure layer and 
 
 The end-to-end tests test the functionalities of the user interface. Each test acts as a user going through the different features, and then checking (by using expect) if the features work as intended.
 
-We have used Coverlet (A coverage framework for .NET) to show the coverage of our tests. Trivially, we wanted to achieve as much coverage as possible. As seen on the pictures, we have achieved 100% line coverage in both `Chirp.Core` and `Chirp.Infrastructure`. (Note, we removed migrations etc. from the coverage report, since it seems nonsense to test). On `Chirp.Web` we achieved 77.2% line coverage. This could have been improved, but that would mean testing a lot of the scaffolded classes which are native to .NET.
+We have used Coverlet (A coverage framework for .NET) to show the coverage of our tests. Trivially, we wanted to achieve as much coverage as possible. As seen on the pictures, we have achieved 100% line coverage in both `Chirp.Core` and `Chirp.Infrastructure`. (Note, we removed migrations etc. from the coverage report, since it seems nonsense to test). On `Chirp.Web` we achieved 77.2% line coverage. This could have been improved, but that would mean testing a lot of the scaffolded classes which are native to .NET. 
+
+For full coverage report, see appendix.
 
 ![Alt text](diagrams/images/CoverageminimizedDone.png)
 
@@ -185,3 +187,8 @@ The MIT license
 For this project, we did occasionally use ChatGPT to help us in various ways, and we credited by co-authoring ChatGPT in the commits where it was relevant.
 
 We mostly used ChatGPT as a TA to explain things, for debugging and to help us understand errors and the capabilities of C#. This was helpful at times and allowed us to more easily put our ideas to reality. The code and the structure of it, we wrote mainly ourselves. 
+
+# Appenix
+
+![Alt text](diagrams/images/Coverage1Done.png)
+![Alt text](diagrams/images/Coverage2Done.png)
