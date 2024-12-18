@@ -38,29 +38,32 @@ The deployment diagram shows how the different nodes communicate with each other
 ## User activities
 
 A user activity diagram showing how an unauthorized user becomes an authorized user by registering as a user on Chirp!
-
+<br />
 ![Alt text](diagrams/images/flowchart-diagrams-register.png)
 
 
 A user activity diagram showing how both authorized and unauthorized users can search for other users. This experience is the same for both types of users.
-
+<br />
 ![Alt text](diagrams/images/flowchart-diagrams-search.png)
 
 
 A user activity diagram showing a typical user journey of an authorized user liking and unliking a cheep.
-
+<br />
 ![Alt text](diagrams/images/flowchart-diagrams-like.png)
 
 
 A user activity diagram showing a typical user journey of an authorized user writing and sharing a cheep.
+<br />
 ![Alt text](diagrams/images/flowchart-diagrams-sendcheep.png)
 
 
 A user activity diagram showing a typical user journey of an authorized user following and unfollowing another user resulting in changes in the authorized user's private timeline.
+<br />
 ![Alt text](diagrams/images/flowchart-diagrams-follow.png)
 
 
 A user activity diagram showing a typical user journey of an authorized user deleting their account and data.
+<br />
 ![Alt text](diagrams/images/flowchart-diagrams-deleteaccount.png)
 
 
