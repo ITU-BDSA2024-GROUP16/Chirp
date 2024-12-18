@@ -11,6 +11,7 @@ author:
 numbersections: true
 ---
 
+
 # Design and architecture
 ## Domain Model
 

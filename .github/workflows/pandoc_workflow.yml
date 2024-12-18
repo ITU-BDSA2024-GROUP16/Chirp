@@ -3,27 +3,33 @@ name: Convert Report to PDF
 on:
   push:
     paths:
-      - 'docs/report.md'  # Trigger only when report.md changes
+      - 'docs/report.md'
   pull_request:
     paths:
-      - 'docs/report.md'  # Trigger on PRs that affect report.md
+      - 'docs/report.md'
 
 jobs:
   convert_report:
-    runs-on: ubuntu-22.04  # You can use any supported GitHub runner
+    runs-on: ubuntu-22.04
     
     steps:
       # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Run Pandoc to convert report.md to the desired PDF filename
+      # Debug: Check if the report.md file exists
+      - name: Check if report.md exists
+        run: |
+          ls -al docs/  # List contents of the docs folder to verify if the report.md is there
+          cat docs/report.md  # Print the contents of report.md for verification
+
+      # Convert the Markdown file to PDF using Pandoc
       - name: Convert Markdown to PDF
-        uses: docker://pandoc/latex:3.5  # Use the Pandoc Docker image with LaTeX
+        uses: docker://pandoc/latex:3.5
         with:
           args: >-
             --output=output/2024_itubdsa_group_16_report.pdf
-            docs/report.md  # Specify the input file
+            docs/report.md  # Ensure this is the correct file path
 
       # Upload the generated PDF as an artifact
       - name: Upload PDF Artifact
